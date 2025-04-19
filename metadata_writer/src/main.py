@@ -1,3 +1,6 @@
+import uvicorn
+from fastapi import FastAPI
+
 def main() -> None:
     pass
 
