@@ -14,5 +14,7 @@ class ServiceSettings(BaseSettings):
     )
     base_dir : str = str(Path(__file__).parent.parent)
     postgres_dsn: PostgresDsn = Field()
+    echo: bool = Field(True, alias="ECHO")
+    debug: bool = Field(True, alias="DEBUG")
 
 settings = ServiceSettings()
