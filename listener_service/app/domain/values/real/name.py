@@ -8,7 +8,7 @@ from domain.exceptions.real.names import NameTooLongException, EmptyNameExceptio
 
 @dataclass(frozen=True)
 class Name(BaseValueObject):
-    """ Объект-значение """
+    """ Объект-значение для имени """
     value: str
 
     def validate(self):
