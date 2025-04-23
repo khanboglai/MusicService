@@ -1,5 +1,6 @@
 from uuid import UUID
 from datetime import date
+from sqlalchemy import select
 
 from infra.database.connect import async_session_maker
 from domain.entities.real.listener import Listener
@@ -18,8 +19,8 @@ class ListenerRepository():
         return new_listener
     
     async def get_listener_by_id(self, listener_id: UUID) -> Listener:
-        listener = self.session.query(Listener).filter(Listener.oid == listener_id).first()
-        return Listener
+        listener = await self.session.execute(select(Listener).where(Listener.oid == listener_id))
+        return listener.scalars().first()
     
     async def close(self):
         await self.session.close()

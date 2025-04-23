@@ -24,13 +24,13 @@ async def root():
 @app.post("/listeners/")
 async def create_listener(first_name: str, last_name: str, birth_date: str):
     listener = await listener_repository.add_listener(first_name, last_name, birth_date)
-    return {"id": listener.oid, "first_name": listener.first_name, "last_name": listener.last_name}
+    return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
 
 @app.get("/listeners/{listener_id}")
 async def read_listener(listener_id: UUID):
     listener = await listener_repository.get_listener_by_id(listener_id)
     if listener:
-        await {"id": listener.oid, "first_name": listener.first_name, "last_name": listener.last_name}
+        return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
     raise HTTPException(status_code=404, detail="Listener not found")
 
 @app.on_event("shutdown")
