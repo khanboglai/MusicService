@@ -1,10 +1,8 @@
 """ Определения исключений связанных с именами """
-from dataclasses import dataclass
 
 from domain.exceptions.abc.base import AplicationException
 
 
-@dataclass
 class NameTooLongException(AplicationException):
     """ Исключение слишком длинного имени """
     @property
@@ -12,7 +10,6 @@ class NameTooLongException(AplicationException):
         return 'Your name is too long!'
     
 
-@dataclass
 class EmptyNameException(AplicationException):
     """ Исключение пустого имени """
     @property
@@ -20,7 +17,6 @@ class EmptyNameException(AplicationException):
         return 'Your name must be not empty!' 
 
 
-@dataclass
 class NotRealNameException(AplicationException): # неймниг говно, как придумаю что-то получше, переделаю
     """ Исключение имени содержащего цифры, спецсимволы и т.д. """
     @property

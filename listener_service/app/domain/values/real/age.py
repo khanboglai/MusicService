@@ -1,12 +1,10 @@
 """ Определение объекта-значения возраста """
-from dataclasses import dataclass
 from datetime import date
 
 from domain.exceptions.real.age import AgeTooSmallException, AgeTooBigException
 from domain.values.abc.base import BaseValueObject
 
 
-@dataclass
 class Age(BaseValueObject):
     """ Объект-значение возраста """
     value: date
@@ -18,4 +16,7 @@ class Age(BaseValueObject):
             raise AgeTooSmallException()
         if age > 120:
             raise AgeTooBigException()
+        
+    def __composite_values__(self):
+        return (self.value, )
     

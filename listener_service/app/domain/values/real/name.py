@@ -1,12 +1,10 @@
 """ Определение объекта-значения для имени и фамилии (текста) """
 import re
-from dataclasses import dataclass
 
 from domain.values.abc.base import BaseValueObject
 from domain.exceptions.real.names import NameTooLongException, EmptyNameException, NotRealNameException
 
 
-@dataclass(frozen=True)
 class Name(BaseValueObject):
     """ Объект-значение для имени """
     value: str
@@ -20,3 +18,6 @@ class Name(BaseValueObject):
         
         if not re.match("^[A-Za-zА-Яа-яЁё]+$", self.value):
             raise NotRealNameException()
+        
+    def __composite_values__(self):
+        return (self.value, )
