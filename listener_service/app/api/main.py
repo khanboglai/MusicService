@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
-from uuid import UUID
 
 from infra.database.models import start_mapping
 from infra.database.repository.listener_repository import ListenerRepository
@@ -27,7 +26,7 @@ async def create_listener(first_name: str, last_name: str, birth_date: str):
     return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
 
 @app.get("/listeners/{listener_id}")
-async def read_listener(listener_id: UUID):
+async def read_listener(listener_id: int):
     listener = await listener_repository.get_listener_by_id(listener_id)
     if listener:
         return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}

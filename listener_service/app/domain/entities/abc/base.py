@@ -8,7 +8,7 @@ from domain.events.abc.base import BaseEvent
 
 class BaseEntity(ABC):
     """ Абстрактная сущность """
-    oid: UUID
+    oid: int
     events: list[BaseEvent]
 
     def register_event(self, event: BaseEvent):

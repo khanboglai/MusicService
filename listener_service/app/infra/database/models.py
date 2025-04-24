@@ -8,7 +8,8 @@ from sqlalchemy import (
     Time,
     Table,
     Text,
-    ForeignKey
+    ForeignKey,
+    BigInteger
 )
 from sqlalchemy.orm import column_property, registry, relationship, composite
 
@@ -25,7 +26,7 @@ mapper_registry = registry()
 listener_table = Table(
     "User",
     mapper_registry.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid4),
+    Column("id", BigInteger, primary_key=True, autoincrement=True),
     Column("first_name", Text),
     Column("last_name", Text),
     Column("birth_date", Date),
@@ -35,17 +36,17 @@ listener_table = Table(
 like_table = Table(
     "TrackLikes",
     mapper_registry.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid4),
-    Column("user_id", UUID(as_uuid=True), ForeignKey("User.id"), nullable=False),
-    Column("track_id", UUID(as_uuid=True), nullable=False)
+    Column("id", BigInteger, primary_key=True, autoincrement=True),
+    Column("user_id", BigInteger, ForeignKey("User.id"), nullable=False),
+    Column("track_id", BigInteger, nullable=False)
 )
 
 interaction_table = Table(
     "Interactions",
     mapper_registry.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid4),
-    Column("user_id", UUID(as_uuid=True), ForeignKey("User.id"), nullable=False),
-    Column("track_id", UUID(as_uuid=True), nullable=False),
+    Column("id", BigInteger, primary_key=True, autoincrement=True),
+    Column("user_id", BigInteger, ForeignKey("User.id"), nullable=False),
+    Column("track_id", BigInteger, nullable=False),
     Column("last_interaction", Time),
     Column("count_interaction", Integer),
     Column("listen_time", Time)
