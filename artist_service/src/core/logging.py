@@ -1,3 +1,7 @@
+import logging
+from logging.config import dictConfig
+
+
 LOG_FORMAT = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
 
 LOG_DEFAULT_HANDLERS = ["console"]
@@ -9,7 +13,7 @@ LOGGING = {
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
             "fmt": "%(levelprefix) %(message)s",
-            "use_colors": None,
+            "use_colors": True,
         },
         "access": {
             "()": "uvicorn.logging.AccessFormatter",
@@ -41,3 +45,15 @@ LOGGING = {
     },
     "root": {"level": "INFO", "formatter": "verbose", "handlers": LOG_DEFAULT_HANDLERS},
 }
+
+
+# dictConfig(LOGGING)
+logging.basicConfig(
+    level=logging.INFO,  # Уровень логирования (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Формат сообщения
+    handlers=[
+        logging.StreamHandler(),  # Вывод в консоль
+        logging.FileHandler("app.log")  # Вывод в файл
+    ]
+)
+logger = logging.getLogger(__name__)

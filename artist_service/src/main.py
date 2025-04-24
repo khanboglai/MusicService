@@ -3,16 +3,19 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from core.logging import LOGGING
-from core.config import settings
+from src.core.logging import LOGGING, logger
+from src.core.config import settings
+from src.database.models import start_mapping
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     """ тут редис прокидывать """
-    print("start up")
+    logger.info("start app")
+    start_mapping()
+    logger.info("mapping done")
     yield
-    print("shutdown")
+    logger.info("finish app")
 
 
 app = FastAPI(
@@ -25,4 +28,4 @@ app = FastAPI(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=LOGGING)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
