@@ -1,8 +1,11 @@
+import uvicorn
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 
 from infra.database.models import start_mapping
 from infra.database.repository.listener_repository import ListenerRepository
+from infra.config import logger
 
 # @asynccontextmanager
 # async def lifespan(_: FastAPI):
@@ -15,6 +18,7 @@ listener_repository = ListenerRepository()
 @app.on_event("startup")
 async def startup_event():
     await start_mapping()
+    logger.info("Data mapped!")
 
 @app.get("/")
 async def root():
@@ -35,3 +39,13 @@ async def read_listener(listener_id: int):
 @app.on_event("shutdown")
 async def shutdown_event():
     await listener_repository.close()
+
+# if __name__ == "__main__":
+#     uvicorn.run(
+#         "api.main:app",
+#         host="0.0.0.0",
+#         port=8000,
+#         log_config=LOGGING,
+#         log_level=logging.INFO,
+#         reload=True
+#     )

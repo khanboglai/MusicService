@@ -8,4 +8,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . /app
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# CMD [ "python3", "api/main.py" ]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-config=infra/logger/log_conf.yaml"]
