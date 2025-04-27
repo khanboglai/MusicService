@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from src.core.config import settings
 
 
-engine = create_async_engine(settings.postgres_dsn, echo=settings.echo, future=True)
+engine = create_async_engine(str(settings.postgres_dsn), echo=settings.echo, future=True)
 # future новая версия библиотеки
 
 

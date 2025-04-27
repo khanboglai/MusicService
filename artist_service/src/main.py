@@ -12,7 +12,7 @@ from src.database.models import start_mapping
 async def lifespan(_: FastAPI):
     """ тут редис прокидывать """
     logger.info("start app")
-    start_mapping()
+    await start_mapping()
     logger.info("mapping done")
     yield
     logger.info("finish app")
@@ -28,4 +28,4 @@ app = FastAPI(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=LOGGING)
