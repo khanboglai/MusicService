@@ -6,7 +6,7 @@ from fastapi.responses import ORJSONResponse
 from src.core.logging import LOGGING, logger
 from src.core.config import settings
 from src.database.models import start_mapping
-
+from src.api.v1.artists import router as artists_router
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -25,6 +25,9 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
+
+
+app.include_router(artists_router, prefix="/api/v1/artists", tags=["Исполнители"])
 
 
 if __name__ == "__main__":

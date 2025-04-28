@@ -4,8 +4,9 @@
 from sqlalchemy import Column, DateTime, Integer, String, Table, Text
 from sqlalchemy.orm import column_property, registry, composite
 from src.models.artist import Artist
-from src.value_objects.artist_description import Description
+from src.models.custom_types.description import DescriptionType
 from src.database.postgres import engine
+
 
 mapper_registry = registry()
 
@@ -17,7 +18,7 @@ artist_table = Table(
     Column("name", Text),
     Column("registered_at", DateTime(timezone=True)),
     Column("cover_path", Text),
-    Column("description", Text),
+    Column("description", DescriptionType),
 )
 
 
@@ -26,11 +27,12 @@ async def start_mapping():
         Artist,
         artist_table,
         properties={
-            "__id": column_property(artist_table.c.id),
-            "__name": column_property(artist_table.c.name),
-            "__registered_at": column_property(artist_table.c.registered_at),
-            "__cover_path": column_property(artist_table.c.cover_path),
-            "__description": composite(lambda value: Description(value), artist_table.c.description),
+            "oid": column_property(artist_table.c.id),
+            "_name": column_property(artist_table.c.name),
+            "_registered_at": column_property(artist_table.c.registered_at),
+            "_cover_path": column_property(artist_table.c.cover_path),
+            "_description": column_property(artist_table.c.description),
+            # composite для маппинга нескольких столбцов, он нам не подойдет в данном случае
         },
     )
 

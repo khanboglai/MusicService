@@ -5,22 +5,33 @@ from src.value_objects.artist_description import Description
 
 
 class Artist(Entity):
-    __id: int
-    __name: str
-    __registered_at: datetime.date
-    __cover_path: str
-    __description: Description
+    _name: str
+    _registered_at: datetime.date
+    _cover_path: str
+    _description: Description
+    # защищенные поля __field мапятся иначе в sqlalchemy, там надо писать название класса еще
 
 
     def __init__(self, name: str, registered_at: datetime.date, cover_path: Optional[str], description: Description) -> None:
         super().__init__()
-        self.__id: int # будет автоматически генерироваться в БД
-        self.__name = name
-        self.__registered_at = registered_at
-        self.__cover_path = cover_path
-        self.__description = description
+        self._name = name
+        self._registered_at = registered_at
+        self._cover_path = cover_path
+        self._description = description
 
 
-    @property # определили свойство
-    def id(self) -> int:
-        return self.__id
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def registered_at(self) -> datetime.date:
+        return self._registered_at
+
+    @property
+    def cover_path(self) -> str:
+        return self._cover_path
+
+    @property
+    def description(self) -> Description:
+        return self._description
