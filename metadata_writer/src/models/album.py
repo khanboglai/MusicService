@@ -31,3 +31,7 @@ class Album(Entity):
     @property
     def release_date(self) -> datetime.date:
         return self._release_date
+    
+    @property
+    def author_id(self) -> int:
+        return self._author_id
