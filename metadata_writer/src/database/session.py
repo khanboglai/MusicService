@@ -2,10 +2,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 
-from src.core.settings import settings
+from src.core.config import settings
 
 
-engine = create_async_engine(settings.postgres_dsn, echo=settings.echo, future=True)
+engine = create_async_engine(str(settings.postgres_dsn), echo=settings.echo, future=True)
 
 
 async_session = async_sessionmaker(
