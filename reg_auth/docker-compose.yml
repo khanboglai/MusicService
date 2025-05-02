@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: AUTH_SERVICE_POSTGRE
+    environment:
+      POSTGRES_DB: "auth_service_db"
+      POSTGRES_USER: "server"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      # - ./initdb:/docker-entrypoint-initdb.d
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U server -d auth_service_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+
+volumes:
+  pgdata:
