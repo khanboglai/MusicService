@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     base_dir: str = str(Path(__file__).parent.parent)
 
     # Переменные для подключения к базе данных
-    postgres_user: str = Field(..., alias="DB_USER")
-    postgres_password: str = Field(..., alias="DB_PASSWORD")
-    postgres_db: str = Field(..., alias="DB_NAME")
+    postgres_user: str = Field("test_user", alias="DB_USER")
+    postgres_password: str = Field("test_password", alias="DB_PASSWORD")
+    postgres_db: str = Field("test_db", alias="DB_NAME")
 
     echo: bool = Field(True, alias="ECHO")
 

@@ -1,11 +1,12 @@
-from abc import ABC, abstractmethod
+""" Тут прописал абстрактный класс для слоя репозитория исполнителя """
 
+from abc import ABC, abstractmethod
 from src.models.artist import Artist
 
 
-class ArtistRepositoryAbc(ABC):
+class ArtistRepositoryABC(ABC):
     @abstractmethod
-    async def get_artist(self, artist_id: int) -> Artist:
+    async def get_artist_by_id(self, artist_id: int) -> Artist:
         pass
 
     @abstractmethod

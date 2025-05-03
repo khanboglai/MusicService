@@ -4,21 +4,33 @@ from sqlalchemy.exc import IntegrityError
 
 from src.core.logging import logger
 from src.models.artist import Artist
-from src.repositories.domain_repo import ArtistRepositoryAbc
+from src.repositories.domain_repo import ArtistRepositoryABC
 
 
-class ArtistRepository(ArtistRepositoryAbc):
+class ArtistRepository(ArtistRepositoryABC):
     def __init__(self, db: AsyncSession):
         self.db = db
 
 
-    async def get_artist(self, artist_id: int) -> Artist:
+    async def get_artist_by_id(self, artist_id: int) -> Artist:
         result = await self.db.execute(select(Artist).where(Artist.oid == artist_id))
-        return result.scalars().first()
+        artist = result.scalars().first()
+
+        if artist is None:
+            raise ValueError(f"Artist {artist_id} not found")
+        return artist
 
 
     async def create_artist(self, artist: Artist) -> Artist:
         try:
+            # проверка существования пользователя
+            # query = select(Artist).where(Artist.name == artist.name)
+            # result = await self.db.execute(query)
+            # existing_artist = result.scalars().first()
+            #
+            # if existing_artist is not None:
+            #     raise ValueError(f"Artist {artist.name} already exists")
+
             logger.info(f"Создание исполнителя {artist.name}")
             self.db.add(artist)
             await self.db.commit()
