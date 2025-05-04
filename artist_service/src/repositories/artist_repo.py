@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
-
 from src.core.logging import logger
 from src.models.artist import Artist
 from src.repositories.domain_repo import ArtistRepositoryABC
+from src.domain_exceptions import *
 
 
 class ArtistRepository(ArtistRepositoryABC):
@@ -17,20 +17,12 @@ class ArtistRepository(ArtistRepositoryABC):
         artist = result.scalars().first()
 
         if artist is None:
-            raise ValueError(f"Artist {artist_id} not found")
+            raise InvalidIdException(f"Исполнитель с id = {artist_id} не найден")
         return artist
 
 
     async def create_artist(self, artist: Artist) -> Artist:
         try:
-            # проверка существования пользователя
-            # query = select(Artist).where(Artist.name == artist.name)
-            # result = await self.db.execute(query)
-            # existing_artist = result.scalars().first()
-            #
-            # if existing_artist is not None:
-            #     raise ValueError(f"Artist {artist.name} already exists")
-
             logger.info(f"Создание исполнителя {artist.name}")
             self.db.add(artist)
             await self.db.commit()
@@ -39,4 +31,21 @@ class ArtistRepository(ArtistRepositoryABC):
             return artist
         except IntegrityError as e:
             await self.db.rollback()
-            raise ValueError(f"Ошибка при создании исполнителя: {e}")
+            if "Key (name)" in str(e):
+                raise UniqueViolationException(f"Исполнитель {artist.name} уже существует")
+            if "Key (email)" in str(e):
+                raise UniqueViolationException(f"Исполнитель с почтой {artist.email} уже существует")
+            # если какая-то незнакомая ошибка
+            raise DatabaseException(f"Ошибка при создании исполнителя: {e}")
+
+
+    async def delete_artist(self, artist_id: int):
+
+        try:
+            artist = await self.get_artist_by_id(artist_id)
+            await self.db.delete(artist)
+            await self.db.commit()
+            return artist.name
+        except IntegrityError as e:
+            raise DatabaseException(f"Ошибка удаления исполнителя: {e}")
+
