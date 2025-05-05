@@ -5,7 +5,7 @@ from datetime import date
 class AlbumCreate(BaseModel):
     """ Схема создания альбома """
     title: str
-    cover_path: Optional[str]
+    cover_path: Optional[str] = None
     release_date: date
     author_id: str
 

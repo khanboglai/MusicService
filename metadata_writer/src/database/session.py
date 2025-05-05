@@ -7,7 +7,6 @@ from src.core.config import settings
 
 engine = create_async_engine(str(settings.postgres_dsn), echo=settings.echo, future=True)
 
-
 async_session = async_sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
