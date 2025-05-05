@@ -11,3 +11,4 @@ class ArtistCreate(BaseModel):
     registered_at: date
     cover_path: Optional[str] = None
     description: str
+    user_id: int

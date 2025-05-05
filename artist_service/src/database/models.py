@@ -20,6 +20,7 @@ artist_table = Table(
     Column("registered_at", DateTime(timezone=True)),
     Column("cover_path", Text),
     Column("description", DescriptionType),
+    Column("user_id", Integer),
 )
 
 
@@ -34,6 +35,7 @@ async def start_mapping():
             "_registered_at": column_property(artist_table.c.registered_at),
             "_cover_path": column_property(artist_table.c.cover_path),
             "_description": column_property(artist_table.c.description),
+            "_user_id": column_property(artist_table.c.user_id),
             # composite для маппинга нескольких столбцов, он нам не подойдет в данном случае
         },
     )

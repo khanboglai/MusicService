@@ -11,7 +11,6 @@ class ArtistRepository(ArtistRepositoryABC):
     def __init__(self, db: AsyncSession):
         self.db = db
 
-
     async def get_artist_by_id(self, artist_id: int) -> Artist:
         result = await self.db.execute(select(Artist).where(Artist.oid == artist_id))
         artist = result.scalars().first()
@@ -20,13 +19,12 @@ class ArtistRepository(ArtistRepositoryABC):
             raise InvalidIdException(f"Исполнитель с id = {artist_id} не найден")
         return artist
 
-
     async def create_artist(self, artist: Artist) -> Artist:
         try:
             logger.info(f"Создание исполнителя {artist.name}")
             self.db.add(artist)
             await self.db.commit()
-            await self.db.refresh(artist) # обновляем, чтобы получить id
+            await self.db.refresh(artist)  # обновляем, чтобы получить id
             logger.info(f"Исполнитель успешно создан: {artist.name}")
             return artist
         except IntegrityError as e:
@@ -38,14 +36,20 @@ class ArtistRepository(ArtistRepositoryABC):
             # если какая-то незнакомая ошибка
             raise DatabaseException(f"Ошибка при создании исполнителя: {e}")
 
+    async def get_artist_by_user_id(self, user_id: int) -> Artist:
+        result = await self.db.execute(select(Artist).where(Artist.user_id == user_id))
+        artist = result.scalars().first()
 
-    async def delete_artist(self, artist_id: int):
+        if artist is None:
+            raise InvalidIdException(f"Исполнителя с user_id {user_id} не найден")
+        return artist
 
+    async def delete_artist(self, user_id: int):
+        """ Удаляем по user_id """
         try:
-            artist = await self.get_artist_by_id(artist_id)
+            artist = await self.get_artist_by_user_id(user_id)
             await self.db.delete(artist)
             await self.db.commit()
             return artist.name
         except IntegrityError as e:
             raise DatabaseException(f"Ошибка удаления исполнителя: {e}")
-

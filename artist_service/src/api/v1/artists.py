@@ -19,6 +19,7 @@ async def create_artist(artist: ArtistCreate, artist_repo: ArtistRepositoryABC =
         registered_at=artist.registered_at,
         cover_path=artist.cover_path,
         description=Description(artist.description),
+        user_id=artist.user_id
     )
 
     try:
@@ -34,15 +35,31 @@ async def create_artist(artist: ArtistCreate, artist_repo: ArtistRepositoryABC =
 async def get_artist(id: int, artist_repo: ArtistRepositoryABC = Depends(get_artist_repository)):
     try:
         artist = await artist_repo.get_artist_by_id(id)
-        return {"message": f"{artist.name}"}
+        return {"name": artist.name,
+                "email": artist.email,
+                "registrations_date": artist.registered_at,
+                "cover_path": artist.cover_path,
+                "description": artist.description,
+                "user_id": artist.user_id}
     except InvalidIdException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
 
 
-@router.delete('/{id}')
-async def delete_artist(id: int, artist_repo: ArtistRepositoryABC = Depends(get_artist_repository)):
+@router.delete('/delete/{user_id}')
+async def delete_artist(user_id: int, artist_repo: ArtistRepositoryABC = Depends(get_artist_repository)):
+    """ Удаляем исполнителя по user_id """
     try:
-        artist_name = await artist_repo.delete_artist(id)
+        artist_name = await artist_repo.delete_artist(user_id)
         return {"message": f"{artist_name} удален"}
     except DatabaseException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
+
+
+@router.get('/description/{id}')
+async def get_artist_description(id: int, artist_repo: ArtistRepositoryABC = Depends(get_artist_repository)):
+    """ Получаем описание исполнителя по его id """
+    try:
+        artist = await artist_repo.get_artist_by_id(id)
+        return {"description": artist.description}
+    except InvalidIdException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
