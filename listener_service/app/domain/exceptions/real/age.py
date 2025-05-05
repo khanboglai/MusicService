@@ -14,3 +14,9 @@ class AgeTooBigException(AplicationException):
     @property
     def message(self):
         return 'Age must be smaller than 120!'
+
+
+class AgeIncorrectFormat(AplicationException):
+    @property
+    def message(self):
+        return 'Age must be in format DD.MM.YYYY'

@@ -11,6 +11,16 @@ from infra.database.repository.abc.listener import BaseListenerRepo
 from domain.entities.real.listener import Listener
 from domain.values.real.age import Age
 from domain.values.real.name import Name
+from domain.exceptions.real.names import (
+    NameTooLongException,
+    NotRealNameException,
+)
+from domain.exceptions.real.age import (
+    AgeTooBigException,
+    AgeTooSmallException,
+    AgeIncorrectFormat,
+)
+from domain.exceptions.abc.base import AplicationException
 
 
 @asynccontextmanager
@@ -42,9 +52,12 @@ async def create_listener(
         birth_date: str,
         listener_repository: BaseListenerRepo = Depends()
     ):
-    new_listener = Listener.add_listener(Name(first_name), Name(last_name), Age(date.fromisoformat(birth_date))) # Тут возможно надо будет обрабатывать исключения + преобразователь дат
-    listener = await listener_repository.insert_listener(listener=new_listener)
-    return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
+    try:
+        new_listener = Listener.add_listener(Name(first_name), Name(last_name), Age(birth_date))
+        listener = await listener_repository.insert_listener(listener=new_listener) # дописать проверку на уникальность
+        return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
+    except AplicationException as e:
+        raise HTTPException(status_code=422, detail=e.message)
 
 @app.get("/listeners/{listener_id}")
 async def read_listener(

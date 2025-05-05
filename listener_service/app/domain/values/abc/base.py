@@ -12,8 +12,6 @@ class BaseValueObject(ABC, Generic[VT]):
 
     def __init__(self, value: VT):
         self.value = value
-
-    def __post_init__(self):
         self.validate()
 
     @abstractmethod
