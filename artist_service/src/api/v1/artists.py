@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
 
 from src.dependencies.repository import get_artist_repository
 from src.models.artist import Artist
