@@ -2,6 +2,8 @@ services:
   postgres_artist:
     image: postgres:16.4
     container_name: artist_service_db
+    networks:
+      - music_network
     environment:
       POSTGRES_USER: artist
       POSTGRES_PASSWORD: pswd
@@ -41,6 +43,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: artist_web
+    networks:
+      - music_network
     restart: always
     ports:
       - "8005:8005"
@@ -61,7 +65,18 @@ services:
     volumes:
       - .:/src
 
+#  grpc_server:
+#    build: .
+#    command: python -m src.grpc.server
+#    ports:
+#      - "50051:50051"
+#    volumes:
+#      - ./src:/src
 
 volumes:
   pgdata:
     driver: local
+
+networks:
+  music_network:
+    name: music_network

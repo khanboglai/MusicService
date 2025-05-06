@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -9,6 +10,7 @@ from src.database.models import start_mapping
 from src.api.v1.artists import router as artists_router
 from src.api.exception_handlers import domain_exception_handler
 from src.domain_exceptions.domain_exception import DomainException
+from src.grpc.server import serve
 
 
 @asynccontextmanager
@@ -17,6 +19,9 @@ async def lifespan(_: FastAPI):
     logger.info("start app")
     await start_mapping()
     logger.info("mapping done")
+    asyncio.create_task(serve())
+    logger.info("gRPC server start")
+
     yield
     logger.info("finish app")
 
