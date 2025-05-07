@@ -17,6 +17,14 @@ class ListenerRepository(BaseListenerRepo):
         result = await self.session.execute(statement=statement)
         return result.scalar_one_or_none()
     
+    async def get_listener_by_user_id(self, *, user_id: int) -> Listener:
+        statement = (
+            select(Listener)
+            .where(Listener.user_id == user_id)
+        )
+        result = await self.session.execute(statement=statement)
+        return result.scalar_one_or_none()
+    
     async def insert_listener(self, *, listener: Listener) -> Listener: # исключения и транзакции
         self.session.add(listener)
         await self.session.commit()

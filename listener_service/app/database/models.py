@@ -1,6 +1,4 @@
-from uuid import UUID, uuid4
 from sqlalchemy import (
-    UUID,
     Integer,
     Boolean,
     Column,
@@ -27,6 +25,7 @@ listener_table = Table(
     "User",
     mapper_registry.metadata,
     Column("id", BigInteger, primary_key=True, autoincrement=True),
+    Column("user_id", BigInteger),
     Column("first_name", Text),
     Column("last_name", Text),
     Column("birth_date", Date),
@@ -58,6 +57,7 @@ async def start_mapping():
         listener_table,
         properties={
             "oid": column_property(listener_table.c.id),
+            "user_id": column_property(listener_table.c.user_id),
             "firstname": composite(lambda value: Name(value, True), listener_table.c.first_name),
             "lastname": composite(lambda value: Name(value, True), listener_table.c.last_name),
             "birthdate": composite(lambda value: Age(value, True), listener_table.c.birth_date),

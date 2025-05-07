@@ -40,15 +40,16 @@ async def root():
 
 @app.post("/listeners/")
 async def create_listener(
+        user_id: int, # временно, потом будем получать из куки
         first_name: str,
         last_name: str,
         birth_date: str,
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        new_listener = Listener.add_listener(Name(first_name), Name(last_name), Age(birth_date))
+        new_listener = Listener.add_listener(user_id, Name(first_name), Name(last_name), Age(birth_date))
         listener = await listener_repository.insert_listener(listener=new_listener)
-        return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
+        return {"id": listener.oid, "user_id": listener.user_id, "first_name": listener.firstname, "last_name": listener.lastname}
     except AplicationException as e:
         raise HTTPException(status_code=422, detail=e.message)
     except DatabaseException as e:
@@ -64,7 +65,7 @@ async def read_listener(
     try:
         listener = await listener_repository.get_listener(listener_id=listener_id)
         if listener:
-            return {"id": listener.oid, "first_name": listener.firstname, "last_name": listener.lastname}
+            return {"id": listener.oid, "user_id": listener.user_id, "first_name": listener.firstname, "last_name": listener.lastname}
     except DatabaseException as e:
         raise HTTPException(status_code=423, detail=e.message)
     except DatabaseErrorException as e:
