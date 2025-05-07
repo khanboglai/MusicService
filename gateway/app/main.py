@@ -6,8 +6,8 @@ from app.core.logging import LOGGING, logger
 from app.core.config import settings
 
 from app.api.v1.artists_routers import router as artists_router
-# from app.api.exception_handlers import domain_exception_handler
-# from app.domain_exceptions.domain_exception import DomainException
+from app.api.exception_handlers import domain_exception_handler
+from app.domain_exceptions.domain_exception import DomainException
 
 
 @asynccontextmanager
@@ -29,8 +29,8 @@ app = FastAPI(
 )
 
 
-# app.add_exception_handler(DomainException, domain_exception_handler)
-#
+app.add_exception_handler(DomainException, domain_exception_handler)
+
 app.include_router(artists_router, prefix="/api/v1/artists", tags=["Исполнители"])
 
 

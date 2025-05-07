@@ -41,7 +41,7 @@ class ArtistRepository(ArtistRepositoryABC):
         artist = result.scalars().first()
 
         if artist is None:
-            raise InvalidIdException(f"Исполнителя с user_id {user_id} не найден")
+            raise InvalidIdException(f"Исполнитель с user_id {user_id} не найден")
         return artist
 
     async def delete_artist(self, user_id: int):

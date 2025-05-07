@@ -17,7 +17,6 @@ async def create_artist(artist: ArtistCreate, artist_repo: ArtistRepositoryABC =
         name=artist.name,
         email=artist.email,
         registered_at=artist.registered_at,
-        cover_path=artist.cover_path,
         description=Description(artist.description),
         user_id=artist.user_id
     )
@@ -38,7 +37,6 @@ async def get_artist(id: int, artist_repo: ArtistRepositoryABC = Depends(get_art
         return {"name": artist.name,
                 "email": artist.email,
                 "registrations_date": artist.registered_at,
-                "cover_path": artist.cover_path,
                 "description": artist.description,
                 "user_id": artist.user_id}
     except InvalidIdException as e:

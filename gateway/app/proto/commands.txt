@@ -1,0 +1,1 @@
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/artist.proto

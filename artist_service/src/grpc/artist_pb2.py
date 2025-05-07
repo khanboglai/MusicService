@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x61rtist.proto\x12\x06\x61rtist\"#\n\x15GetDescriptionRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x16GetDescriptionResponse\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\"8\n\x13\x43reateArtistRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"\"\n\x14\x43reateArtistResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x32\xab\x01\n\rArtistService\x12O\n\x0eGetDescription\x12\x1d.artist.GetDescriptionRequest\x1a\x1e.artist.GetDescriptionResponse\x12I\n\x0c\x43reateArtist\x12\x1b.artist.CreateArtistRequest\x1a\x1c.artist.CreateArtistResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x61rtist.proto\x12\x06\x61rtist\"(\n\x15GetDescriptionRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\"-\n\x16GetDescriptionResponse\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\"X\n\x13\x43reateArtistRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07user_id\x18\x04 \x01(\x05\"\"\n\x14\x43reateArtistResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x32\xab\x01\n\rArtistService\x12O\n\x0eGetDescription\x12\x1d.artist.GetDescriptionRequest\x1a\x1e.artist.GetDescriptionResponse\x12I\n\x0c\x43reateArtist\x12\x1b.artist.CreateArtistRequest\x1a\x1c.artist.CreateArtistResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,13 +32,13 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'artist_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_GETDESCRIPTIONREQUEST']._serialized_start=24
-  _globals['_GETDESCRIPTIONREQUEST']._serialized_end=59
-  _globals['_GETDESCRIPTIONRESPONSE']._serialized_start=61
-  _globals['_GETDESCRIPTIONRESPONSE']._serialized_end=106
-  _globals['_CREATEARTISTREQUEST']._serialized_start=108
-  _globals['_CREATEARTISTREQUEST']._serialized_end=164
-  _globals['_CREATEARTISTRESPONSE']._serialized_start=166
-  _globals['_CREATEARTISTRESPONSE']._serialized_end=200
-  _globals['_ARTISTSERVICE']._serialized_start=203
-  _globals['_ARTISTSERVICE']._serialized_end=374
+  _globals['_GETDESCRIPTIONREQUEST']._serialized_end=64
+  _globals['_GETDESCRIPTIONRESPONSE']._serialized_start=66
+  _globals['_GETDESCRIPTIONRESPONSE']._serialized_end=111
+  _globals['_CREATEARTISTREQUEST']._serialized_start=113
+  _globals['_CREATEARTISTREQUEST']._serialized_end=201
+  _globals['_CREATEARTISTRESPONSE']._serialized_start=203
+  _globals['_CREATEARTISTRESPONSE']._serialized_end=237
+  _globals['_ARTISTSERVICE']._serialized_start=240
+  _globals['_ARTISTSERVICE']._serialized_end=411
 # @@protoc_insertion_point(module_scope)

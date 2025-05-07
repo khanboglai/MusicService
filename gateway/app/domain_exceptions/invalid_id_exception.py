@@ -1,6 +1,6 @@
 """ Исключение при запросе неправильного id """
 
-from src.domain_exceptions.domain_exception import DomainException
+from app.domain_exceptions.domain_exception import DomainException
 
 
 class InvalidIdException(DomainException):
