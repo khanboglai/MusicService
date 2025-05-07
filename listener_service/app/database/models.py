@@ -16,7 +16,7 @@ from sqlalchemy.orm import column_property, registry, relationship, composite
 from domain.entities.real.listener import Listener
 from domain.events.real.interaction import NewInteractionRegistered
 from domain.events.real.like import NewLikeRegistered
-from infra.database.connect import engine
+from database.connect import engine
 from domain.values.real.age import Age
 from domain.values.real.name import Name
 
@@ -58,9 +58,9 @@ async def start_mapping():
         listener_table,
         properties={
             "oid": column_property(listener_table.c.id),
-            "firstname": composite(lambda value: Name(value), listener_table.c.first_name),
-            "lastname": composite(lambda value: Name(value), listener_table.c.last_name),
-            "birthdate": composite(lambda value: Age(value), listener_table.c.birth_date),
+            "firstname": composite(lambda value: Name(value, True), listener_table.c.first_name),
+            "lastname": composite(lambda value: Name(value, True), listener_table.c.last_name),
+            "birthdate": composite(lambda value: Age(value, True), listener_table.c.birth_date),
             "subscription": column_property(listener_table.c.subscription),
             "likes": relationship(NewLikeRegistered, back_populates="user"),
             "interactions": relationship(NewInteractionRegistered, back_populates="user"),

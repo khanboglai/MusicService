@@ -10,9 +10,10 @@ class BaseValueObject(ABC, Generic[VT]):
     """ Базовый объект-значение """
     value: VT
 
-    def __init__(self, value: VT):
+    def __init__(self, value: VT, skip_validation: bool = False):
         self.value = value
-        self.validate()
+        if not skip_validation:
+            self.validate()
 
     @abstractmethod
     def validate(self):

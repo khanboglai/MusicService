@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 
-from infra.database.repository.abc.listener import BaseListenerRepo
+from database.repository.abc.listener import BaseListenerRepo
 from domain.entities.real.listener import Listener
 
 

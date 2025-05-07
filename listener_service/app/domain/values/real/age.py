@@ -15,7 +15,7 @@ class Age(BaseValueObject):
 
     def validate(self):
         try:
-            self.value = datetime.strptime(self.value, '%d.%m.%Y').date()
+            self.value = datetime.strptime(str(self.value), '%d.%m.%Y').date()
         except ValueError:
             raise AgeIncorrectFormat()
         today = date.today()

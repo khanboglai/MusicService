@@ -2,7 +2,7 @@ from typing import Any, Callable
 from fastapi import FastAPI
 
 from dependencies.registrator import dependencies_container
-from infra.core.config import logger
+from core.config import logger
 
 
 def setup_dependencies(app: FastAPI, mapper: dict[Any, Callable] | None = None) -> None:
