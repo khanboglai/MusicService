@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.repository.abc.listener import BaseListenerRepo
 from database.repository.real.listener import ListenerRepository
 from dependencies.registrator import add_factory_to_mapper
-from domain.entities.real.listener import Listener
 from database.connect import get_session
 
 

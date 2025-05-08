@@ -11,6 +11,6 @@ class BaseListenerRepo(ABC):
     async def insert_listener(self, *, listener: Listener) -> Listener:
         ...
 
-    # @abstractmethod
-    # async def delete_listener(self, *, listener_id) -> None:
-    #     ...
+    @abstractmethod
+    async def delete_listener(self, *, listener_id) -> None:
+        ...

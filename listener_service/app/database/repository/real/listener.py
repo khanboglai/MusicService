@@ -29,6 +29,11 @@ class ListenerRepository(BaseListenerRepo):
         self.session.add(listener)
         await self.session.commit()
         return listener
+    
+    async def delete_listener(self, *, user_id: int):
+        listener = await self.get_listener_by_user_id(user_id=user_id)
+        await self.session.delete(listener)
+        await self.session.commit()
 
     # async def add_listener(self, firstname: str, lastname: str, birthdate: str) -> Listener:
     #     new_listener = Listener.add_listener(Name(firstname), Name(lastname), Age(date.fromisoformat(birthdate))) # Тут возможно надо будет обрабатывать исключения + преобразователь дат

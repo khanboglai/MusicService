@@ -1,5 +1,4 @@
 """ Опреление абстрактной сущности """
-from uuid import uuid4, UUID
 from abc import ABC
 from copy import copy
 
