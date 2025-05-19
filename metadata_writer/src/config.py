@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 from pydantic import Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -22,7 +21,7 @@ class Settings(BaseSettings):
 
     @property
     def postgres_dsn(self) -> PostgresDsn:
-        return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@metadata_service_db:5432/{self.postgres_db}"
+        return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@metadata_database:5432/{self.postgres_db}"
 
 
 settings = Settings()

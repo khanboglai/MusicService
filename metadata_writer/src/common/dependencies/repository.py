@@ -8,6 +8,7 @@ from src.common.repository.abstract.track import TrackRepositoryABC
 from src.common.repository.album import AlbumRepository
 from src.common.repository.track import TrackRepository
 
+
 def get_album_repository(db: AsyncSession = Depends(get_session)) -> AlbumRepositoryABC:
     return AlbumRepository(db)
 

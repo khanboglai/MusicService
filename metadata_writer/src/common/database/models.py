@@ -24,11 +24,15 @@ class Genre:
     def __init__(self, name):
         self._name = name
 
+    @property
+    def name(self):
+        return self._name
+
 genres_table = Table(
     "genres",
     mapper_registry.metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("name", String, unique=True, nullable=False),
+    Column("_name", String, unique=True, nullable=False),
 )
 
 albums_table = Table(
@@ -45,14 +49,14 @@ tracks_table = Table(
     mapper_registry.metadata,
     Column("oid", Integer, primary_key=True, autoincrement=True),
     Column("_title", String, nullable=False),
-    Column("_album_id", Integer, ForeignKey("albums.id")),
+    Column("_album_id", Integer, ForeignKey("albums.oid")),
     Column("_explicit", Boolean),
 )
 
 track_genres_table = Table(
     "track_genres",
     mapper_registry.metadata,
-    Column("track_id", Integer, ForeignKey("tracks.id")),
+    Column("track_id", Integer, ForeignKey("tracks.oid")),
     Column("genre_id", Integer, ForeignKey("genres.id")),
 )
 

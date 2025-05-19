@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from src.common.models.album import Album
+from src.common.schemas.album import AlbumCreate
 
 
 class AlbumRepositoryABC(ABC):

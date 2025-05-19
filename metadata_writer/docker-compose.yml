@@ -40,7 +40,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: metadata_service
+    container_name: writer_service
     restart: always
     ports:
       - "8005:8005"
