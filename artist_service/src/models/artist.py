@@ -1,4 +1,5 @@
-from typing import Optional
+import json
+from typing import Optional, Dict
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from src.models.base import Entity
@@ -44,3 +45,16 @@ class Artist(Entity):
     @hybrid_property
     def user_id(self) -> int:
         return self._user_id
+
+    def to_dict(self) -> Dict:
+        return {
+            "id": self.oid,
+            "name": self.name,
+            "email": self.email,
+            "registered_at": self.registered_at.isoformat() if self.registered_at else None,
+            "description": str(self.description),
+            "user_id": self.user_id
+        }
+
+    def json(self) -> str:
+        return json.dumps(self.to_dict())

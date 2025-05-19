@@ -3,12 +3,14 @@ import io
 import magic
 import grpc
 import asyncio
+from src.dependencies.repository import ArtistRepositoryFactory
 from grpc import StatusCode
 from concurrent import futures
+import redis.asyncio as redis
+from src.repositories.domain_repo import ArtistRepositoryABC
 from src.database.postgres import get_db_session # только так получилось достать сессию для gRPC
 from src.models.artist import Artist
 from src.core.config import settings
-from src.repositories.artist_repo import ArtistRepository
 from src.grpc.artist_pb2_grpc import add_ArtistServiceServicer_to_server
 from src.grpc.artist_pb2 import GetDescriptionResponse, CreateArtistResponse, FileChunk, UploadStatus
 from src.value_objects.artist_description import Description
@@ -17,29 +19,30 @@ from src.core.logging import logger
 
 
 class ArtistService:
+    def __init__(self, artist_repo: ArtistRepositoryABC):
+        self.artist_repo = artist_repo
+
     @grpc_exception_handler # в декоратор поместил логику обработки ошибок, кода стало в 2 раза меньше
     async def CreateArtist(self, request, context):
-        async with get_db_session() as db:
-            repository = ArtistRepository(db)
 
-            new_artist = Artist(
-                name=request.name,
-                email=request.email,
-                registered_at=datetime.now(),
-                description=Description(request.description),
-                user_id=request.user_id
-            )
-            artist = await repository.create_artist(new_artist)
-            return CreateArtistResponse(id=artist.user_id)
+        new_artist = Artist(
+            name=request.name,
+            email=request.email,
+            registered_at=datetime.now(),
+            description=Description(request.description),
+            user_id=request.user_id
+        )
+        artist = await self.artist_repo.create_artist(new_artist)
+        logger.info(f"GRPC: Created new artist {artist.name}")
+        return CreateArtistResponse(id=artist.user_id)
 
 
     @grpc_exception_handler
     async def GetDescription(self, request, context):
-        async with get_db_session() as db:
-            repository = ArtistRepository(db)
-            user_id = int(request.user_id)
-            artist = await repository.get_artist_by_user_id(user_id)
-            return GetDescriptionResponse(description=str(artist.description))
+        user_id = int(request.user_id)
+        artist = await self.artist_repo.get_artist_by_user_id(user_id)
+        logger.info(f"GRPC: Getting description for artist {artist.name}")
+        return GetDescriptionResponse(description=str(artist.description))
 
 
     @grpc_exception_handler
@@ -61,12 +64,7 @@ class ArtistService:
             if user_id is None:
                 return UploadStatus(success=False, message="User id is missing")
 
-            artist = None
-            async with get_db_session() as db:
-                repository = ArtistRepository(db)
-                artist = await repository.get_artist_by_user_id(user_id)
-
-
+            artist = await self.artist_repo.get_artist_by_user_id(user_id)
             s3_key = f"{artist.oid}/{artist.oid}.jpg"
             buffer.seek(0) # перемещение указателя на начало буфера
 
@@ -75,7 +73,7 @@ class ArtistService:
             buffer.seek(0)
             if mimetype != "image/jpeg":
                 return UploadStatus(success=False, message="Unsupported Media Type")
-            logger.info("Checked mime type")
+            logger.info("GRPC: Checked mime type")
 
             s3_client.upload_fileobj(
                 Fileobj=buffer,
@@ -84,7 +82,7 @@ class ArtistService:
                 ExtraArgs={"ContentType": "image/jpeg"}
             )
 
-            logger.info("Uploaded file")
+            logger.info("GRPC: Uploaded cover")
             return UploadStatus(success=True, message="Artist Cover Uploaded")
         finally:
             buffer.close()
@@ -94,9 +92,19 @@ class ArtistService:
         pass
 
 
-async def serve():
+async def serve(redis_client):
     server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
-    add_ArtistServiceServicer_to_server(ArtistService(), server)
+
+    async with get_db_session() as db:
+        repo = await ArtistRepositoryFactory.create(
+            db=db,
+            use_cache=True,
+            redis_client=redis_client
+        )
+
+    service = ArtistService(repo)
+
+    add_ArtistServiceServicer_to_server(service, server)
     server.add_insecure_port('[::]:50051')
     print("gRPC server is running on port 50051")
     await server.start()

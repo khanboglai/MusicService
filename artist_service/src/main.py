@@ -2,6 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
+import redis.asyncio as redis
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from src.core.logging import LOGGING, logger
@@ -19,10 +20,13 @@ async def lifespan(_: FastAPI):
     logger.info("start app")
     await start_mapping()
     logger.info("mapping done")
-    asyncio.create_task(serve())
+    redis_client = redis.Redis(host="redis", port=6379, db=0)
+    logger.info("redis client done")
+    asyncio.create_task(serve(redis_client))
     logger.info("gRPC server start")
 
     yield
+    await redis_client.close()
     logger.info("finish app")
 
 

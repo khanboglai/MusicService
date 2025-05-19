@@ -14,8 +14,21 @@ services:
     volumes:
       - minio_data:/data  # Хранение данных MinIO
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - music_network
+
+
 volumes:
   minio_data:
+  redis_data:
 
 networks:
   music_network:
