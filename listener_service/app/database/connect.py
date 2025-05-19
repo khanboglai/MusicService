@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
 from core.config import get_db_url
+from contextlib import asynccontextmanager
 
 
 URL_DATABASE = get_db_url()
@@ -19,3 +20,8 @@ async def get_session() -> AsyncSession:
             raise e
         finally:
             await session.close()
+
+@asynccontextmanager
+async def get_db_session():
+    async for session in get_session():
+        yield session

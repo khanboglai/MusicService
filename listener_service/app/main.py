@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
+import asyncio
 
 from database.models import start_mapping
 from dependencies.main import setup_dependencies
@@ -15,6 +16,7 @@ from database.exceptions.abc.base import (
     DatabaseException,
     DatabaseErrorException
 )
+from grpcc.server import serve
 
 
 @asynccontextmanager
@@ -22,6 +24,8 @@ async def lifespan(_: FastAPI):
     logger.info("Application started!")
     await start_mapping()
     logger.info("Data mapped!")
+    asyncio.create_task(serve())
+    logger.info("GRPC Started")
     yield
     logger.info("Shutting down...")
 

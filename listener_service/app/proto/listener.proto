@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package listener;
+
+service ListenerService {
+    rpc GetListener (GetListenerRequest) returns (GetListenerResponse);
+}
+
+message GetListenerRequest {
+    int32 listener_id = 1;
+}
+
+message GetListenerResponse {
+    int32 listener_id = 1;
+    int32 user_id = 2;
+    string first_name = 3;
+    string last_name = 4;
+}
+
+// message CreateArtistRequest {
+//     string name = 1;
+//     string email = 2;
+//     string description = 3;
+//     int32 user_id = 4;
+// }
+// 
+// message CreateArtistResponse {
+//     int32 id = 1; // ID созданного исполнителя
+// }
+// 
+// message FileChunk {
+//     bytes content = 1;
+//     int32 user_id = 2;
+// }
+// 
+// message UploadStatus {
+//     bool success = 1;
+//     string message = 2;
+// }

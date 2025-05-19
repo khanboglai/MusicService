@@ -11,6 +11,8 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - music_network
     deploy:
       resources:
         limits:
@@ -48,6 +50,8 @@ services:
       - postgres
       # - elasticsearch
       # - rabbitmq
+    networks:
+      - music_network
     environment:
       DB_USER: debug
       DB_PASSWORD: pswd
@@ -64,3 +68,7 @@ services:
 volumes:
   pgdata:
     driver: local
+
+networks:
+  music_network:
+    name: music_network
