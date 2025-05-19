@@ -17,6 +17,8 @@ def handle_exceptions(func):
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
+        except InvalidMimeType as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
         except Exception as e:
             # Для неопознанных ошибок
             raise HTTPException(status_code=500, detail="Internal Server Error")

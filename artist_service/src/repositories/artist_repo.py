@@ -33,6 +33,8 @@ class ArtistRepository(ArtistRepositoryABC):
                 raise UniqueViolationException(f"Исполнитель {artist.name} уже существует")
             if "Key (email)" in str(e):
                 raise UniqueViolationException(f"Исполнитель с почтой {artist.email} уже существует")
+            if "Key (user_id)" in str(e):
+                raise UniqueViolationException(f"Исполнитель с user_id {artist.user_id} уже существует")
             # если какая-то незнакомая ошибка
             raise DatabaseException(f"Ошибка при создании исполнителя: {e}")
 

@@ -4,6 +4,7 @@ from grpc import StatusCode
 from grpc.aio import AioRpcError
 from app.domain_exceptions import UniqueViolationException, InvalidIdException
 
+
 def grpc_client_exception_handler(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):

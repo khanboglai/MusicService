@@ -1,11 +1,8 @@
-import mimetypes
 from datetime import datetime
-import os
 import io
 import magic
 import grpc
 import asyncio
-
 from grpc import StatusCode
 from concurrent import futures
 from src.database.postgres import get_db_session # только так получилось достать сессию для gRPC
@@ -17,9 +14,6 @@ from src.grpc.artist_pb2 import GetDescriptionResponse, CreateArtistResponse, Fi
 from src.value_objects.artist_description import Description
 from src.grpc.grpc_exceptions_handlers.grpc_excaption_handler import grpc_exception_handler
 from src.core.logging import logger
-
-
-
 
 
 class ArtistService:
@@ -48,7 +42,7 @@ class ArtistService:
             return GetDescriptionResponse(description=str(artist.description))
 
 
-    # @grpc_exception_handler
+    @grpc_exception_handler
     async def UploadArtistCover(self, request_iterator, context):
 
         buffer = io.BytesIO()
@@ -72,9 +66,6 @@ class ArtistService:
                 repository = ArtistRepository(db)
                 artist = await repository.get_artist_by_user_id(user_id)
 
-            if artist is None:
-                return UploadStatus(success=False, message=f"Artist with user_id {user_id} not found")
-
 
             s3_key = f"{artist.oid}/{artist.oid}.jpg"
             buffer.seek(0) # перемещение указателя на начало буфера
@@ -95,8 +86,6 @@ class ArtistService:
 
             logger.info("Uploaded file")
             return UploadStatus(success=True, message="Artist Cover Uploaded")
-        except Exception as e:
-            return UploadStatus(success=False, message=str(e))
         finally:
             buffer.close()
 
