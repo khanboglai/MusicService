@@ -6,8 +6,8 @@ from dependencies.main import setup_dependencies
 from core.config import logger
 from database.repository.abc.listener import BaseListenerRepo
 from database.repository.abc.like import BaseLikeRepo
+from database.repository.abc.interaction import BaseInteractionRepo
 from domain.entities.real.listener import Listener
-from domain.events.real.like import NewLikeRegistered
 from domain.values.real.age import Age
 from domain.values.real.name import Name
 from domain.exceptions.abc.base import AplicationException
@@ -86,8 +86,8 @@ async def delete_listener(
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
     
-@app.post("/like/add")
-async def add_like(
+@app.post("/like")
+async def add_del_like(
         listener_id: int,
         track_id: int,
         like_repository: BaseLikeRepo = Depends(),
@@ -95,28 +95,50 @@ async def add_like(
     ):
     try:
         listener = await listener_repository.get_listener(listener_id=listener_id)
-        new_like = NewLikeRegistered(listener_id=listener, track_id=track_id)
-        like = await like_repository.add_like(like=new_like)
-        return {"id": like.event_id, "listener": like.user, "track_id": like.track_id}
+        # new_like = NewLikeRegistered(listener_id=listener, track_id=track_id)
+        like = await like_repository.add_or_delete_like(listener=listener, track_id=track_id)
+        if like:
+            return {"id": like.event_id, "listener": like.user, "track_id": like.track_id}
     except DatabaseException as e:
         raise HTTPException(status_code=423, detail=e.message)
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
-    # Здесь надо по DDD закидывать ивент к сущности слушателя, но пока будем рассчитывать на бд
+    
+@app.post("/interaction")
+async def add_upd_interaction(
+        listener_id: int,
+        track_id: int,
+        listen_time: int,
+        interaction_repository: BaseInteractionRepo = Depends(),
+        listener_repository: BaseListenerRepo = Depends()
+    ):
+    try:
+        listener = await listener_repository.get_listener(listener_id=listener_id)
+        interaction = await interaction_repository.add_or_update_interaction(
+            listener=listener,
+            track_id=track_id, 
+            listen_time=listen_time
+        )
+        return interaction
+    except DatabaseException as e:
+        raise HTTPException(status_code=423, detail=e.message)
+    except DatabaseErrorException as e:
+        raise HTTPException(status_code=500, detail=e.message)
 
-@app.delete("/like/delete")
-async def delete_like(
-        listener_id: int,
-        track_id: int,
-        like_repository: BaseLikeRepo = Depends(),
-        listener_repository: BaseListenerRepo = Depends()
-    ):
-    try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
-        await like_repository.delete_like(listener=listener, track_id=track_id)
-        return {"message": "Deleted successfully"}
-    except DatabaseException as e:
-        raise HTTPException(status_code=423, detail=e.message)
-    except DatabaseErrorException as e:
-        raise HTTPException(status_code=500, detail=e.message)
-    # Здесь уже надо удалять ивент из сущности слушателя
+
+# @app.delete("/like/delete")
+# async def delete_like(
+#         listener_id: int,
+#         track_id: int,
+#         like_repository: BaseLikeRepo = Depends(),
+#         listener_repository: BaseListenerRepo = Depends()
+#     ):
+#     try:
+#         listener = await listener_repository.get_listener(listener_id=listener_id)
+#         await like_repository.delete_like(listener=listener, track_id=track_id)
+#         return {"message": "Deleted successfully"}
+#     except DatabaseException as e:
+#         raise HTTPException(status_code=423, detail=e.message)
+#     except DatabaseErrorException as e:
+#         raise HTTPException(status_code=500, detail=e.message)
+#     # Здесь уже надо удалять ивент из сущности слушателя

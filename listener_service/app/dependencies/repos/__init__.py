@@ -1,2 +1,3 @@
 from .listener_factory import create_listener_repo
 from .like_factory import create_like_repo
+from .interaction_factory import create_interaction_repo

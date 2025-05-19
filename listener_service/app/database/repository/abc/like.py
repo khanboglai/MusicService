@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 
 from domain.events.real.like import NewLikeRegistered
+from domain.entities.real.listener import Listener
 
 class BaseLikeRepo(ABC):
     @abstractmethod
-    async def add_like(self, *, like: NewLikeRegistered) -> NewLikeRegistered:
+    async def get_like_by_ids(self, *, listener: Listener, track_id: int) -> NewLikeRegistered:
         ...
 
     @abstractmethod
-    async def delete_like(self, *, user_id: int, track_id: int):
+    async def add_or_delete_like(self, *, listener: Listener, track_id: int) -> NewLikeRegistered:
         ...
         

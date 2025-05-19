@@ -1,9 +1,8 @@
 from sqlalchemy import (
-    Integer,
     Boolean,
     Column,
     Date,
-    Time,
+    DateTime,
     Table,
     Text,
     ForeignKey,
@@ -46,9 +45,9 @@ interaction_table = Table(
     Column("id", BigInteger, primary_key=True, autoincrement=True),
     Column("user_id", BigInteger, ForeignKey("User.id"), nullable=False),
     Column("track_id", BigInteger, nullable=False),
-    Column("last_interaction", Time),
-    Column("count_interaction", Integer),
-    Column("listen_time", Time)
+    Column("last_interaction", DateTime),
+    Column("count_interaction", BigInteger),
+    Column("listen_time", BigInteger)
 )
 
 async def start_mapping():
@@ -62,8 +61,8 @@ async def start_mapping():
             "lastname": composite(lambda value: Name(value, True), listener_table.c.last_name),
             "birthdate": composite(lambda value: Age(value, True), listener_table.c.birth_date),
             "subscription": column_property(listener_table.c.subscription),
-            "likes": relationship(NewLikeRegistered, back_populates="user"),
-            "interactions": relationship(NewInteractionRegistered, back_populates="user"),
+            "likes": relationship(NewLikeRegistered, back_populates="user", cascade="all, delete-orphan"),
+            "interactions": relationship(NewInteractionRegistered, back_populates="user", cascade="all, delete-orphan"),
         },
     )
 
