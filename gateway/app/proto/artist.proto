@@ -5,6 +5,10 @@ package artist;
 service ArtistService {
     rpc GetDescription (GetDescriptionRequest) returns (GetDescriptionResponse);
     rpc CreateArtist (CreateArtistRequest) returns (CreateArtistResponse);
+
+    // методы для работы с файлами
+    rpc UploadFileMP3 (stream FileChunk) returns (UploadStatus);
+    rpc UploadArtistCover (stream FileChunk) returns (UploadStatus);
 }
 
 message GetDescriptionRequest {
@@ -24,4 +28,19 @@ message CreateArtistRequest {
 
 message CreateArtistResponse {
     int32 id = 1; // ID созданного исполнителя
+}
+
+
+message FileRequest {
+    string file_name = 1; // Имя файла
+}
+
+message FileChunk {
+    bytes content = 1;
+    int32 user_id = 2;
+}
+
+message UploadStatus {
+    bool success = 1;
+    string message = 2;
 }

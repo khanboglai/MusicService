@@ -19,7 +19,7 @@ artist_table = Table(
     Column("email", Text, unique=True),
     Column("registered_at", DateTime(timezone=True)),
     Column("description", DescriptionType),
-    Column("user_id", Integer),
+    Column("user_id", Integer, unique=True),
 )
 
 

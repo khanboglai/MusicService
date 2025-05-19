@@ -1,0 +1,22 @@
+# общие сервисы
+services:
+  storage:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"  # Порт для доступа к MinIO
+      - "9001:9001"  # Порт для веб-консоли
+    environment:
+      MINIO_ACCESS_KEY: storage
+      MINIO_SECRET_KEY: qwerty1234
+    networks:
+      - music_network
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data  # Хранение данных MinIO
+
+volumes:
+  minio_data:
+
+networks:
+  music_network:
+    name: music_network

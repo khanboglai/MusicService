@@ -44,6 +44,16 @@ class ArtistServiceStub(object):
                 request_serializer=artist__pb2.CreateArtistRequest.SerializeToString,
                 response_deserializer=artist__pb2.CreateArtistResponse.FromString,
                 _registered_method=True)
+        self.UploadFileMP3 = channel.stream_unary(
+                '/artist.ArtistService/UploadFileMP3',
+                request_serializer=artist__pb2.FileChunk.SerializeToString,
+                response_deserializer=artist__pb2.UploadStatus.FromString,
+                _registered_method=True)
+        self.UploadArtistCover = channel.stream_unary(
+                '/artist.ArtistService/UploadArtistCover',
+                request_serializer=artist__pb2.FileChunk.SerializeToString,
+                response_deserializer=artist__pb2.UploadStatus.FromString,
+                _registered_method=True)
 
 
 class ArtistServiceServicer(object):
@@ -61,6 +71,19 @@ class ArtistServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UploadFileMP3(self, request_iterator, context):
+        """методы для работы с файлами
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UploadArtistCover(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ArtistServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +96,16 @@ def add_ArtistServiceServicer_to_server(servicer, server):
                     servicer.CreateArtist,
                     request_deserializer=artist__pb2.CreateArtistRequest.FromString,
                     response_serializer=artist__pb2.CreateArtistResponse.SerializeToString,
+            ),
+            'UploadFileMP3': grpc.stream_unary_rpc_method_handler(
+                    servicer.UploadFileMP3,
+                    request_deserializer=artist__pb2.FileChunk.FromString,
+                    response_serializer=artist__pb2.UploadStatus.SerializeToString,
+            ),
+            'UploadArtistCover': grpc.stream_unary_rpc_method_handler(
+                    servicer.UploadArtistCover,
+                    request_deserializer=artist__pb2.FileChunk.FromString,
+                    response_serializer=artist__pb2.UploadStatus.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +162,60 @@ class ArtistService(object):
             '/artist.ArtistService/CreateArtist',
             artist__pb2.CreateArtistRequest.SerializeToString,
             artist__pb2.CreateArtistResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UploadFileMP3(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(
+            request_iterator,
+            target,
+            '/artist.ArtistService/UploadFileMP3',
+            artist__pb2.FileChunk.SerializeToString,
+            artist__pb2.UploadStatus.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UploadArtistCover(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(
+            request_iterator,
+            target,
+            '/artist.ArtistService/UploadArtistCover',
+            artist__pb2.FileChunk.SerializeToString,
+            artist__pb2.UploadStatus.FromString,
             options,
             channel_credentials,
             insecure,
