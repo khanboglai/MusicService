@@ -5,7 +5,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Table, Text
 from sqlalchemy.orm import column_property, registry, composite
 from src.models.artist import Artist
 from src.models.custom_types.description import DescriptionType
-from src.database.postgres import engine
+from src.database.postgres import engine, Base
 
 
 mapper_registry = registry()
@@ -15,13 +15,14 @@ artist_table = Table(
     "artists",
     mapper_registry.metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("name", Text, unique=True, nullable=True),
+    Column("name", Text, unique=True, nullable=False),
     Column("email", Text, unique=True),
     Column("registered_at", DateTime(timezone=True)),
     Column("description", DescriptionType),
-    Column("user_id", Integer, unique=True),
+    Column("user_id", Integer, unique=True, nullable=False),
 )
 
+artist_table.tometadata(Base.metadata) # регистрация таблицы для миграции
 
 async def start_mapping():
     mapper_registry.map_imperatively(
@@ -39,4 +40,4 @@ async def start_mapping():
     )
 
     async with engine.begin() as conn:
-        await conn.run_sync(mapper_registry.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all)

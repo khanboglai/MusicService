@@ -10,6 +10,8 @@ from alembic import context
 from src.database.postgres import Base
 from src.core.config import settings
 from src.models.artist import Artist
+from src.database.models import artist_table
+
 
 load_dotenv()
 db_user = os.getenv("POSTGRES_USER")
