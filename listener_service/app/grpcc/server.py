@@ -2,95 +2,104 @@ from datetime import datetime
 import grpc
 import asyncio
 from concurrent import futures
+from google.protobuf.empty_pb2 import Empty
+
 from domain.entities.real.listener import Listener
+from domain.events.real.interaction import NewInteractionRegistered
+from domain.events.real.like import NewLikeRegistered
 from database.repository.real.listener import ListenerRepository
-# from src.repositories.domain_repo import ArtistRepositoryABC
+from database.repository.real.interaction import InteractionRepository
+from database.repository.real.like import LikeRepository
 from database.connect import get_db_session
-# from src.database.postgres import get_db_session # только так получилось достать сессию для gRPC
-# from src.models.artist import Artist
-# from src.core.config import settings
 from grpcc.listener_pb2_grpc import add_ListenerServiceServicer_to_server
-from grpcc.listener_pb2 import GetListenerResponse
+from grpcc.listener_pb2 import (
+    GetListenerResponse,
+    CreateListenerResponse,
+    DeleteListenerResponse,
+    ListenerResponse,
+    LikeResponse,
+    LikeData,
+    InteractionResponse,
+)
 from domain.values.real.age import Age
 from domain.values.real.name import Name
-# from src.value_objects.artist_description import Description
-# from src.grpc.grpc_exceptions_handlers.grpc_excaption_handler import grpc_exception_handler
 from core.config import logger
 
 
 class ListenerService:
-    def __init__(self, listener_repo):
+    def __init__(self, listener_repo, like_repo, interaction_repo):
         self.listener_repo = listener_repo
-
-    # @grpc_exception_handler # в декоратор поместил логику обработки ошибок, кода стало в 2 раза меньше
-    # async def CreateArtist(self, request, context):
-
-    #     new_artist = Artist(
-    #         name=request.name,
-    #         email=request.email,
-    #         registered_at=datetime.now(),
-    #         description=Description(request.description),
-    #         user_id=request.user_id
-    #     )
-    #     artist = await self.artist_repo.create_artist(new_artist)
-    #     logger.info(f"GRPC: Created new artist {artist.name}")
-    #     return CreateArtistResponse(id=artist.user_id)
+        self.like_repo = like_repo
+        self.interaction_repo = interaction_repo
 
 
     # @grpc_exception_handler
     async def GetListener(self, request, context):
         listener_id = int(request.listener_id)
         listener = await self.listener_repo.get_listener(listener_id=listener_id)
-        logger.info(f"GRPC: Getting description for artist {listener.first_name}")
+        logger.info(f"GRPC: Getting user data for listener with listener id {listener.oid}")
         return GetListenerResponse(listener_id=listener.oid, user_id=listener.user_id, first_name=listener.first_name, last_name=listener.last_name)
-
-
-
+    
     # @grpc_exception_handler
-    # async def UploadArtistCover(self, request_iterator, context):
-
-    #     buffer = io.BytesIO()
-    #     user_id = None
-
-    #     try:
-    #         s3_client = settings.create_minio_client()
-    #         bucket_name = settings.minio_bucket_name
-    #         settings.create_bucket_if_not_exists(client=s3_client)
-
-    #         async for chunk in request_iterator:
-    #             if user_id is None:
-    #                 user_id = chunk.user_id
-    #             buffer.write(chunk.content)
-
-    #         if user_id is None:
-    #             return UploadStatus(success=False, message="User id is missing")
-
-    #         artist = await self.artist_repo.get_artist_by_user_id(user_id)
-    #         s3_key = f"{artist.oid}/{artist.oid}.jpg"
-    #         buffer.seek(0) # перемещение указателя на начало буфера
-
-    #         # проверка типа файла
-    #         mimetype = magic.from_buffer(buffer.read(1024), mime=True)
-    #         buffer.seek(0)
-    #         if mimetype != "image/jpeg":
-    #             return UploadStatus(success=False, message="Unsupported Media Type")
-    #         logger.info("GRPC: Checked mime type")
-
-    #         s3_client.upload_fileobj(
-    #             Fileobj=buffer,
-    #             Bucket=bucket_name,
-    #             Key=s3_key,
-    #             ExtraArgs={"ContentType": "image/jpeg"}
-    #         )
-
-    #         logger.info("GRPC: Uploaded cover")
-    #         return UploadStatus(success=True, message="Artist Cover Uploaded")
-    #     finally:
-    #         buffer.close()
-
-
-    # async def UploadFileMP3(self, request_iterator, context):
-    #     pass
+    async def CreateListener(self, request, context):
+        new_listener = Listener(
+            user_id=int(request.user_id),
+            firstname=Name(str(request.first_name)),
+            lastname=Name(str(request.last_name)),
+            birthdate=Age(str(request.birth_date))
+        )
+        listener = await self.listener_repo.insert_listener(listener=new_listener)
+        return CreateListenerResponse(listener_id=listener.oid, user_id=listener.user_id, first_name=listener.first_name, last_name=listener.last_name)
+    
+    # @grpc_exception_handler
+    async def DeleteListener(self, request, context):
+        user_id = int(request.user_id)
+        await self.listener_repo.delete_listener(user_id=user_id)
+        return DeleteListenerResponse(delete_message=f"User with id {user_id} deleted successfully!")
+    
+    # @grpc_exception_handler
+    async def Like(self, request, context):
+        listener = await self.listener_repo.get_listener(listener_id=int(request.listener_id))
+        like = await self.like_repo.add_or_delete_like(listener=listener, track_id=int(request.track_id))
+        if like:
+            return LikeResponse(
+                liked=LikeData(
+                    id=like.event_id,
+                    track_id=like.track_id,
+                    listener=ListenerResponse(
+                        listener_id=like.user.oid,
+                        user_id=like.user.user_id,
+                        first_name=like.user.first_name,
+                        last_name=like.user.last_name,
+                        birth_date=str(like.user.birth_date),
+                        subscription=like.user.subscription,
+                    ),
+                ),
+            )
+        return LikeResponse(
+            deleted=Empty(),
+        )
+    
+    # @grpc_exception_handler
+    async def Interaction(self, request, context):
+        listener = await self.listener_repo.get_listener(listener_id=int(request.listener_id))
+        interaction = await self.interaction_repo.add_or_update_interaction(
+            listener=listener,
+            track_id=int(request.track_id),
+            listen_time=int(request.listen_time),
+        )
+        return InteractionResponse(
+            listener=ListenerResponse(
+                listener_id=interaction.user.oid,
+                user_id=interaction.user.user_id,
+                first_name=interaction.user.first_name,
+                last_name=interaction.user.last_name,
+                birth_date=str(interaction.user.birth_date),
+                subscription=interaction.user.subscription,
+            ),
+            track_id=interaction.track_id,
+            listen_time=interaction.listen_time,
+        )
 
 
 async def serve():
@@ -102,9 +111,15 @@ async def serve():
         #     use_cache=True,
         #     redis_client=redis_client
         # )
-        repo = ListenerRepository(db)
+        listener_repo = ListenerRepository(db)
+        like_repo = LikeRepository(db)
+        interaction_repo = InteractionRepository(db)
 
-    service = ListenerService(repo)
+    service = ListenerService(
+        listener_repo=listener_repo,
+        like_repo=like_repo,
+        interaction_repo=interaction_repo
+    )
 
     add_ListenerServiceServicer_to_server(service, server)
     server.add_insecure_port('[::]:50051')

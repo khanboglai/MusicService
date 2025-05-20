@@ -44,6 +44,7 @@ logger.info("Dependencies set up!")
 async def root():
     return {"message": "Hello world!"}
 
+# GRPC
 @app.post("/listener/add")
 async def create_listener(
         user_id: int, # временно, потом будем получать из куки
@@ -63,6 +64,7 @@ async def create_listener(
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
 
+# GRPC
 @app.get("/listener/get")
 async def read_listener(
         listener_id: int,
@@ -129,20 +131,3 @@ async def add_upd_interaction(
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
 
-
-# @app.delete("/like/delete")
-# async def delete_like(
-#         listener_id: int,
-#         track_id: int,
-#         like_repository: BaseLikeRepo = Depends(),
-#         listener_repository: BaseListenerRepo = Depends()
-#     ):
-#     try:
-#         listener = await listener_repository.get_listener(listener_id=listener_id)
-#         await like_repository.delete_like(listener=listener, track_id=track_id)
-#         return {"message": "Deleted successfully"}
-#     except DatabaseException as e:
-#         raise HTTPException(status_code=423, detail=e.message)
-#     except DatabaseErrorException as e:
-#         raise HTTPException(status_code=500, detail=e.message)
-#     # Здесь уже надо удалять ивент из сущности слушателя

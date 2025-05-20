@@ -13,7 +13,7 @@ from sqlalchemy.orm import column_property, registry, relationship, composite
 from domain.entities.real.listener import Listener
 from domain.events.real.interaction import NewInteractionRegistered
 from domain.events.real.like import NewLikeRegistered
-from database.connect import engine
+from database.connect import engine, Base
 from domain.values.real.age import Age
 from domain.values.real.name import Name
 
@@ -49,6 +49,10 @@ interaction_table = Table(
     Column("count_interaction", BigInteger),
     Column("listen_time", BigInteger)
 )
+
+listener_table.tometadata(Base.metadata)
+like_table.tometadata(Base.metadata)
+interaction_table.tometadata(Base.metadata)
 
 async def start_mapping():
     mapper_registry.map_imperatively(
@@ -89,4 +93,4 @@ async def start_mapping():
         }
     )
     async with engine.begin() as conn:
-        await conn.run_sync(mapper_registry.metadata.create_all) 
+        await conn.run_sync(Base.metadata.create_all) 

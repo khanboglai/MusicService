@@ -63,7 +63,7 @@ services:
       # ELASTICSEARCH_HOST: elasticsearch
       # ELASTICSEARCH_PORT: 9200
     volumes:
-      - ./app:/application
+      - ./app:/app
 
 volumes:
   pgdata:

@@ -1,1 +1,1 @@
- python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc --grpc_python_out=app/grpc app/proto/listener.proto
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpcc --grpc_python_out=app/grpcc app/proto/listener.proto

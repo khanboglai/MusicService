@@ -7,9 +7,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from alembic import context
 from database.connect import Base, get_db_url
-from domain.entities.real.listener import Listener
-from domain.events.real.interaction import NewInteractionRegistered
-from domain.events.real.like import NewLikeRegistered
+from database.models import listener_table, like_table, interaction_table
 
 
 # this is the Alembic Config object, which provides

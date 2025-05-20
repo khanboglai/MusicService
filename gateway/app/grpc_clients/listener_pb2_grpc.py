@@ -39,12 +39,56 @@ class ListenerServiceStub(object):
                 request_serializer=listener__pb2.GetListenerRequest.SerializeToString,
                 response_deserializer=listener__pb2.GetListenerResponse.FromString,
                 _registered_method=True)
+        self.CreateListener = channel.unary_unary(
+                '/listener.ListenerService/CreateListener',
+                request_serializer=listener__pb2.CreateListenerRequest.SerializeToString,
+                response_deserializer=listener__pb2.CreateListenerResponse.FromString,
+                _registered_method=True)
+        self.DeleteListener = channel.unary_unary(
+                '/listener.ListenerService/DeleteListener',
+                request_serializer=listener__pb2.DeleteListenerRequest.SerializeToString,
+                response_deserializer=listener__pb2.DeleteListenerResponse.FromString,
+                _registered_method=True)
+        self.Like = channel.unary_unary(
+                '/listener.ListenerService/Like',
+                request_serializer=listener__pb2.LikeRequest.SerializeToString,
+                response_deserializer=listener__pb2.LikeResponse.FromString,
+                _registered_method=True)
+        self.Interaction = channel.unary_unary(
+                '/listener.ListenerService/Interaction',
+                request_serializer=listener__pb2.InteractionRequest.SerializeToString,
+                response_deserializer=listener__pb2.InteractionResponse.FromString,
+                _registered_method=True)
 
 
 class ListenerServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetListener(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateListener(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteListener(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Like(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Interaction(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -57,6 +101,26 @@ def add_ListenerServiceServicer_to_server(servicer, server):
                     servicer.GetListener,
                     request_deserializer=listener__pb2.GetListenerRequest.FromString,
                     response_serializer=listener__pb2.GetListenerResponse.SerializeToString,
+            ),
+            'CreateListener': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateListener,
+                    request_deserializer=listener__pb2.CreateListenerRequest.FromString,
+                    response_serializer=listener__pb2.CreateListenerResponse.SerializeToString,
+            ),
+            'DeleteListener': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteListener,
+                    request_deserializer=listener__pb2.DeleteListenerRequest.FromString,
+                    response_serializer=listener__pb2.DeleteListenerResponse.SerializeToString,
+            ),
+            'Like': grpc.unary_unary_rpc_method_handler(
+                    servicer.Like,
+                    request_deserializer=listener__pb2.LikeRequest.FromString,
+                    response_serializer=listener__pb2.LikeResponse.SerializeToString,
+            ),
+            'Interaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.Interaction,
+                    request_deserializer=listener__pb2.InteractionRequest.FromString,
+                    response_serializer=listener__pb2.InteractionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,6 +150,114 @@ class ListenerService(object):
             '/listener.ListenerService/GetListener',
             listener__pb2.GetListenerRequest.SerializeToString,
             listener__pb2.GetListenerResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateListener(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/CreateListener',
+            listener__pb2.CreateListenerRequest.SerializeToString,
+            listener__pb2.CreateListenerResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteListener(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/DeleteListener',
+            listener__pb2.DeleteListenerRequest.SerializeToString,
+            listener__pb2.DeleteListenerResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Like(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/Like',
+            listener__pb2.LikeRequest.SerializeToString,
+            listener__pb2.LikeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Interaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/Interaction',
+            listener__pb2.InteractionRequest.SerializeToString,
+            listener__pb2.InteractionResponse.FromString,
             options,
             channel_credentials,
             insecure,

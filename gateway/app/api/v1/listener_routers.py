@@ -1,7 +1,6 @@
 import os
 
 from fastapi import APIRouter, HTTPException
-# from app.schemas.artist import ArtistCreate
 from app.grpc_clients.listener_client import ListenerClient
 from app.api.handel_exceptions import handle_exceptions, InvalidMimeType
 
@@ -10,39 +9,42 @@ router = APIRouter()
 listener_client = ListenerClient()
 
 
-# @router.get('/{id}')
-# async def get_artist(user_id: int):
-#     return {"message": f"artist/{user_id}"}
-
-
-@router.get('/listeners/{listener_id}')
+@router.get('/listener/get')
 @handle_exceptions
-async def get_artist_description(listener_id: int):
+async def read_listener(listener_id: int):
     listener = await listener_client.get_listener(listener_id)
     return {"message": f"{listener}"}
 
+@router.post('/listener/add')
+@handle_exceptions
+async def add_listener(
+        user_id: int, # временно, потом будем получать из куки
+        first_name: str,
+        last_name: str,
+        birth_date: str,
+    ):
+    listener = await listener_client.create_listener(
+            user_id,
+            first_name,
+            last_name,
+            birth_date,
+        )
+    return {"message": f"{listener}"}
 
-# @router.post('/create_artist', response_model=None)
-# @handle_exceptions
-# async def create_artist(artist: ArtistCreate):
-#     artist_id = await artist_client.create_artist(artist)
-#     return {"id": f"{artist_id}"}
+@router.delete('/listener/delete')
+@handle_exceptions
+async def erase_listener(user_id: int):
+    message = await listener_client.delete_listener(user_id)
+    return {"message": f"{message}"}
 
+@router.post('/like')
+@handle_exceptions
+async def liking(listener_id: int, track_id: int):
+    like = await listener_client.like(listener_id, track_id)
+    return {"message": f"{like}"}
 
-# @router.post('/upload_cover')
-# @handle_exceptions
-# async def upload_cover(file: UploadFile = File(...), user_id: int = Form(...)):
-
-#     # должен быть метод для извлечения user_id из jwt
-
-#     if not file.content_type.startswith('image/jpeg'):
-#         raise InvalidMimeType("Неверный формат файла")
-
-#     temp_file = f"temp_{file.filename}"
-#     with open(temp_file, "wb") as f:
-#         content = await file.read()
-#         f.write(content)
-
-#     response = await artist_client.upload_cover(temp_file, user_id)
-#     os.remove(temp_file)
-#     return {"message": response.message}
+@router.post('/interaction')
+@handle_exceptions
+async def interaction(listener_id: int, track_id: int, listen_time: int):
+    interaction = await listener_client.interaction(listener_id, track_id, listen_time)
+    return {"message": f"{interaction}"}
