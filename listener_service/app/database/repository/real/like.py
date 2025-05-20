@@ -23,14 +23,16 @@ class LikeRepository(BaseLikeRepo):
         )
         result = await self.session.execute(statement=statement)
         result = result.scalar_one_or_none()
+        if not result:
+            raise NotExistException
         return result
 
     async def add_or_delete_like(self, *, listener: Listener, track_id: int) -> NewLikeRegistered:
-        like = await self.get_like_by_ids(listener=listener, track_id=track_id)
-        if like is not None:
+        try:
+            like = await self.get_like_by_ids(listener=listener, track_id=track_id)
             await self.session.delete(like)
             await self.session.commit()
-        else:
+        except NotExistException:
             like = NewLikeRegistered(user_id=listener, track_id=track_id)
             self.session.add(like)
             await self.session.commit()
