@@ -17,6 +17,8 @@ from grpcc.listener_pb2 import (
     LikeResponse,
     LikeData,
     InteractionResponse,
+    InteractionsHistoryResponse,
+    HistoryResponse,
 )
 from domain.values.real.age import Age
 from domain.values.real.name import Name
@@ -103,6 +105,23 @@ class ListenerService:
             ),
             track_id=interaction.track_id,
             listen_time=interaction.listen_time,
+        )
+    
+    # @grpc_exception_handler
+    async def History(self, request, context):
+        listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
+        interactions = await self.interaction_repo.get_listener_history(listener=listener)
+        logger.info(f"GRPC: History for listener with listener_id: {listener.oid}, user_id: {listener.user_id} and name {listener.first_name} {listener.last_name} was loaded!")
+        return HistoryResponse(
+            listener=ListenerResponse(
+                listener_id=listener.oid,
+                user_id=listener.user_id,
+                first_name=listener.first_name,
+                last_name=listener.last_name,
+                birth_date=str(listener.birth_date),
+                subscription=listener.subscription,
+            ),
+            interactions=[InteractionsHistoryResponse(track_id=interaction.track_id, last_interaction=str(interaction.last_interaction)) for interaction in interactions],
         )
 
 

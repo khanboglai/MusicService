@@ -1,5 +1,4 @@
-""" Клиент gRPC для взаимодействия с сервером исполнителя """
-
+""" Клиент gRPC для взаимодействия с сервером слушателя """
 import grpc
 from app.grpc_clients.listener_pb2_grpc import ListenerServiceStub
 from app.grpc_clients.listener_pb2 import (
@@ -8,13 +7,13 @@ from app.grpc_clients.listener_pb2 import (
     DeleteListenerRequest,
     LikeRequest,
     InteractionRequest,
+    HistoryRequest,
 )
-# from app.schemas.artist import ArtistCreate
 from app.grpc_clients.grpc_client_exception_handler import grpc_client_exception_handler
 
 class ListenerClient:
     def __init__(self):
-        self.channel = grpc.aio.insecure_channel('web:50051') # change
+        self.channel = grpc.aio.insecure_channel('listener_web:50051')
         self.stub = ListenerServiceStub(self.channel)
 
 
@@ -53,18 +52,9 @@ class ListenerClient:
         request = InteractionRequest(user_id=user_id, track_id=track_id, listen_time=listen_time)
         response = await self.stub.Interaction(request)
         return response
-        
-
-
-    # @grpc_client_exception_handler
-    # async def upload_cover(self, file_path: str, user_id: int):
-    #     def generate_chunks():
-    #         with open(file_path, 'rb') as f:
-    #             while True:
-    #                 chunk = f.read(1024 * 64) # читаем по частям 64 Кб
-    #                 if not chunk:
-    #                     break
-    #                 yield FileChunk(content=chunk, user_id=user_id)
-
-    #     response = await self.stub.UploadArtistCover(generate_chunks())
-    #     return response
+    
+    @grpc_client_exception_handler
+    async def history(self, user_id: int):
+        request = HistoryRequest(user_id=user_id)
+        response = await self.stub.History(request)
+        return response

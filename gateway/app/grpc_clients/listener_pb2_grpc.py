@@ -59,6 +59,11 @@ class ListenerServiceStub(object):
                 request_serializer=listener__pb2.InteractionRequest.SerializeToString,
                 response_deserializer=listener__pb2.InteractionResponse.FromString,
                 _registered_method=True)
+        self.History = channel.unary_unary(
+                '/listener.ListenerService/History',
+                request_serializer=listener__pb2.HistoryRequest.SerializeToString,
+                response_deserializer=listener__pb2.HistoryResponse.FromString,
+                _registered_method=True)
 
 
 class ListenerServiceServicer(object):
@@ -94,6 +99,12 @@ class ListenerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def History(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ListenerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -121,6 +132,11 @@ def add_ListenerServiceServicer_to_server(servicer, server):
                     servicer.Interaction,
                     request_deserializer=listener__pb2.InteractionRequest.FromString,
                     response_serializer=listener__pb2.InteractionResponse.SerializeToString,
+            ),
+            'History': grpc.unary_unary_rpc_method_handler(
+                    servicer.History,
+                    request_deserializer=listener__pb2.HistoryRequest.FromString,
+                    response_serializer=listener__pb2.HistoryResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -258,6 +274,33 @@ class ListenerService(object):
             '/listener.ListenerService/Interaction',
             listener__pb2.InteractionRequest.SerializeToString,
             listener__pb2.InteractionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def History(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/History',
+            listener__pb2.HistoryRequest.SerializeToString,
+            listener__pb2.HistoryResponse.FromString,
             options,
             channel_credentials,
             insecure,

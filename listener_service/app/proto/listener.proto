@@ -10,6 +10,7 @@ service ListenerService {
     rpc DeleteListener (DeleteListenerRequest) returns (DeleteListenerResponse);
     rpc Like (LikeRequest) returns (LikeResponse);
     rpc Interaction (InteractionRequest) returns (InteractionResponse);
+    rpc History (HistoryRequest) returns (HistoryResponse);
 }
 
 message GetListenerRequest {
@@ -82,4 +83,18 @@ message InteractionResponse {
     ListenerResponse listener = 1;
     int32 track_id = 2;
     int32 listen_time = 3;
+}
+
+message HistoryRequest {
+    int32 user_id = 1;
+}
+
+message InteractionsHistoryResponse {
+    int32 track_id = 1;
+    string last_interaction = 2;
+}
+
+message HistoryResponse {
+    ListenerResponse listener = 1;
+    repeated InteractionsHistoryResponse interactions = 2;
 }

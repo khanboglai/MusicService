@@ -38,7 +38,7 @@ services:
     tty: true
     stdin_open: true
 
-  web:
+  listener_web:
     build:
       context: ./app
       dockerfile: Dockerfile

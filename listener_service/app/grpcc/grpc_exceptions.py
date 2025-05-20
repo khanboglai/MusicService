@@ -19,5 +19,7 @@ def grpc_exception_handler(func):
         except AplicationException as e:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details(e.message)
+        except Exception as e:
+            await context.abort(grpc.StatusCode.UNKNOWN, f"Unexpected error: {str(e)}")
 
     return wrapper

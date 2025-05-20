@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, update
+from sqlalchemy import select, desc
 from datetime import datetime
+from typing import List
 
 from domain.events.real.interaction import NewInteractionRegistered
 from database.repository.abc.interaction import BaseInteractionRepo
@@ -43,5 +44,15 @@ class InteractionRepository(BaseInteractionRepo):
             self.session.add(interaction)
             await self.session.commit()
             await self.session.refresh(interaction, ["user"])
-            return interaction        
+            return interaction
+
+    async def get_listener_history(self, *, listener: Listener) -> List[NewInteractionRegistered]:
+        statement = (
+            select(NewInteractionRegistered)
+            .where(NewInteractionRegistered.user == listener)
+            .order_by(desc(NewInteractionRegistered.last_interaction))
+        )
+        result = await self.session.execute(statement=statement)
+        result = result.scalars().all()
+        return result
         

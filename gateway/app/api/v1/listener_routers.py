@@ -45,6 +45,12 @@ async def liking(user_id: int, track_id: int):
 
 @router.post('/interaction')
 @handle_exceptions
-async def interaction(user_id: int, track_id: int, listen_time: int):
+async def interacting(user_id: int, track_id: int, listen_time: int):
     interaction = await listener_client.interaction(user_id, track_id, listen_time)
     return {"message": f"{interaction}"}
+
+@router.get('/history')
+@handle_exceptions
+async def load_history(user_id: int):
+    history = await listener_client.history(user_id)
+    return {"message": f"{history}"}
