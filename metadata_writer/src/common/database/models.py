@@ -49,7 +49,7 @@ tracks_table = Table(
     mapper_registry.metadata,
     Column("oid", Integer, primary_key=True, autoincrement=True),
     Column("_title", String, nullable=False),
-    Column("_album_id", Integer, ForeignKey("albums.oid")),
+    Column("_album_id", Integer, ForeignKey("albums.oid", ondelete="CASCADE")),
     Column("_explicit", Boolean),
 )
 
@@ -67,7 +67,7 @@ async def start_mapping():
         Album,
         albums_table,
         properties={
-            "tracks": relationship("Track", back_populates="album")
+            "tracks": relationship("Track", back_populates="album", cascade="all, delete-orphan")
         }
     )
 

@@ -7,8 +7,9 @@ from fastapi.responses import ORJSONResponse
 from src.common.core.logging import LOGGING, logger
 from src.config import settings
 from src.common.database.models import start_mapping
-from src.api.v1.writer import router as writer_router
-# from src.api.exception_handlers import domain_exception_handler
+from src.api.v1.album import router as album_router
+from src.api.v1.track import router as track_router
+from src.api.exception_handler import domain_exception_handler
 from src.common.exceptions.exceptions import DomainException
 # from src.grpc.server import serve
 
@@ -32,9 +33,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# app.add_exception_handler(DomainException, domain_exception_handler)
+app.add_exception_handler(DomainException, domain_exception_handler)
 
-app.include_router(writer_router, prefix="/api/v1", tags=["Запись метаданных"])
+app.include_router(album_router, prefix="/api/v1/album", tags=["Запись метаданных альбомов"])
+app.include_router(track_router, prefix="/api/v1/track", tags=["Запись метаданных треков"])
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_config=LOGGING)

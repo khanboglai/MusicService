@@ -15,8 +15,8 @@ class TrackRepository(TrackRepositoryABC):
         self.db = db
 
     async def create_track(self, track: TrackCreate) -> Track:
+        logger.info(f"Создание трека {track.title}...")
         try:
-            logger.info(f"Создание трека {track.title}.")
             genres = []
             if track.genre_names:
                 for name in track.genre_names:
@@ -39,16 +39,36 @@ class TrackRepository(TrackRepositoryABC):
             self.db.add(t)
             await self.db.commit()
             await self.db.refresh(t)
-            logger.info(f"Трек {t.title} успешно создан.")
             return t
         except IntegrityError as e:
             await self.db.rollback()
             raise DatabaseException(f"Ошибка при создании трека: {e}")
 
     async def get_track_by_id(self, id: int) -> Track:
+        logger.info(f"Получение трека с ID {id}...")
         result = await self.db.execute(select(Track).where(Track.oid == id))
         track = result.scalars().first()
 
         if track is None:
-            raise NoSuchTrackException()
+            raise NoSuchTrackException(f"Трек с ID {id} не существует")
         return track
+
+    async def get_tracks_by_album_id(self, album_id: int) -> list[Track]:
+        logger.info(f"Получение треков из альбома с ID {album_id}.")
+        result = await self.db.execute(select(Track).where(Track.album_id == album_id))
+        tracks = result.scalars().all()
+
+        if tracks is None:
+            tracks = []
+        return tracks
+
+    async def remove_track(self, track_id: int) -> int:
+        logger.info(f"Удаление трека с ID{track_id}.")
+        try:
+            track = await self.get_track_by_id(track_id)
+            id = track.oid
+            await self.db.delete(track)
+            await self.db.commit()
+            return id
+        except IntegrityError as e:
+            raise DatabaseException(f"Ошибка удаления трека: {e}")
