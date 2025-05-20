@@ -107,7 +107,7 @@ class ListenerService:
             listen_time=interaction.listen_time,
         )
     
-    # @grpc_exception_handler
+    @grpc_exception_handler
     async def History(self, request, context):
         listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         interactions = await self.interaction_repo.get_listener_history(listener=listener)
