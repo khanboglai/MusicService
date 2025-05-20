@@ -23,31 +23,19 @@ class InteractionRepository(BaseInteractionRepo):
         )
         result = await self.session.execute(statement=statement)
         result = result.scalar_one_or_none()
-        if not result:
-            raise NotExistException()
         return result
 
     async def add_or_update_interaction(self, *, listener: Listener, track_id: int, listen_time: int) -> NewInteractionRegistered:
-        try:
-            old_interaction = await self.get_interaction_by_ids(listener=listener, track_id=track_id)
-            statement = (
-                update(NewInteractionRegistered)
-                .where(
-                    NewInteractionRegistered.event_id == old_interaction.event_id
-                )
-                .values(
-                    last_interaction=datetime.now(),
-                    count_interaction=(old_interaction.count_interaction + 1),
-                    listen_time=listen_time,
-                )
-            )
-            await self.session.execute(statement=statement)
-            await self.session.commit()
-            new_interaction = await self.get_interaction_by_ids(listener=listener, track_id=track_id)
-            return new_interaction
-        except DatabaseException:
-            interaction = NewInteractionRegistered(listener_id=listener, track_id=track_id, listen_time=listen_time)
+        interaction = await self.get_interaction_by_ids(listener=listener, track_id=track_id)
+        if interaction:
+            interaction.last_interaction = datetime.now()
+            interaction.count_interaction += 1
+            interaction.listen_time = listen_time
+        else:
+            interaction = NewInteractionRegistered(user_id=listener, track_id=track_id, listen_time=listen_time)
             self.session.add(interaction)
-            await self.session.commit()
-            return interaction
+
+        await self.session.commit()
+        await self.session.refresh(interaction, ["user"])
+        return interaction        
         

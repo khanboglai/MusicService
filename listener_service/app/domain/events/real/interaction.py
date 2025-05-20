@@ -12,8 +12,8 @@ class NewInteractionRegistered(BaseEvent):
     count_interaction: int
     listen_time: int # в секундах
     
-    def __init__(self, listener_id: int, track_id: int, listen_time: int):
-        self.user = listener_id
+    def __init__(self, user_id: int, track_id: int, listen_time: int):
+        self.user = user_id
         self.track_id = track_id
         self.last_interaction = datetime.now()
         self.count_interaction = 1

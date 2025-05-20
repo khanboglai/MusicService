@@ -35,8 +35,8 @@ class ListenerService:
 
     # @grpc_exception_handler
     async def GetListener(self, request, context):
-        listener_id = int(request.listener_id)
-        listener = await self.listener_repo.get_listener(listener_id=listener_id)
+        user_id = int(request.user_id)
+        listener = await self.listener_repo.get_listener_by_user_id(user_id=user_id)
         logger.info(f"GRPC: Getting user data for listener with listener id {listener.oid}")
         return GetListenerResponse(listener_id=listener.oid, user_id=listener.user_id, first_name=listener.first_name, last_name=listener.last_name)
     
@@ -59,7 +59,7 @@ class ListenerService:
     
     # @grpc_exception_handler
     async def Like(self, request, context):
-        listener = await self.listener_repo.get_listener(listener_id=int(request.listener_id))
+        listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         like = await self.like_repo.add_or_delete_like(listener=listener, track_id=int(request.track_id))
         if like:
             return LikeResponse(
@@ -82,12 +82,14 @@ class ListenerService:
     
     # @grpc_exception_handler
     async def Interaction(self, request, context):
-        listener = await self.listener_repo.get_listener(listener_id=int(request.listener_id))
+        listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         interaction = await self.interaction_repo.add_or_update_interaction(
             listener=listener,
             track_id=int(request.track_id),
             listen_time=int(request.listen_time),
         )
+        # logger.debug(f"Value: {interaction.user.oid} type: {type(interaction.user.oid)}")
+        logger.debug(f"{interaction}")
         return InteractionResponse(
             listener=ListenerResponse(
                 listener_id=interaction.user.oid,

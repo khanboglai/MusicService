@@ -67,11 +67,11 @@ async def create_listener(
 # GRPC
 @app.get("/listener/get")
 async def read_listener(
-        listener_id: int,
+        user_id: int,
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         if listener:
             return {"id": listener.oid, "user_id": listener.user_id, "first_name": listener.firstname, "last_name": listener.lastname}
     except DatabaseException as e:
@@ -94,14 +94,13 @@ async def delete_listener(
     
 @app.post("/like")
 async def add_del_like(
-        listener_id: int,
+        user_id: int,
         track_id: int,
         like_repository: BaseLikeRepo = Depends(),
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
-        # new_like = NewLikeRegistered(listener_id=listener, track_id=track_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         like = await like_repository.add_or_delete_like(listener=listener, track_id=track_id)
         if like:
             return {"id": like.event_id, "listener": like.user, "track_id": like.track_id}
@@ -112,14 +111,14 @@ async def add_del_like(
     
 @app.post("/interaction")
 async def add_upd_interaction(
-        listener_id: int,
+        user_id: int,
         track_id: int,
         listen_time: int,
         interaction_repository: BaseInteractionRepo = Depends(),
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         interaction = await interaction_repository.add_or_update_interaction(
             listener=listener,
             track_id=track_id, 

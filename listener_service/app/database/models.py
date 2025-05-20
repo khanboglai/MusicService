@@ -24,7 +24,7 @@ listener_table = Table(
     "User",
     mapper_registry.metadata,
     Column("id", BigInteger, primary_key=True, autoincrement=True),
-    Column("user_id", BigInteger),
+    Column("user_id", BigInteger, unique=True),
     Column("first_name", Text),
     Column("last_name", Text),
     Column("birth_date", Date),
@@ -35,7 +35,7 @@ like_table = Table(
     "TrackLikes",
     mapper_registry.metadata,
     Column("id", BigInteger, primary_key=True, autoincrement=True),
-    Column("user_id", BigInteger, ForeignKey("User.id"), nullable=False),
+    Column("user_id", BigInteger, ForeignKey("User.user_id"), nullable=False),
     Column("track_id", BigInteger, nullable=False)
 )
 
@@ -43,7 +43,7 @@ interaction_table = Table(
     "Interactions",
     mapper_registry.metadata,
     Column("id", BigInteger, primary_key=True, autoincrement=True),
-    Column("user_id", BigInteger, ForeignKey("User.id"), nullable=False),
+    Column("user_id", BigInteger, ForeignKey("User.user_id"), nullable=False),
     Column("track_id", BigInteger, nullable=False),
     Column("last_interaction", DateTime),
     Column("count_interaction", BigInteger),

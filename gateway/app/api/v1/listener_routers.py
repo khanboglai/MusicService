@@ -11,8 +11,8 @@ listener_client = ListenerClient()
 
 @router.get('/listener/get')
 @handle_exceptions
-async def read_listener(listener_id: int):
-    listener = await listener_client.get_listener(listener_id)
+async def read_listener(user_id: int):
+    listener = await listener_client.get_listener(user_id)
     return {"message": f"{listener}"}
 
 @router.post('/listener/add')
@@ -39,12 +39,12 @@ async def erase_listener(user_id: int):
 
 @router.post('/like')
 @handle_exceptions
-async def liking(listener_id: int, track_id: int):
-    like = await listener_client.like(listener_id, track_id)
+async def liking(user_id: int, track_id: int):
+    like = await listener_client.like(user_id, track_id)
     return {"message": f"{like}"}
 
 @router.post('/interaction')
 @handle_exceptions
-async def interaction(listener_id: int, track_id: int, listen_time: int):
-    interaction = await listener_client.interaction(listener_id, track_id, listen_time)
+async def interaction(user_id: int, track_id: int, listen_time: int):
+    interaction = await listener_client.interaction(user_id, track_id, listen_time)
     return {"message": f"{interaction}"}

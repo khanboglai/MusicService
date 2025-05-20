@@ -17,23 +17,10 @@ class ListenerClient:
         self.channel = grpc.aio.insecure_channel('web:50051') # change
         self.stub = ListenerServiceStub(self.channel)
 
-    # @grpc_client_exception_handler
-    # async def create_artist(self, artist: ArtistCreate):
-    #     # создаем запрос
-    #     request = CreateArtistRequest(
-    #         name=artist.name,
-    #         email=artist.email,
-    #         description=artist.description,
-    #         user_id=artist.user_id,
-    #     )
-    #     # вызываем метод сервера
-    #     response = await self.stub.CreateArtist(request)
-    #     return response.id
-
 
     @grpc_client_exception_handler
-    async def get_listener(self, listener_id: int):
-        request = GetListenerRequest(listener_id=listener_id)
+    async def get_listener(self, user_id: int):
+        request = GetListenerRequest(user_id=user_id)
         response = await self.stub.GetListener(request)
         return response
     
@@ -56,14 +43,14 @@ class ListenerClient:
         return response
     
     @grpc_client_exception_handler
-    async def like(self, listener_id: int, track_id: int):
-        request = LikeRequest(listener_id=listener_id, track_id=track_id)
+    async def like(self, user_id: int, track_id: int):
+        request = LikeRequest(user_id=user_id, track_id=track_id)
         response = await self.stub.Like(request)
         return response
     
     @grpc_client_exception_handler
-    async def interaction(self, listener_id: int, track_id: int, listen_time: int):
-        request = InteractionRequest(listener_id=listener_id, track_id=track_id, listen_time=listen_time)
+    async def interaction(self, user_id: int, track_id: int, listen_time: int):
+        request = InteractionRequest(user_id=user_id, track_id=track_id, listen_time=listen_time)
         response = await self.stub.Interaction(request)
         return response
         
