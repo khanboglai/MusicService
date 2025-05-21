@@ -1,3 +1,4 @@
+""" Отлавливание всех типов исключений """
 import grpc
 from functools import wraps
 
@@ -6,6 +7,7 @@ from domain.exceptions.abc.base import AplicationException
 
 
 def grpc_exception_handler(func):
+    """ Декоратор для отлавливания исключений """
     @wraps(func)
     async def wrapper(self, request, context):
         try:

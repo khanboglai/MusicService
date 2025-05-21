@@ -1,3 +1,4 @@
+""" Серверная часть сервиса слушаетеля """
 import grpc
 import asyncio
 from concurrent import futures
@@ -27,6 +28,7 @@ from grpcc.grpc_exceptions import grpc_exception_handler
 
 
 class ListenerService:
+    """ Сервис слушателя """
     def __init__(self, listener_repo, like_repo, interaction_repo):
         self.listener_repo = listener_repo
         self.like_repo = like_repo
@@ -35,6 +37,7 @@ class ListenerService:
 
     @grpc_exception_handler
     async def GetListener(self, request, context):
+        """ Ручка для получения слушателя по user_id (все поля) """
         user_id = int(request.user_id)
         listener = await self.listener_repo.get_listener_by_user_id(user_id=user_id)
         logger.info(f"GRPC: Getting user data for listener with listener id {listener.oid}")
@@ -42,6 +45,7 @@ class ListenerService:
     
     @grpc_exception_handler
     async def CreateListener(self, request, context):
+        """ Ручка для создания нового слушателя """
         new_listener = Listener(
             user_id=int(request.user_id),
             firstname=Name(str(request.first_name)),
@@ -54,6 +58,7 @@ class ListenerService:
     
     @grpc_exception_handler
     async def DeleteListener(self, request, context):
+        """ Ручка для удаления слушателя по user_id """
         user_id = int(request.user_id)
         await self.listener_repo.delete_listener(user_id=user_id)
         logger.info(f"GRPC: Listener with user_id {user_id} was deleted!")
@@ -61,6 +66,7 @@ class ListenerService:
     
     @grpc_exception_handler
     async def Like(self, request, context):
+        """ Ручка для поставки или удаления лайка """
         listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         like = await self.like_repo.add_or_delete_like(listener=listener, track_id=int(request.track_id))
         if like:
@@ -87,6 +93,7 @@ class ListenerService:
     
     @grpc_exception_handler
     async def Interaction(self, request, context):
+        """ Ручка для добавления или обновления взаимодействия """
         listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         interaction = await self.interaction_repo.add_or_update_interaction(
             listener=listener,
@@ -109,6 +116,7 @@ class ListenerService:
     
     @grpc_exception_handler
     async def History(self, request, context):
+        """ Ручка для выгрузки истории слушателя по user_id (сначала новые) """
         listener = await self.listener_repo.get_listener_by_user_id(user_id=int(request.user_id))
         interactions = await self.interaction_repo.get_listener_history(listener=listener)
         logger.info(f"GRPC: History for listener with listener_id: {listener.oid}, user_id: {listener.user_id} and name {listener.first_name} {listener.last_name} was loaded!")

@@ -1,3 +1,4 @@
+""" Определение слоя репозиториев для взаимодействий """
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, desc
@@ -13,10 +14,12 @@ from database.exceptions.abc.base import DatabaseException
 
 
 class InteractionRepository(BaseInteractionRepo):
+    """ Слой репозиториев для взаимодействий """
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def get_interaction_by_ids(self, *, listener: Listener, track_id: int) -> NewInteractionRegistered:
+        """ Получение взаимодействия по слушателю и track_id """
         statement = (
             select(NewInteractionRegistered)
             .where(
@@ -31,6 +34,7 @@ class InteractionRepository(BaseInteractionRepo):
         return result
 
     async def add_or_update_interaction(self, *, listener: Listener, track_id: int, listen_time: int) -> NewInteractionRegistered:
+        """ Добавление или обновление взаимодействия на трек с track_id """
         try:
             interaction = await self.get_interaction_by_ids(listener=listener, track_id=track_id)
             interaction.last_interaction = datetime.now()
@@ -47,6 +51,7 @@ class InteractionRepository(BaseInteractionRepo):
             return interaction
 
     async def get_listener_history(self, *, listener: Listener) -> List[NewInteractionRegistered]:
+        """ Выгрузка истории прослушиваний слушателя (сначала новые) """
         statement = (
             select(NewInteractionRegistered)
             .where(NewInteractionRegistered.user == listener)

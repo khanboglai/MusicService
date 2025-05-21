@@ -1,3 +1,4 @@
+""" Определение абстрактного слоя репозиториев для взаимодействий """
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -6,6 +7,7 @@ from domain.entities.real.listener import Listener
 
 
 class BaseInteractionRepo(ABC):
+    """ Абстрактный слой репозиториев взаимодействий """
     @abstractmethod
     async def add_or_update_interaction(self, *, listener: Listener, track_id: int, listen_time: int) -> NewInteractionRegistered:
         ...

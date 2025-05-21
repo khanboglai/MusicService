@@ -1,3 +1,4 @@
+""" Определение слоя репозиториев для слушателя """
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 
@@ -8,10 +9,12 @@ from database.exceptions.real.unique import UniqueException
 
 
 class ListenerRepository(BaseListenerRepo):
+    """ Слой репозиториев для слушателя """
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def get_listener(self, *, listener_id: int) -> Listener:
+        """ Получение данных слушателя по listener_id """
         statement = (
             select(Listener)
             .where(Listener.oid == listener_id)
@@ -23,6 +26,7 @@ class ListenerRepository(BaseListenerRepo):
         return result
     
     async def get_listener_by_user_id(self, *, user_id: int) -> Listener:
+        """ Получение данных слушателя по user_id """
         statement = (
             select(Listener)
             .where(Listener.user_id == user_id)
@@ -34,6 +38,7 @@ class ListenerRepository(BaseListenerRepo):
         return result
     
     async def insert_listener(self, *, listener: Listener) -> Listener:
+        """ Создание нового слушателя """
         try:
             listener = await self.get_listener_by_user_id(user_id=listener.user_id)
             raise UniqueException
@@ -43,6 +48,7 @@ class ListenerRepository(BaseListenerRepo):
             return listener
     
     async def delete_listener(self, *, user_id: int):
+        """ Удаление слушателя по user_id """
         try:
             listener = await self.get_listener_by_user_id(user_id=user_id)
             await self.session.delete(listener)

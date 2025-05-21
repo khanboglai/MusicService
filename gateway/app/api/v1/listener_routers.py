@@ -1,3 +1,4 @@
+""" Ручки клиента слушателя """
 import os
 
 from fastapi import APIRouter, HTTPException

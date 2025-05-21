@@ -1,3 +1,4 @@
+""" Маппинг моделей в таблицы в бд """
 from sqlalchemy import (
     Boolean,
     Column,

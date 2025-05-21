@@ -1,8 +1,10 @@
+""" Определение абстрактного слоя репозиториев для слушателя """
 from abc import ABC, abstractmethod
 from domain.entities.real.listener import Listener
 
 
 class BaseListenerRepo(ABC):
+    """ Абстрактный слой репозиториев слушателя """
     @abstractmethod
     async def get_listener(self, *, listener_id: int) -> Listener:
         ...
