@@ -7,6 +7,6 @@ class NewLikeRegistered(BaseEvent):
     user: int
     track_id: int
 
-    def __init__(self, listener_id: int, track_id: int):
-        self.user = listener_id
+    def __init__(self, user_id: int, track_id: int):
+        self.user = user_id
         self.track_id = track_id

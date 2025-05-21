@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
+import asyncio
 
 from database.models import start_mapping
 from dependencies.main import setup_dependencies
@@ -15,6 +16,7 @@ from database.exceptions.abc.base import (
     DatabaseException,
     DatabaseErrorException
 )
+from grpcc.server import serve
 
 
 @asynccontextmanager
@@ -22,6 +24,8 @@ async def lifespan(_: FastAPI):
     logger.info("Application started!")
     await start_mapping()
     logger.info("Data mapped!")
+    asyncio.create_task(serve())
+    logger.info("GRPC Started")
     yield
     logger.info("Shutting down...")
 
@@ -40,6 +44,7 @@ logger.info("Dependencies set up!")
 async def root():
     return {"message": "Hello world!"}
 
+# GRPC
 @app.post("/listener/add")
 async def create_listener(
         user_id: int, # временно, потом будем получать из куки
@@ -59,13 +64,14 @@ async def create_listener(
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
 
+# GRPC
 @app.get("/listener/get")
 async def read_listener(
-        listener_id: int,
+        user_id: int,
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         if listener:
             return {"id": listener.oid, "user_id": listener.user_id, "first_name": listener.firstname, "last_name": listener.lastname}
     except DatabaseException as e:
@@ -88,14 +94,13 @@ async def delete_listener(
     
 @app.post("/like")
 async def add_del_like(
-        listener_id: int,
+        user_id: int,
         track_id: int,
         like_repository: BaseLikeRepo = Depends(),
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
-        # new_like = NewLikeRegistered(listener_id=listener, track_id=track_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         like = await like_repository.add_or_delete_like(listener=listener, track_id=track_id)
         if like:
             return {"id": like.event_id, "listener": like.user, "track_id": like.track_id}
@@ -106,14 +111,14 @@ async def add_del_like(
     
 @app.post("/interaction")
 async def add_upd_interaction(
-        listener_id: int,
+        user_id: int,
         track_id: int,
         listen_time: int,
         interaction_repository: BaseInteractionRepo = Depends(),
         listener_repository: BaseListenerRepo = Depends()
     ):
     try:
-        listener = await listener_repository.get_listener(listener_id=listener_id)
+        listener = await listener_repository.get_listener_by_user_id(user_id=user_id)
         interaction = await interaction_repository.add_or_update_interaction(
             listener=listener,
             track_id=track_id, 
@@ -125,20 +130,3 @@ async def add_upd_interaction(
     except DatabaseErrorException as e:
         raise HTTPException(status_code=500, detail=e.message)
 
-
-# @app.delete("/like/delete")
-# async def delete_like(
-#         listener_id: int,
-#         track_id: int,
-#         like_repository: BaseLikeRepo = Depends(),
-#         listener_repository: BaseListenerRepo = Depends()
-#     ):
-#     try:
-#         listener = await listener_repository.get_listener(listener_id=listener_id)
-#         await like_repository.delete_like(listener=listener, track_id=track_id)
-#         return {"message": "Deleted successfully"}
-#     except DatabaseException as e:
-#         raise HTTPException(status_code=423, detail=e.message)
-#     except DatabaseErrorException as e:
-#         raise HTTPException(status_code=500, detail=e.message)
-#     # Здесь уже надо удалять ивент из сущности слушателя

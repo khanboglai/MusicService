@@ -11,6 +11,8 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - music_network
     deploy:
       resources:
         limits:
@@ -36,7 +38,7 @@ services:
     tty: true
     stdin_open: true
 
-  web:
+  listener_web:
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -48,6 +50,8 @@ services:
       - postgres
       # - elasticsearch
       # - rabbitmq
+    networks:
+      - music_network
     environment:
       DB_USER: debug
       DB_PASSWORD: pswd
@@ -59,8 +63,12 @@ services:
       # ELASTICSEARCH_HOST: elasticsearch
       # ELASTICSEARCH_PORT: 9200
     volumes:
-      - ./app:/application
+      - ./app:/app
 
 volumes:
   pgdata:
     driver: local
+
+networks:
+  music_network:
+    name: music_network
