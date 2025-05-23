@@ -14,7 +14,12 @@ listener_client = ListenerClient()
 @handle_exceptions
 async def read_listener(user_id: int):
     listener = await listener_client.get_listener(user_id)
-    return {"message": f"{listener}"}
+    return {
+        "listener_id": int(listener.listener_id),
+        "user_id": int(listener.user_id),
+        "first_name": str(listener.first_name),
+        "last_name": str(listener.last_name)
+    }
 
 @router.post('/listener/add')
 @handle_exceptions
@@ -30,19 +35,40 @@ async def add_listener(
             last_name,
             birth_date,
         )
-    return {"message": f"{listener}"}
+    return {
+        "listener_id": int(listener.listener_id),
+        "user_id": int(listener.user_id),
+        "first_name": str(listener.first_name),
+        "last_name": str(listener.last_name)
+    }
 
 @router.delete('/listener/delete')
 @handle_exceptions
 async def erase_listener(user_id: int):
     message = await listener_client.delete_listener(user_id)
-    return {"message": f"{message}"}
+    return {
+        "message": str(message.delete_message)
+    }
 
 @router.post('/like')
 @handle_exceptions
 async def liking(user_id: int, track_id: int):
     like = await listener_client.like(user_id, track_id)
-    return {"message": f"{like}"}
+    if not like.HasField("deleted"):
+        return {
+            "like": {
+                "like_id": int(like.liked.id),
+                "track_id": int(like.liked.track_id),
+                "listener": {
+                    "listener_id": int(like.liked.listener.listener_id),
+                    "user_id": int(like.liked.listener.user_id),
+                    "first_name": str(like.liked.listener.first_name),
+                    "last_name": str(like.liked.listener.last_name),
+                    "birthdate": str(like.liked.listener.birth_date)
+                }
+            }
+        }
+    return {"message": "Like deleted successfully!"}
 
 @router.post('/interaction')
 @handle_exceptions
@@ -57,10 +83,33 @@ async def interacting(
         genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
     ):
     interaction = await listener_client.interaction(user_id, track_id, listen_time, track_name, artist_id, artist_name, genre_id, genre_name)
-    return {"message": f"{interaction}"}
+    return {
+        "track_id": int(interaction.track_id),
+        "listen_time": int(interaction.listen_time),
+        "listener": {
+            "listener_id": int(interaction.listener.listener_id),
+            "user_id": int(interaction.listener.user_id),
+            "first_name": str(interaction.listener.first_name),
+            "last_name": str(interaction.listener.last_name),
+            "birthdate": str(interaction.listener.birth_date)
+        }
+    }
 
 @router.get('/history')
 @handle_exceptions
 async def load_history(user_id: int):
     history = await listener_client.history(user_id)
-    return {"message": f"{history}"}
+    for interaction in history.interactions:
+        print(f"{interaction.track_id} {interaction.last_interaction}")
+    return {
+        "listener": {
+            "listener_id": int(history.listener.listener_id),
+            "user_id": int(history.listener.user_id),
+            "first_name": str(history.listener.first_name),
+            "last_name": str(history.listener.last_name),
+            "birthdate": str(history.listener.birth_date)
+        },
+        "history": [
+            {"track_id": interaction.track_id, "last_interaction": interaction.last_interaction} for interaction in history.interactions
+        ]
+    }
