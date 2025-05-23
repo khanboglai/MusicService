@@ -9,7 +9,7 @@ from app.grpc_clients.listener_pb2 import (
     InteractionRequest,
     HistoryRequest,
 )
-from app.grpc_clients.grpc_client_exception_handler import grpc_client_exception_handler
+from app.grpc_clients.listener_grpc_exception_handler import grpc_listener_client_exception_handler
 
 class ListenerClient:
     """ Клиент слушателя """
@@ -18,14 +18,14 @@ class ListenerClient:
         self.stub = ListenerServiceStub(self.channel)
 
 
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def get_listener(self, user_id: int):
         """ Получение данных слушателя """
         request = GetListenerRequest(user_id=user_id)
         response = await self.stub.GetListener(request)
         return response
     
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def create_listener(
             self,
             user_id: int,
@@ -38,28 +38,28 @@ class ListenerClient:
         response = await self.stub.CreateListener(request)
         return response
     
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def delete_listener(self, user_id: int):
         """ Удаление слушателя """
         request = DeleteListenerRequest(user_id=user_id)
         response = await self.stub.DeleteListener(request)
         return response
     
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def like(self, user_id: int, track_id: int):
         """ Добавление или удаление лайка на трек"""
         request = LikeRequest(user_id=user_id, track_id=track_id)
         response = await self.stub.Like(request)
         return response
     
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def interaction(self, user_id: int, track_id: int, listen_time: int, track_name: str, artist_id: int, artist_name: str, genre_id: int, genre_name: str):
         """ Добавление или обновление взаимодействия с треком """
         request = InteractionRequest(user_id=user_id, track_id=track_id, track_name=track_name, listen_time=listen_time, artist_id=artist_id, artist_name=artist_name, genre_id=genre_id, genre_name=genre_name)
         response = await self.stub.Interaction(request)
         return response
     
-    @grpc_client_exception_handler
+    @grpc_listener_client_exception_handler
     async def history(self, user_id: int):
         """ Получение истории прослушиваний """
         request = HistoryRequest(user_id=user_id)
