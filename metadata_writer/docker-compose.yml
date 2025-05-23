@@ -8,7 +8,9 @@ services:
       POSTGRES_DB: metadata
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5435:5432"
+      - "5437:5432"
+    networks:
+      - music_network
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
     deploy:
@@ -36,14 +38,16 @@ services:
     tty: true
     stdin_open: true
 
-  metadata_service:
+  writer_service:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: writer_service
     restart: always
     ports:
-      - "8005:8005"
+      - "8801:8801"
+    networks:
+      - music_network
     depends_on:
       - metadata_database
     environment:
@@ -58,3 +62,7 @@ services:
 volumes:
   pgdata:
     driver: local
+
+networks:
+  music_network:
+    name: music_network

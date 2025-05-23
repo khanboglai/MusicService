@@ -5,4 +5,3 @@ class AlbumCreate(BaseModel):
     title: str
     owner_id: int
     release_date: date
-

@@ -4,7 +4,8 @@ from fastapi.responses import JSONResponse
 from src.common.database.models import Genre
 from src.common.repository.abstract.album import AlbumRepositoryABC
 from src.common.repository.abstract.track import TrackRepositoryABC
-from src.common.dependencies.repository import get_album_repository, get_track_repository
+from src.common.dependencies.repository.album import get_album_repository
+from src.common.dependencies.repository.track import get_track_repository
 from src.common.models.album import Album
 from src.common.models.track import Track
 from src.common.schemas.album import AlbumCreate
