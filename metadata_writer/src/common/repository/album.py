@@ -18,7 +18,7 @@ class AlbumRepository(AlbumRepositoryABC):
             result = await self.db.execute(select(Album).where((Album.title == album.title) and (Album.owner_id == album.owner_id)))
             same_album = result.scalars().first()
             if same_album is not None:
-                raise OwnerAlbumDublicateException(f"У мользователя ID = {same_album.owner_id} уже есть альбом с названием {same_album.title}")
+                raise OwnerAlbumDublicateException(f"У пользователя с ID = {same_album.owner_id} уже есть альбом с названием {same_album.title}")
             
             self.db.add(album)
             await self.db.commit()

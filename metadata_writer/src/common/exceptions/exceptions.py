@@ -25,4 +25,4 @@ class NoSuchTrackException(DomainException):
 class OwnerAlbumDublicateException(DomainException):
     """ У исполнителя уже есть альбом с таким именем """
     def __init__(self, message: str = "У исполнителя уже существует альбом с таким именем"):
-        super().__init__(message, status_code=406)
+        super().__init__(message, status_code=409)
