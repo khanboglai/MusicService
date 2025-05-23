@@ -22,22 +22,6 @@ async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(ge
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
 
-""" @router.get("/get_by_id", response_model=None)
-async def get_by_id(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
-    try:
-        album = await track_repo.get_track_by_id(track_id)
-        return JSONResponse(album)
-    except DatabaseException as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e))
-    
-@router.get("/get_by_album_id", response_model=None)
-async def get_by_album_id(album_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
-    try:
-        tracks = await track_repo.get_tracks_by_album_id(album_id)
-        return JSONResponse(tracks)
-    except DatabaseException as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e)) """
-
 @router.delete("/delete", response_model=None)
 async def delete(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:

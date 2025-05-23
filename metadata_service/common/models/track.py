@@ -10,6 +10,13 @@ class Track(Entity):
         self._album_id = album_id
         self._explicit = explicit
 
+    def to_json(self) -> dict:
+        return {
+            "title": self.title,
+            "album_id": self.album_id,
+            "explicit": self.explicit
+        }
+
     @property
     def title(self) -> str:
         return self._title

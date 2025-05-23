@@ -41,11 +41,32 @@ services:
   writer_service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./writer/Dockerfile
     container_name: writer_service
     restart: always
     ports:
       - "8801:8801"
+    networks:
+      - music_network
+    depends_on:
+      - metadata_database
+    environment:
+      DB_USER: user
+      DB_PASSWORD: 12345678
+      DB_HOST: metadata_database
+      DB_PORT: 5435
+      DB_NAME: metadata
+    volumes:
+      - .:/src
+    
+  reader_service:
+    build:
+      context: .
+      dockerfile: ./reader/Dockerfile
+    container_name: reader_service
+    restart: always
+    ports:
+      - "8802:8802"
     networks:
       - music_network
     depends_on:
@@ -66,3 +87,4 @@ volumes:
 networks:
   music_network:
     name: music_network
+    external: true

@@ -20,6 +20,14 @@ def grpc_exception_handler(func):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
             return None
+        except OwnerAlbumDublicateException as e:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details(str(e))
+            return None
+        except AlbumTrackDublicateException as e:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details(str(e))
+            return None
         except Exception as e:
             # Обработка всех остальных исключений (если необходимо)
             context.set_code(grpc.StatusCode.INTERNAL)

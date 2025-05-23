@@ -28,19 +28,6 @@ async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(ge
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
 
-""" @router.get("/get_by_id", response_model=None)
-async def get_by_id(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
-    try:
-        album = await album_repo.get_album_by_id(album_id)
-        return JSONResponse(album)
-    except DatabaseException as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e))
-
-@router.get("/get_by_owner_id", response_model=None)
-async def get_by_owner_id(owner_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
-    albums = await album_repo.get_albums_by_owner_id(owner_id)
-    return JSONResponse(albums) """
-
 @router.delete("/delete", response_model=None)
 async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
     try:

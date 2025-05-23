@@ -17,6 +17,10 @@ class TrackRepository(TrackRepositoryABC):
     async def create_track(self, track: TrackCreate) -> Track:
         logger.info(f"Создание трека {track.title}...")
         try:
+            same_track = await self.db.execute(select(Track).where(Track._title == track.title, Track._album_id == track.album_id))
+            if same_track is not None:
+                raise AlbumTrackDublicateException(f"В альбоме ID = {track.album_id} уже есть трек с названием {track.title}")
+            
             genres = []
             if track.genre_names:
                 for name in track.genre_names:
@@ -55,7 +59,7 @@ class TrackRepository(TrackRepositoryABC):
 
     async def get_tracks_by_album_id(self, album_id: int) -> list[Track]:
         logger.info(f"Получение треков из альбома с ID {album_id}.")
-        result = await self.db.execute(select(Track).where(Track.album_id == album_id))
+        result = await self.db.execute(select(Track).where(Track._album_id == album_id))
         tracks = result.scalars().all()
 
         if tracks is None:

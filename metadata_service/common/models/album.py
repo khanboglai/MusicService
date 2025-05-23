@@ -13,6 +13,13 @@ class Album(Entity):
         self._owner_id = owner_id
         self._release_date = release_date
 
+    def to_json(self) -> dict:
+        return {
+            "title": self.title,
+            "owner_id": self.owner_id,
+            "release_date": str(self.release_date),
+        }
+
     @property
     def title(self) -> str:
         return self._title
