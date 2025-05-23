@@ -1,9 +1,15 @@
 from pydantic import BaseModel
+from datetime import date
 
 
-class TrackMetaData(BaseModel):
-    """ Метаданные треков, которые мы можем получить от пользователя """
+class AlbumCreate(BaseModel):
+    title: str
+    owner_id: int
+    release_date: date
+
+class TrackCreate(BaseModel):
     title: str
     album_id: int
-    genre_id: int # у пользователя это должно мапиться: название жанра в id, чтобы его получить
+    explicit: bool
+    genre_names: list[str]
     

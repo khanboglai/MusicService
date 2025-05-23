@@ -1,33 +1,50 @@
-import httpx
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
 
-from src.dependencies.repository import get_artist_repository
-from src.models.artist import Artist
-from src.repositories.domain_repo import ArtistRepositoryABC
-from src.schemas.track_meta_data import TrackMetaData
+from src.schemas.track_meta_data import TrackCreate, AlbumCreate
 from src.domain_exceptions import *
-
+from src.grpc_client.writer_client import WriterClient
 
 router = APIRouter()
+writer_client = WriterClient()
+    
 
-
-@router.post('/upload_track')
-async def upload_track(track: UploadFile = File(...), metadata: TrackMetaData = None):
-    """ Загрузка трека """
-
-    # достать artist_id через user_id
+@router.post("/create_track")
+async def create_track(track: TrackCreate):
     try:
-        data = metadata.model_dump()
+        track_id = await writer_client.create_track(track)
+        return {"message": track_id}
+    except DatabaseException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
 
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url=..., data=data)
+@router.delete("/delete_track")
+async def delete_track(track_id: int):
+    try:
+        id = await writer_client.remove_track(track_id)
+        return {"message": id}
+    except NoSuchTrackException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
 
-        if response.status_code == 200:
-            # тут нужно прописать логику загрузки файла в s3 или вызов этой логики
-            # загружаем только после загрузки метаданных в сервис треков
-            pass
-        else:
-            raise HTTPException(status_code=response.status_code, detail=response.text)
-    except Exception as e:
-        # заменить на кастомный эксепшн
-        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/create_album")
+async def create_album(album: AlbumCreate):
+    try:
+        album_id = await writer_client.create_album(album)
+        return {"message": album_id}
+    except DatabaseException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
+
+@router.delete("/delete_album")
+async def delete_album(album_id: int):
+    try:
+        id = await writer_client.remove_album(album_id)
+        return {"message": id}
+    except NoSuchAlbumException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
+
+@router.delete("/delete_albums_by_owner_id")
+async def delete_albums_by_owner_id(owner_id: int):
+    try:
+        ids = await writer_client.remove_albums_by_owner_id(owner_id)
+        return {"message": ids}
+    except DatabaseException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
