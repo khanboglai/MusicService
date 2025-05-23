@@ -46,8 +46,17 @@ async def liking(user_id: int, track_id: int):
 
 @router.post('/interaction')
 @handle_exceptions
-async def interacting(user_id: int, track_id: int, listen_time: int):
-    interaction = await listener_client.interaction(user_id, track_id, listen_time)
+async def interacting(
+        user_id: int, # временно
+        track_id: int, # это останется здесь (тк на фронте когда мы нажимаем на кнопку трека, то с фронта на бэк идет айдишник)
+        track_name: str, # перенесется в тело функции (запрос к сервису ридера)
+        listen_time: int,
+        artist_id: int, # перенесется в тело функции (запрос к сервису артиста)
+        artist_name: str, # перенесется в тело функции (запрос к сервису артиста)
+        genre_id: int, # перенесется в тело функции (запрос к сервису ридера)
+        genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
+    ):
+    interaction = await listener_client.interaction(user_id, track_id, listen_time, track_name, artist_id, artist_name, genre_id, genre_name)
     return {"message": f"{interaction}"}
 
 @router.get('/history')

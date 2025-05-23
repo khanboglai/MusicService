@@ -99,6 +99,11 @@ class ListenerService:
             listener=listener,
             track_id=int(request.track_id),
             listen_time=int(request.listen_time),
+            track_name=str(request.track_name),
+            artist_id=int(request.artist_id),
+            artist_name=str(request.artist_name),
+            genre_id=int(request.genre_id),
+            genre_name=str(request.genre_name)
         )
         logger.info(f"GRPC: Interaction from listener with listener_id: {interaction.user.oid}, user_id: {interaction.user.user_id} and name {interaction.user.first_name} {interaction.user.last_name} on track with track_id {interaction.track_id} was registered on {interaction.listen_time} seconds was registered!")
         return InteractionResponse(

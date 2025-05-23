@@ -28,7 +28,7 @@ class ListenerClient:
     @grpc_client_exception_handler
     async def create_listener(
             self,
-            user_id: int, # временно, потом будем получать из куки
+            user_id: int,
             first_name: str,
             last_name: str,
             birth_date: str,
@@ -53,9 +53,9 @@ class ListenerClient:
         return response
     
     @grpc_client_exception_handler
-    async def interaction(self, user_id: int, track_id: int, listen_time: int):
+    async def interaction(self, user_id: int, track_id: int, listen_time: int, track_name: str, artist_id: int, artist_name: str, genre_id: int, genre_name: str):
         """ Добавление или обновление взаимодействия с треком """
-        request = InteractionRequest(user_id=user_id, track_id=track_id, listen_time=listen_time)
+        request = InteractionRequest(user_id=user_id, track_id=track_id, track_name=track_name, listen_time=listen_time, artist_id=artist_id, artist_name=artist_name, genre_id=genre_id, genre_name=genre_name)
         response = await self.stub.Interaction(request)
         return response
     
