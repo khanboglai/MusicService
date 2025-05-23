@@ -76,7 +76,12 @@ message LikeResponse {
 message InteractionRequest {
     int32 user_id = 1;
     int32 track_id = 2;
-    int32 listen_time = 3;
+    string track_name = 3;
+    int32 listen_time = 4;
+    int32 artist_id = 5;
+    string artist_name = 6;
+    int32 genre_id = 7;
+    string genre_name = 8;
 }
 
 message InteractionResponse {

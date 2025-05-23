@@ -19,6 +19,22 @@ def handle_exceptions(func):
             raise HTTPException(status_code=500, detail=str(e))
         except InvalidMimeType as e:
             raise HTTPException(status_code=e.status_code, detail=str(e))
+        except AgeTooSmallException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except AgeTooBigException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except AgeIncorrectFormat as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except NameTooLongException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except EmptyNameException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except NotRealNameException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except NotExistException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except UniqueException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
         except Exception as e:
             # Для неопознанных ошибок
             raise HTTPException(status_code=500, detail="Internal Server Error")
