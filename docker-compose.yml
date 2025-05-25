@@ -109,7 +109,7 @@ services:
         hard: 262144
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/custom.xml
+      - clickhouse-config.xml:/etc/clickhouse-server/config.d/custom.xml
     networks:
       - music_network
 
