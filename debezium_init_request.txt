@@ -9,18 +9,18 @@ tar -xzf debezium-connector-postgres-2.3.3.Final-plugin.tar.gz
 curl -i -X POST -H "Accept:application/json" \
   -H "Content-Type:application/json" http://localhost:8083/connectors/ \
   -d '{
-    "name": "inventory-connector",
+    "name": "AnalyticsInteractions-connector",
     "config": {
       "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-      "database.hostname": "postgres",
+      "database.hostname": "listener_postgres_db",
       "database.port": "5432",
-      "database.user": "debezium",
-      "database.password": "dbz_password",
-      "database.dbname": "myapp",
-      "database.server.name": "inventory-server",
-      "topic.prefix": "debezium_inventory",
+      "database.user": "debug",
+      "database.password": "pswd",
+      "database.dbname": "listener",
+      "database.server.name": "AnalyticsInteractions-server",
+      "topic.prefix": "debezium_AnalyticsInteractions",
       "schema.include.list": "public",
-      "table.include.list": "public.inventory",
+      "table.include.list": "public.AnalyticsInteractions",
       "snapshot.mode": "initial",
       "plugin.name": "pgoutput",
       "publication.name": "dbz_publication",

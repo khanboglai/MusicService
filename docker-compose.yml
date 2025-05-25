@@ -1,29 +1,29 @@
 # общие сервисы
 services:
-  storage:
-    image: minio/minio:latest
-    ports:
-      - "9000:9000"  # Порт для доступа к MinIO
-      - "9001:9001"  # Порт для веб-консоли
-    environment:
-      MINIO_ACCESS_KEY: storage
-      MINIO_SECRET_KEY: qwerty1234
-    networks:
-      - music_network
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data  # Хранение данных MinIO
-
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - music_network
+#  storage:
+#    image: minio/minio:latest
+#    ports:
+#      - "9000:9000"  # Порт для доступа к MinIO
+#      - "9001:9001"  # Порт для веб-консоли
+#    environment:
+#      MINIO_ACCESS_KEY: storage
+#      MINIO_SECRET_KEY: qwerty1234
+#    networks:
+#      - music_network
+#    command: server /data --console-address ":9001"
+#    volumes:
+#      - minio_data:/data  # Хранение данных MinIO
+#
+#  redis:
+#    image: redis:latest
+#    container_name: redis
+#    restart: unless-stopped
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis_data:/data
+#    networks:
+#      - music_network
 
 
   zookeeper:
@@ -72,30 +72,29 @@ services:
       - ./plugins:/kafka/connect
     depends_on:
       - kafka
-      - postgres
     networks:
       - music_network
 
-  postgres:
-    image: postgres:15
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: debezium
-      POSTGRES_PASSWORD: dbz_password
-      POSTGRES_DB: myapp
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    command:
-      - "postgres"
-      - "-c"
-      - "wal_level=logical"
-      - "-c"
-      - "max_wal_senders=10"
-      - "-c"
-      - "max_replication_slots=10"
-    networks:
-      - music_network
+#  postgres:
+#    image: postgres:15
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: debezium
+#      POSTGRES_PASSWORD: dbz_password
+#      POSTGRES_DB: myapp
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    command:
+#      - "postgres"
+#      - "-c"
+#      - "wal_level=logical"
+#      - "-c"
+#      - "max_wal_senders=10"
+#      - "-c"
+#      - "max_replication_slots=10"
+#    networks:
+#      - music_network
 
   clickhouse-server:
     image: yandex/clickhouse-server:latest
@@ -109,7 +108,24 @@ services:
         hard: 262144
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - clickhouse-config.xml:/etc/clickhouse-server/config.d/custom.xml
+      - ./clickhouse-config:/etc/clickhouse-server/config.d/custom.xml
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=secret
+    networks:
+      - music_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana_plugins:/var/lib/grafana/plugins
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - clickhouse-server
+    restart: unless-stopped
     networks:
       - music_network
 
@@ -118,6 +134,7 @@ volumes:
   redis_data:
   clickhouse_data:
   postgres_data:
+  grafana_data:
 
 networks:
   music_network:
