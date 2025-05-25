@@ -1,0 +1,33 @@
+mkdir -p plugins/debezium
+cd plugins/debezium
+wget https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.3.Final/debezium-connector-postgres-2.3.3.Final-plugin.tar.gz
+tar -xzf debezium-connector-postgres-2.3.3.Final-plugin.tar.gz
+
+
+
+
+curl -i -X POST -H "Accept:application/json" \
+  -H "Content-Type:application/json" http://localhost:8083/connectors/ \
+  -d '{
+    "name": "inventory-connector",
+    "config": {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "database.hostname": "postgres",
+      "database.port": "5432",
+      "database.user": "debezium",
+      "database.password": "dbz_password",
+      "database.dbname": "myapp",
+      "database.server.name": "inventory-server",
+      "topic.prefix": "debezium_inventory",
+      "schema.include.list": "public",
+      "table.include.list": "public.inventory",
+      "snapshot.mode": "initial",
+      "plugin.name": "pgoutput",
+      "publication.name": "dbz_publication",
+      "slot.name": "dbz_slot",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "false",
+      "value.converter.schemas.enable": "false"
+    }
+}'
