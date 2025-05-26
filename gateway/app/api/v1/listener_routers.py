@@ -3,11 +3,13 @@ import os
 
 from fastapi import APIRouter, HTTPException
 from app.grpc_clients.listener_client import ListenerClient
+from app.grpc_clients.reader_client import ReaderClient
 from app.api.handel_exceptions import handle_exceptions, InvalidMimeType
 
 
 router = APIRouter()
 listener_client = ListenerClient()
+reader_client = ReaderClient()
 
 
 @router.get('/listener/get')
@@ -75,14 +77,17 @@ async def liking(user_id: int, track_id: int):
 async def interacting(
         user_id: int, # временно
         track_id: int, # это останется здесь (тк на фронте когда мы нажимаем на кнопку трека, то с фронта на бэк идет айдишник)
-        track_name: str, # перенесется в тело функции (запрос к сервису ридера)
+        # track_name: str, # перенесется в тело функции (запрос к сервису ридера)
         listen_time: int,
-        artist_id: int, # перенесется в тело функции (запрос к сервису артиста)
+        # artist_id: int, # перенесется в тело функции (запрос к сервису ридера)
         artist_name: str, # перенесется в тело функции (запрос к сервису артиста)
-        genre_id: int, # перенесется в тело функции (запрос к сервису ридера)
-        genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
+        # genre_id: int, # перенесется в тело функции (запрос к сервису ридера)
+        # genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
     ):
-    interaction = await listener_client.interaction(user_id, track_id, listen_time, track_name, artist_id, artist_name, genre_id, genre_name)
+    track_info = await reader_client.get_track(track_id)
+    album_info = await reader_client.get_album(int(track_info.album_id))
+    genre_info = await reader_client.get_track_genre(track_id)
+    interaction = await listener_client.interaction(user_id, track_id, listen_time, str(track_info.title), int(album_info.artist_id), artist_name, int(genre_info.genre_id), str(genre_info.genre_name))
     return {
         "track_id": int(interaction.track_id),
         "listen_time": int(interaction.listen_time),
