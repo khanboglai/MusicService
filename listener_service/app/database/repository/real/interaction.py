@@ -55,11 +55,11 @@ class InteractionRepository(BaseInteractionRepo):
             interaction = await self.get_interaction_by_ids(listener=listener, track_id=track_id)
             interaction.last_interaction = current_time
             interaction.count_interaction += 1
-            interaction.listen_time = listen_time
+            interaction.listen_time += listen_time
             analytics_interaction = await self.get_analytics_interaction_by_ids(listener=listener, track_id=track_id)
             analytics_interaction.last_interaction = current_time
             analytics_interaction.count_interaction += 1
-            analytics_interaction.listen_time = listen_time
+            analytics_interaction.listen_time += listen_time
             await self.session.commit()
             await self.session.refresh(interaction, ["user"])
             await self.session.refresh(analytics_interaction, ["user"])
