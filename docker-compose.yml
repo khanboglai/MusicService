@@ -69,32 +69,11 @@ services:
       # Для Debezium
       PLUGIN_PATH: "/kafka/connect"
     volumes:
-      - ./plugins:/kafka/connect
+      - ./analytic_data/plugins:/kafka/connect
     depends_on:
       - kafka
     networks:
       - music_network
-
-#  postgres:
-#    image: postgres:15
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      POSTGRES_USER: debezium
-#      POSTGRES_PASSWORD: dbz_password
-#      POSTGRES_DB: myapp
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data
-#    command:
-#      - "postgres"
-#      - "-c"
-#      - "wal_level=logical"
-#      - "-c"
-#      - "max_wal_senders=10"
-#      - "-c"
-#      - "max_replication_slots=10"
-#    networks:
-#      - music_network
 
   clickhouse-server:
     image: yandex/clickhouse-server:latest
@@ -108,7 +87,7 @@ services:
         hard: 262144
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - ./clickhouse-config:/etc/clickhouse-server/config.d/custom.xml
+#      - ./clickhouse-config:/etc/clickhouse-server/config.d/custom.xml
     environment:
       - CLICKHOUSE_USER=admin
       - CLICKHOUSE_PASSWORD=secret
@@ -120,8 +99,11 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=qwerty
     volumes:
-      - ./grafana_plugins:/var/lib/grafana/plugins
+      - ./analytic_data/plugins:/var/lib/grafana/plugins
       - grafana_data:/var/lib/grafana
     depends_on:
       - clickhouse-server

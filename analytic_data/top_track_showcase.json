@@ -1,0 +1,146 @@
+{
+  "id": 1,
+  "type": "barchart",
+  "title": "Top 3 tracks",
+  "gridPos": {
+    "x": 0,
+    "y": 8,
+    "h": 8,
+    "w": 12
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "lineWidth": 1,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "axisPlacement": "auto",
+        "axisLabel": "Interactions",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "unit": "short"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "interactions"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "blue",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "__systemRef": "hideSeriesFrom",
+        "matcher": {
+          "id": "byNames",
+          "options": {
+            "mode": "exclude",
+            "names": [
+              "interactions"
+            ],
+            "prefix": "All except:",
+            "readOnly": true
+          }
+        },
+        "properties": [
+          {
+            "id": "custom.hideFrom",
+            "value": {
+              "viz": true,
+              "legend": false,
+              "tooltip": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pluginVersion": "12.0.1",
+  "targets": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "eemzgp75t1kowf"
+      },
+      "editorType": "sql",
+      "format": 1,
+      "meta": {
+        "builderOptions": {
+          "columns": [],
+          "database": "",
+          "limit": 1000,
+          "mode": "list",
+          "queryType": "table",
+          "table": ""
+        }
+      },
+      "pluginVersion": "4.9.0",
+      "queryType": "table",
+      "rawSql": "SELECT\n    track_name,\n    sum(total_interactions) AS interactions\nFROM top_tracks\nGROUP BY track_name\nORDER BY interactions DESC\nLIMIT 3;",
+      "refId": "A"
+    }
+  ],
+  "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "eemzgp75t1kowf"
+  },
+  "options": {
+    "orientation": "auto",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0,
+    "showValue": "never",
+    "stacking": "none",
+    "groupWidth": 0.7,
+    "barWidth": 0.97,
+    "barRadius": 0,
+    "fullHighlight": false,
+    "tooltip": {
+      "mode": "single",
+      "sort": "none",
+      "hideZeros": false
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "right",
+      "calcs": []
+    }
+  }
+}
