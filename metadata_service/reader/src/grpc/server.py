@@ -17,6 +17,7 @@ from src.grpc.reader_pb2 import (
     GetTrackGenreResponse,
 )
 from src.common.core.logging import logger
+from src.grpc.exceptions.handler import grpc_exception_handler
 
 
 class ReaderService:
@@ -26,6 +27,7 @@ class ReaderService:
         self.album_repo = album_repo
 
     
+    @grpc_exception_handler
     async def GetTrack(self, request, context):
         """ Ручка для получения информации о треке """
         track_id = int(request.track_id)
@@ -33,6 +35,7 @@ class ReaderService:
         logger.info(f"GRPC: Getting track data for track with track_id {track_id}")
         return GetTrackResponse(track_id=track.oid, title=track.title, album_id=track.album_id, explicit=track.explicit)
     
+    @grpc_exception_handler
     async def GetTracksInAlbum(self, request, context):
         """ Ручка для получения треков в альбоме """
         album_id = int(request.album_id)
@@ -40,6 +43,7 @@ class ReaderService:
         logger.info(f"GRPC: Getting tracks in album with album_id {album_id}")
         return GetTracksInAlbumResponse(tracks=[GetTrackResponse(track_id=track.oid, title=track.title, album_id=track.album_id, explicit=track.explicit) for track in tracks])
     
+    @grpc_exception_handler
     async def GetAlbum(self, request, context):
         """ Ручка для получения информации об альбоме """
         album_id = int(request.album_id)
@@ -47,6 +51,7 @@ class ReaderService:
         logger.info(f"GRPC: Getting album data for album with album_id {album_id}")
         return GetAlbumResponse(album_id=album.oid, title=album.title, artist_id=album.owner_id, release_date=str(album.release_date))
     
+    @grpc_exception_handler
     async def GetAlbumInArtist(self, request, context):
         """ Ручка для получения альбомов исполнителя """
         artist_id = int(request.artist_id)
@@ -54,6 +59,7 @@ class ReaderService:
         logger.info(f"GRPC: Getting albums in artist with artist_id {artist_id}")
         return GetAlbumInArtistResponse(albums=[GetAlbumResponse(album_id=album.oid, title=album.title, artist_id=album.owner_id, release_date=str(album.release_date)) for album in albums])
     
+    @grpc_exception_handler
     async def GetTrackGenre(self, request, context):
         """ Ручка для получения жанра трека """
         track_id = int(request.track_id)
