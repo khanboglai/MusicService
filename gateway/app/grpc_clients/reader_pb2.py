@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creader.proto\x12\x06reader\"#\n\x0fGetTrackRequest\x12\x10\n\x08track_id\x18\x01 \x01(\x05\"W\n\x10GetTrackResponse\x12\x10\n\x08track_id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x10\n\x08\x61lbum_id\x18\x03 \x01(\x05\x12\x10\n\x08\x65xplicit\x18\x04 \x01(\x08\"+\n\x17GetTracksInAlbumRequest\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\"D\n\x18GetTracksInAlbumResponse\x12(\n\x06tracks\x18\x01 \x03(\x0b\x32\x18.reader.GetTrackResponse\"#\n\x0fGetAlbumRequest\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\"\\\n\x10GetAlbumResponse\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x11\n\tartist_id\x18\x03 \x01(\x05\x12\x14\n\x0crelease_date\x18\x04 \x01(\t\",\n\x17GetAlbumInArtistRequest\x12\x11\n\tartist_id\x18\x01 \x01(\x05\"D\n\x18GetAlbumInArtistResponse\x12(\n\x06\x61lbums\x18\x01 \x03(\x0b\x32\x18.reader.GetAlbumResponse\"(\n\x14GetTrackGenreRequest\x12\x10\n\x08track_id\x18\x01 \x01(\x05\"=\n\x15GetTrackGenreResponse\x12\x10\n\x08genre_id\x18\x01 \x01(\x05\x12\x12\n\ngenre_name\x18\x02 \x01(\t2\x89\x03\n\rReaderService\x12=\n\x08GetTrack\x12\x17.reader.GetTrackRequest\x1a\x18.reader.GetTrackResponse\x12U\n\x10GetTracksInAlbum\x12\x1f.reader.GetTracksInAlbumRequest\x1a .reader.GetTracksInAlbumResponse\x12=\n\x08GetAlbum\x12\x17.reader.GetAlbumRequest\x1a\x18.reader.GetAlbumResponse\x12U\n\x10GetAlbumInArtist\x12\x1f.reader.GetAlbumInArtistRequest\x1a .reader.GetAlbumInArtistResponse\x12L\n\rGetTrackGenre\x12\x1c.reader.GetTrackGenreRequest\x1a\x1d.reader.GetTrackGenreResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0creader.proto\x12\x06reader\"#\n\x0fGetTrackRequest\x12\x10\n\x08track_id\x18\x01 \x01(\x05\"W\n\x10GetTrackResponse\x12\x10\n\x08track_id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x10\n\x08\x61lbum_id\x18\x03 \x01(\x05\x12\x10\n\x08\x65xplicit\x18\x04 \x01(\x08\"+\n\x17GetTracksInAlbumRequest\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\"D\n\x18GetTracksInAlbumResponse\x12(\n\x06tracks\x18\x01 \x03(\x0b\x32\x18.reader.GetTrackResponse\"#\n\x0fGetAlbumRequest\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\"\\\n\x10GetAlbumResponse\x12\x10\n\x08\x61lbum_id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x11\n\tartist_id\x18\x03 \x01(\x05\x12\x14\n\x0crelease_date\x18\x04 \x01(\t\",\n\x17GetAlbumInArtistRequest\x12\x11\n\tartist_id\x18\x01 \x01(\x05\"D\n\x18GetAlbumInArtistResponse\x12(\n\x06\x61lbums\x18\x01 \x03(\x0b\x32\x18.reader.GetAlbumResponse\"(\n\x14GetTrackGenreRequest\x12\x10\n\x08track_id\x18\x01 \x01(\x05\"=\n\x15GetTrackGenreResponse\x12\x10\n\x08genre_id\x18\x01 \x01(\x05\x12\x12\n\ngenre_name\x18\x02 \x01(\t\"\x15\n\x13GetAllAlbumsRequest\"@\n\x14GetAllAlbumsResponse\x12(\n\x06\x61lbums\x18\x01 \x03(\x0b\x32\x18.reader.GetAlbumResponse2\xd4\x03\n\rReaderService\x12=\n\x08GetTrack\x12\x17.reader.GetTrackRequest\x1a\x18.reader.GetTrackResponse\x12U\n\x10GetTracksInAlbum\x12\x1f.reader.GetTracksInAlbumRequest\x1a .reader.GetTracksInAlbumResponse\x12=\n\x08GetAlbum\x12\x17.reader.GetAlbumRequest\x1a\x18.reader.GetAlbumResponse\x12U\n\x10GetAlbumInArtist\x12\x1f.reader.GetAlbumInArtistRequest\x1a .reader.GetAlbumInArtistResponse\x12L\n\rGetTrackGenre\x12\x1c.reader.GetTrackGenreRequest\x1a\x1d.reader.GetTrackGenreResponse\x12I\n\x0cGetAllAlbums\x12\x1b.reader.GetAllAlbumsRequest\x1a\x1c.reader.GetAllAlbumsResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -51,6 +51,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETTRACKGENREREQUEST']._serialized_end=552
   _globals['_GETTRACKGENRERESPONSE']._serialized_start=554
   _globals['_GETTRACKGENRERESPONSE']._serialized_end=615
-  _globals['_READERSERVICE']._serialized_start=618
-  _globals['_READERSERVICE']._serialized_end=1011
+  _globals['_GETALLALBUMSREQUEST']._serialized_start=617
+  _globals['_GETALLALBUMSREQUEST']._serialized_end=638
+  _globals['_GETALLALBUMSRESPONSE']._serialized_start=640
+  _globals['_GETALLALBUMSRESPONSE']._serialized_end=704
+  _globals['_READERSERVICE']._serialized_start=707
+  _globals['_READERSERVICE']._serialized_end=1175
 # @@protoc_insertion_point(module_scope)

@@ -8,8 +8,10 @@ from app.grpc_clients.reader_pb2 import (
     GetAlbumRequest,
     GetAlbumInArtistRequest,
     GetTrackGenreRequest,
+    GetAllAlbumsRequest,
 )
 from app.grpc_clients.reader_grpc_exception_handler import grpc_reader_client_exception_handler
+from app.core.logging import logger
 
 
 class ReaderClient:
@@ -52,5 +54,12 @@ class ReaderClient:
         """ Получение жанра трека """
         request = GetTrackGenreRequest(track_id=track_id)
         response = await self.stub.GetTrackGenre(request)
+        return response
+    
+    @grpc_reader_client_exception_handler
+    async def get_all_albums(self):
+        """ Получение всех альбомов """
+        request = GetAllAlbumsRequest()
+        response = await self.stub.GetAllAlbums(request)
         return response
     

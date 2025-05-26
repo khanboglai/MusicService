@@ -52,6 +52,63 @@ async def erase_listener(user_id: int):
         "message": str(message.delete_message)
     }
 
+@router.get('/albums')
+@handle_exceptions
+async def get_all_albums():
+    albums = await reader_client.get_all_albums()
+    return {
+        "albums": [
+            {
+                "album_id": int(album.album_id),
+                "title": str(album.title),
+                "artist_id": int(album.artist_id),
+                "release_date": str(album.release_date)
+            }
+            for album in albums.albums
+        ]  
+    }
+
+@router.get('/album/{album_id}')
+@handle_exceptions
+async def get_tracks_in_album(album_id: int):
+    tracks = await reader_client.get_tracks_in_album(album_id)
+    return {
+        "tracks": [
+            {
+                "track_id": track.track_id,
+                "title": track.title,
+                "album_id": track.album_id,
+            }
+            for track in tracks.tracks
+        ]
+    }
+
+@router.get('/artist/{artist_id}')
+@handle_exceptions
+async def get_albums_in_artist(artist_id: int):
+    albums = await reader_client.get_albums_in_artist(artist_id)
+    return {
+        "albums": [
+            {
+                "album_id": int(album.album_id),
+                "title": str(album.title),
+                "artist_id": int(album.artist_id), # возможно надо будет достать еще и имя артиста
+                "release_date": str(album.release_date)
+            }
+            for album in albums.albums
+        ]     
+    }
+
+@router.get('/tracks/{track_id}')
+@handle_exceptions
+async def get_track_info(track_id: int):
+    track = await reader_client.get_track(track_id)
+    return {
+        "track_id": track.track_id,
+        "title": track.title,
+        "album_id": track.album_id,
+    }
+
 @router.post('/like')
 @handle_exceptions
 async def liking(user_id: int, track_id: int):
@@ -104,8 +161,10 @@ async def interacting(
 @handle_exceptions
 async def load_history(user_id: int):
     history = await listener_client.history(user_id)
+    tracks_in_history = []
     for interaction in history.interactions:
-        print(f"{interaction.track_id} {interaction.last_interaction}")
+        track_info = await reader_client.get_track(interaction.track_id)
+        tracks_in_history.append({"track_id": interaction.track_id, "title": track_info.title, "last_interaction": interaction.last_interaction})
     return {
         "listener": {
             "listener_id": int(history.listener.listener_id),
@@ -114,7 +173,5 @@ async def load_history(user_id: int):
             "last_name": str(history.listener.last_name),
             "birthdate": str(history.listener.birth_date)
         },
-        "history": [
-            {"track_id": interaction.track_id, "last_interaction": interaction.last_interaction} for interaction in history.interactions
-        ]
+        "history": tracks_in_history
     }

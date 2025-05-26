@@ -15,6 +15,7 @@ from src.grpc.reader_pb2 import (
     GetAlbumResponse,
     GetAlbumInArtistResponse,
     GetTrackGenreResponse,
+    GetAllAlbumsResponse,
 )
 from src.common.core.logging import logger
 from src.grpc.exceptions.handler import grpc_exception_handler
@@ -66,6 +67,13 @@ class ReaderService:
         genre = await self.track_repo.get_track_genre(track_id=track_id)
         logger.info(f"GRPC: Getting genre of track with track_id {track_id}")
         return GetTrackGenreResponse(genre_id=genre[0], genre_name=genre[1])
+    
+    @grpc_exception_handler
+    async def GetAllAlbums(self, request, context):
+        """ Ручка для получения всех альбомов """
+        albums = await self.album_repo.get_all_albums()
+        logger.info(f"GRPC: Getting all albums")
+        return GetAllAlbumsResponse(albums=[GetAlbumResponse(album_id=album.oid, title=album.title, artist_id=album.owner_id, release_date=str(album.release_date)) for album in albums])
     
 
 async def serve():

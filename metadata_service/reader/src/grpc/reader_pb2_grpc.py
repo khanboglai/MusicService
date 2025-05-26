@@ -59,6 +59,11 @@ class ReaderServiceStub(object):
                 request_serializer=reader__pb2.GetTrackGenreRequest.SerializeToString,
                 response_deserializer=reader__pb2.GetTrackGenreResponse.FromString,
                 _registered_method=True)
+        self.GetAllAlbums = channel.unary_unary(
+                '/reader.ReaderService/GetAllAlbums',
+                request_serializer=reader__pb2.GetAllAlbumsRequest.SerializeToString,
+                response_deserializer=reader__pb2.GetAllAlbumsResponse.FromString,
+                _registered_method=True)
 
 
 class ReaderServiceServicer(object):
@@ -94,6 +99,12 @@ class ReaderServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllAlbums(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ReaderServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -121,6 +132,11 @@ def add_ReaderServiceServicer_to_server(servicer, server):
                     servicer.GetTrackGenre,
                     request_deserializer=reader__pb2.GetTrackGenreRequest.FromString,
                     response_serializer=reader__pb2.GetTrackGenreResponse.SerializeToString,
+            ),
+            'GetAllAlbums': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllAlbums,
+                    request_deserializer=reader__pb2.GetAllAlbumsRequest.FromString,
+                    response_serializer=reader__pb2.GetAllAlbumsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -258,6 +274,33 @@ class ReaderService(object):
             '/reader.ReaderService/GetTrackGenre',
             reader__pb2.GetTrackGenreRequest.SerializeToString,
             reader__pb2.GetTrackGenreResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllAlbums(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/reader.ReaderService/GetAllAlbums',
+            reader__pb2.GetAllAlbumsRequest.SerializeToString,
+            reader__pb2.GetAllAlbumsResponse.FromString,
             options,
             channel_credentials,
             insecure,

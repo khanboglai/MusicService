@@ -8,6 +8,7 @@ service ReaderService {
     rpc GetAlbum (GetAlbumRequest) returns (GetAlbumResponse);
     rpc GetAlbumInArtist (GetAlbumInArtistRequest) returns (GetAlbumInArtistResponse);
     rpc GetTrackGenre (GetTrackGenreRequest) returns (GetTrackGenreResponse);
+    rpc GetAllAlbums (GetAllAlbumsRequest) returns (GetAllAlbumsResponse);
 }
 
 message GetTrackRequest {
@@ -55,4 +56,12 @@ message GetTrackGenreRequest {
 message GetTrackGenreResponse {
     int32 genre_id = 1;
     string genre_name = 2;
+}
+
+message GetAllAlbumsRequest {
+    
+}
+
+message GetAllAlbumsResponse {
+    repeated GetAlbumResponse albums = 1;
 }
