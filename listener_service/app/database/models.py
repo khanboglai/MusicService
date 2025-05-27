@@ -47,7 +47,7 @@ interaction_table = Table(
     Column("user_id", BigInteger, ForeignKey("User.user_id"), nullable=False),
     Column("track_id", BigInteger, nullable=False),
     Column("last_interaction", DateTime),
-    Column("count_interaction", BigInteger),
+    # Column("count_interaction", BigInteger),
     Column("listen_time", BigInteger)
 )
 
@@ -59,7 +59,7 @@ analytics_interaction_table = Table(
     Column("track_id", BigInteger, nullable=False),
     Column("track_name", Text),
     Column("last_interaction", DateTime),
-    Column("count_interaction", BigInteger),
+    # Column("count_interaction", BigInteger),
     Column("listen_time", BigInteger),
     Column("artist_id", BigInteger, nullable=False),
     Column("artist_name", Text),
@@ -107,7 +107,7 @@ async def start_mapping():
             "user": relationship(Listener, back_populates="interactions"),
             "track_id": column_property(interaction_table.c.track_id),
             "last_interaction": column_property(interaction_table.c.last_interaction),
-            "count_interaction": column_property(interaction_table.c.count_interaction),
+            # "count_interaction": column_property(interaction_table.c.count_interaction),
             "listen_time": column_property(interaction_table.c.listen_time),
         }
     )
@@ -121,7 +121,7 @@ async def start_mapping():
             "track_id": column_property(analytics_interaction_table.c.track_id),
             "track_name": column_property(analytics_interaction_table.c.track_name),
             "last_interaction": column_property(analytics_interaction_table.c.last_interaction),
-            "count_interaction": column_property(analytics_interaction_table.c.count_interaction),
+            # "count_interaction": column_property(analytics_interaction_table.c.count_interaction),
             "listen_time": column_property(analytics_interaction_table.c.listen_time),
             "artist_id": column_property(analytics_interaction_table.c.artist_id),
             "artist_name": column_property(analytics_interaction_table.c.artist_name),
