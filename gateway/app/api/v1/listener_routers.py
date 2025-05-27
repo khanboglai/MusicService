@@ -175,3 +175,72 @@ async def load_history(user_id: int):
         },
         "history": tracks_in_history
     }
+
+@router.post('/playlist/create')
+@handle_exceptions
+async def create_playlist(user_id: int, title: str):
+    playlist = await listener_client.create_playlist(user_id, title)
+    return {
+        "playlist_id": int(playlist.playlist_id),
+        "title": str(playlist.title),
+    }
+
+@router.delete('/playlists/delete')
+@handle_exceptions
+async def delete_playlist(user_id: int, playlist_id: int):
+    message = await listener_client.delete_playlist(user_id, playlist_id)
+    return {
+        "message": str(message.delete_message)
+    }
+
+@router.get('/playlists')
+@handle_exceptions
+async def get_all_playlists(user_id: int):
+    playlists = await listener_client.get_all_playlists(user_id)
+    return {
+        "listener": {
+        "listener_id": int(playlists.listener.listener_id),
+        "user_id": int(playlists.listener.user_id),
+        "first_name": str(playlists.listener.first_name),
+        "last_name": str(playlists.listener.last_name),
+        "birthdate": str(playlists.listener.birth_date)
+        },
+        "playlists": [
+            {
+                "playlist_id": int(playlist.playlist_id),
+                "title": str(playlist.title),
+            }
+            for playlist in playlists.playlists
+        ]
+    }
+
+@router.post('/playlists/{playlist_id}/add_track')
+@handle_exceptions
+async def add_new_track_in_playlist(user_id: int, playlist_id: int, track_id: int):
+    track = await listener_client.add_new_track_in_playlist(user_id, playlist_id, track_id)
+    track_info = await reader_client.get_track(track_id)
+    return {
+        "playlist_id": int(track.playlist_id),
+        "track_id": int(track_info.track_id),
+        "track_title": str(track_info.title),
+    }
+
+@router.delete('/playlists/{playlist_id}/delete_track')
+@handle_exceptions
+async def delete_track_from_playlist(user_id: int, playlist_id: int, track_id: int):
+    message = await listener_client.delete_track_from_playlist(user_id, playlist_id, track_id)
+    return {
+        "message": str(message.delete_message),
+    }
+
+@router.get('/playlists/{playlist_id}/tracks')
+@handle_exceptions
+async def get_all_tracks_in_playlist(user_id: int, playlist_id: int):
+    tracks = await listener_client.get_all_tracks_in_playlist(user_id, playlist_id)
+    tracks_in_playlist = []
+    for track in tracks.tracks:
+        track_info = await reader_client.get_track(track.track_id)
+        tracks_in_playlist.append({"track_id": int(track.track_id), "track_title": str(track_info.title)})
+    return {
+        "playlist": tracks_in_playlist,
+    }

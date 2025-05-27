@@ -64,6 +64,36 @@ class ListenerServiceStub(object):
                 request_serializer=listener__pb2.HistoryRequest.SerializeToString,
                 response_deserializer=listener__pb2.HistoryResponse.FromString,
                 _registered_method=True)
+        self.CreatePlaylist = channel.unary_unary(
+                '/listener.ListenerService/CreatePlaylist',
+                request_serializer=listener__pb2.CreatePlaylistRequest.SerializeToString,
+                response_deserializer=listener__pb2.PlaylistResponse.FromString,
+                _registered_method=True)
+        self.DeletePlaylist = channel.unary_unary(
+                '/listener.ListenerService/DeletePlaylist',
+                request_serializer=listener__pb2.DeletePlaylistRequest.SerializeToString,
+                response_deserializer=listener__pb2.DeletePlaylistResponse.FromString,
+                _registered_method=True)
+        self.GetAllPlaylists = channel.unary_unary(
+                '/listener.ListenerService/GetAllPlaylists',
+                request_serializer=listener__pb2.GetAllPlaylistsRequest.SerializeToString,
+                response_deserializer=listener__pb2.GetAllPlaylistsResponse.FromString,
+                _registered_method=True)
+        self.AddNewTrackInPlaylist = channel.unary_unary(
+                '/listener.ListenerService/AddNewTrackInPlaylist',
+                request_serializer=listener__pb2.AddNewTrackInPlaylistRequest.SerializeToString,
+                response_deserializer=listener__pb2.TrackInPlaylistResponse.FromString,
+                _registered_method=True)
+        self.DeleteTrackFromPlaylist = channel.unary_unary(
+                '/listener.ListenerService/DeleteTrackFromPlaylist',
+                request_serializer=listener__pb2.DeleteTrackFromPlaylistRequest.SerializeToString,
+                response_deserializer=listener__pb2.DeleteTrackFromPlaylistResponse.FromString,
+                _registered_method=True)
+        self.GetAllTracksInPlaylist = channel.unary_unary(
+                '/listener.ListenerService/GetAllTracksInPlaylist',
+                request_serializer=listener__pb2.GetAllTracksInPlaylistRequest.SerializeToString,
+                response_deserializer=listener__pb2.GetAllTracksInPlaylistResponse.FromString,
+                _registered_method=True)
 
 
 class ListenerServiceServicer(object):
@@ -105,6 +135,42 @@ class ListenerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CreatePlaylist(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeletePlaylist(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllPlaylists(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AddNewTrackInPlaylist(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteTrackFromPlaylist(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllTracksInPlaylist(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ListenerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -137,6 +203,36 @@ def add_ListenerServiceServicer_to_server(servicer, server):
                     servicer.History,
                     request_deserializer=listener__pb2.HistoryRequest.FromString,
                     response_serializer=listener__pb2.HistoryResponse.SerializeToString,
+            ),
+            'CreatePlaylist': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreatePlaylist,
+                    request_deserializer=listener__pb2.CreatePlaylistRequest.FromString,
+                    response_serializer=listener__pb2.PlaylistResponse.SerializeToString,
+            ),
+            'DeletePlaylist': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeletePlaylist,
+                    request_deserializer=listener__pb2.DeletePlaylistRequest.FromString,
+                    response_serializer=listener__pb2.DeletePlaylistResponse.SerializeToString,
+            ),
+            'GetAllPlaylists': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllPlaylists,
+                    request_deserializer=listener__pb2.GetAllPlaylistsRequest.FromString,
+                    response_serializer=listener__pb2.GetAllPlaylistsResponse.SerializeToString,
+            ),
+            'AddNewTrackInPlaylist': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddNewTrackInPlaylist,
+                    request_deserializer=listener__pb2.AddNewTrackInPlaylistRequest.FromString,
+                    response_serializer=listener__pb2.TrackInPlaylistResponse.SerializeToString,
+            ),
+            'DeleteTrackFromPlaylist': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteTrackFromPlaylist,
+                    request_deserializer=listener__pb2.DeleteTrackFromPlaylistRequest.FromString,
+                    response_serializer=listener__pb2.DeleteTrackFromPlaylistResponse.SerializeToString,
+            ),
+            'GetAllTracksInPlaylist': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllTracksInPlaylist,
+                    request_deserializer=listener__pb2.GetAllTracksInPlaylistRequest.FromString,
+                    response_serializer=listener__pb2.GetAllTracksInPlaylistResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -301,6 +397,168 @@ class ListenerService(object):
             '/listener.ListenerService/History',
             listener__pb2.HistoryRequest.SerializeToString,
             listener__pb2.HistoryResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreatePlaylist(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/CreatePlaylist',
+            listener__pb2.CreatePlaylistRequest.SerializeToString,
+            listener__pb2.PlaylistResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeletePlaylist(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/DeletePlaylist',
+            listener__pb2.DeletePlaylistRequest.SerializeToString,
+            listener__pb2.DeletePlaylistResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllPlaylists(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/GetAllPlaylists',
+            listener__pb2.GetAllPlaylistsRequest.SerializeToString,
+            listener__pb2.GetAllPlaylistsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AddNewTrackInPlaylist(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/AddNewTrackInPlaylist',
+            listener__pb2.AddNewTrackInPlaylistRequest.SerializeToString,
+            listener__pb2.TrackInPlaylistResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteTrackFromPlaylist(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/DeleteTrackFromPlaylist',
+            listener__pb2.DeleteTrackFromPlaylistRequest.SerializeToString,
+            listener__pb2.DeleteTrackFromPlaylistResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllTracksInPlaylist(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/listener.ListenerService/GetAllTracksInPlaylist',
+            listener__pb2.GetAllTracksInPlaylistRequest.SerializeToString,
+            listener__pb2.GetAllTracksInPlaylistResponse.FromString,
             options,
             channel_credentials,
             insecure,
