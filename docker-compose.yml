@@ -76,7 +76,7 @@ services:
       - music_network
 
   clickhouse-server:
-    image: yandex/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:latest
     ports:
       - "8123:8123"
       - "9000:9000"
