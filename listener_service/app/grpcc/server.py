@@ -5,9 +5,9 @@ from concurrent import futures
 from google.protobuf.empty_pb2 import Empty
 
 from domain.entities.real.listener import Listener
-from database.repository.real.listener import ListenerRepository
-from database.repository.real.interaction import InteractionRepository
-from database.repository.real.like import LikeRepository
+from dependencies.listener import ListenerRepositoryFactory
+from dependencies.like import LikeRepositoryFactory
+from dependencies.interaction import InteractionRepositoryFactory
 from database.connect import get_db_session
 from grpcc.listener_pb2_grpc import add_ListenerServiceServicer_to_server
 from grpcc.listener_pb2 import (
@@ -147,9 +147,9 @@ async def serve():
         #     use_cache=True,
         #     redis_client=redis_client
         # )
-        listener_repo = ListenerRepository(db)
-        like_repo = LikeRepository(db)
-        interaction_repo = InteractionRepository(db)
+        listener_repo = await ListenerRepositoryFactory.create(db)
+        like_repo = await LikeRepositoryFactory.create(db)
+        interaction_repo = await InteractionRepositoryFactory.create(db)
 
     service = ListenerService(
         listener_repo=listener_repo,
