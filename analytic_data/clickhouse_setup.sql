@@ -89,7 +89,8 @@ CREATE MATERIALIZED VIEW top_artists_mv TO top_artists_buffer AS
 SELECT
     JSONExtractInt(_raw, 'after', 'artist_id') AS artist_id,
     JSONExtractString(_raw, 'after', 'artist_name') AS artist_name,
-    sum(toInt64(JSONExtractInt(_raw, 'after', 'count_interaction'))) AS total_interactions,
+--     sum(toInt64(JSONExtractInt(_raw, 'after', 'count_interaction'))) AS total_interactions,
+    count(*) as total_interactions,
     sum(toInt64(JSONExtractInt(_raw, 'after', 'listen_time'))) AS total_listen_time
 FROM kafka_analytic
 WHERE JSONExtractString(_raw, 'op') IN ('c', 'u', 'r')
@@ -100,7 +101,8 @@ CREATE MATERIALIZED VIEW top_tracks_mv TO top_tracks_buffer AS
 SELECT
     JSONExtractInt(_raw, 'after', 'track_id') AS track_id,
     JSONExtractString(_raw, 'after', 'track_name') AS track_name,
-    sum(toInt64(JSONExtractInt(_raw, 'after', 'count_interaction'))) AS total_interactions,
+--     sum(toInt64(JSONExtractInt(_raw, 'after', 'count_interaction'))) AS total_interactions,
+    count(*) as total_interactions,
     sum(toInt64(JSONExtractInt(_raw, 'after', 'listen_time'))) AS total_listen_time
 FROM kafka_analytic
 WHERE JSONExtractString(_raw, 'op') IN ('c', 'u', 'r')
