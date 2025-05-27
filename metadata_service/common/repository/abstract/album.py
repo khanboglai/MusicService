@@ -30,3 +30,7 @@ class AlbumRepositoryABC(ABC):
     async def remove_albums_by_owner_id(self, owner_id: int) -> list[int]:
         """ Удалить все альбомы автора по его ID """
         ...
+    @abstractmethod
+    async def get_all_albums(self) -> list[Album]:
+        """ Получить все альбомы на площадке """
+        ...

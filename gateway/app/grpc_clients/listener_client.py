@@ -8,6 +8,12 @@ from app.grpc_clients.listener_pb2 import (
     LikeRequest,
     InteractionRequest,
     HistoryRequest,
+    CreatePlaylistRequest,
+    DeletePlaylistRequest,
+    GetAllPlaylistsRequest,
+    AddNewTrackInPlaylistRequest,
+    DeleteTrackFromPlaylistRequest,
+    GetAllTracksInPlaylistRequest,
 )
 from app.grpc_clients.listener_grpc_exception_handler import grpc_listener_client_exception_handler
 
@@ -64,4 +70,46 @@ class ListenerClient:
         """ Получение истории прослушиваний """
         request = HistoryRequest(user_id=user_id)
         response = await self.stub.History(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def create_playlist(self, user_id: int, title: str):
+        """ Создание плейлиста """
+        request = CreatePlaylistRequest(user_id=user_id, title=title)
+        response = await self.stub.CreatePlaylist(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def delete_playlist(self, user_id: int, playlist_id: int):
+        """ Удаление плейлиста """
+        request = DeletePlaylistRequest(user_id=user_id, playlist_id=playlist_id)
+        response = await self.stub.DeletePlaylist(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def get_all_playlists(self, user_id: int):
+        """ Получение всех плейлистов слушателя """
+        request = GetAllPlaylistsRequest(user_id=user_id)
+        response = await self.stub.GetAllPlaylists(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def add_new_track_in_playlist(self, user_id: int, playlist_id: int, track_id: int):
+        """ Добавление нового трека в плейлист """
+        request = AddNewTrackInPlaylistRequest(user_id=user_id, playlist_id=playlist_id, track_id=track_id)
+        response = await self.stub.AddNewTrackInPlaylist(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def delete_track_from_playlist(self, user_id: int, playlist_id: int, track_id: int):
+        """ Удаление трека из плейлиста """
+        request = DeleteTrackFromPlaylistRequest(user_id=user_id, playlist_id=playlist_id, track_id=track_id)
+        response = await self.stub.DeleteTrackFromPlaylist(request)
+        return response
+    
+    @grpc_listener_client_exception_handler
+    async def get_all_tracks_in_playlist(self, user_id: int, playlist_id: int):
+        """ Получение всех треков в плейлисте """
+        request = GetAllTracksInPlaylistRequest(user_id=user_id, playlist_id=playlist_id)
+        response = await self.stub.GetAllTracksInPlaylist(request)
         return response

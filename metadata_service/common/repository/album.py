@@ -45,6 +45,15 @@ class AlbumRepository(AlbumRepositoryABC):
         if albums is None:
             albums = []
         return albums
+    
+    async def get_all_albums(self) -> list[Album]:
+        logger.info(f"Получение всех альбомов на площадке...")
+        result = await self.db.execute(select(Album))
+        albums = result.scalars().all()
+
+        if albums is None:
+            albums = []
+        return albums
 
     async def remove_album(self, album_id: int) -> int:
         logger.info(f"Удаление альбома с ID {album_id}...")

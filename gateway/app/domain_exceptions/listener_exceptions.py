@@ -47,3 +47,13 @@ class UniqueException(DomainException):
     """ Исключение для повтора какого-либо объекта в бд """
     def __init__(self, message: str = "This object must be unique in database!"):
         super().__init__(message, status_code=423)
+
+class ForbiddenDeletingException(DomainException):
+    """ Исключение для запрещения удаления какого-либо объекта в бд """
+    def __init__(self, message: str = "You can't delete this object!"):
+        super().__init__(message, status_code=403)
+
+class ForbiddenInsertingException(DomainException):
+    """ Исключение для запрещения вставки какого-либо объекта в бд """
+    def __init__(self, message: str = "You can't insert this object!"):
+        super().__init__(message, status_code=403)

@@ -11,7 +11,7 @@ from src.api.v1.album import router as album_router
 from src.api.v1.track import router as track_router
 from src.api.exception_handler import domain_exception_handler
 from src.common.exceptions.exceptions import DomainException
-# from src.grpc.server import serve
+from src.grpc.server import serve
 
 
 @asynccontextmanager
@@ -19,8 +19,8 @@ async def lifespan(_: FastAPI):
     logger.info("start app")
     await start_mapping()
     logger.info("mapping done")
-    # asyncio.create_task(serve())
-    # logger.info("gRPC server start")
+    asyncio.create_task(serve())
+    logger.info("gRPC server start")
 
     yield
     logger.info("finish app")

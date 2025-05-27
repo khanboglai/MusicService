@@ -35,6 +35,19 @@ def handle_exceptions(func):
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except UniqueException as e:
             raise HTTPException(status_code=e.status_code, detail=str(e))
+        except NoSuchAlbumException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except NoSuchTrackException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except OwnerAlbumDublicateException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except AlbumTrackDublicateException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except ForbiddenDeletingException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except ForbiddenInsertingException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        
         except Exception as e:
             # Для неопознанных ошибок
             raise HTTPException(status_code=500, detail="Internal Server Error")

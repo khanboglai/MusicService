@@ -11,6 +11,12 @@ service ListenerService {
     rpc Like (LikeRequest) returns (LikeResponse);
     rpc Interaction (InteractionRequest) returns (InteractionResponse);
     rpc History (HistoryRequest) returns (HistoryResponse);
+    rpc CreatePlaylist (CreatePlaylistRequest) returns (PlaylistResponse);
+    rpc DeletePlaylist (DeletePlaylistRequest) returns (DeletePlaylistResponse);
+    rpc GetAllPlaylists (GetAllPlaylistsRequest) returns (GetAllPlaylistsResponse);
+    rpc AddNewTrackInPlaylist (AddNewTrackInPlaylistRequest) returns (TrackInPlaylistResponse);
+    rpc DeleteTrackFromPlaylist (DeleteTrackFromPlaylistRequest) returns (DeleteTrackFromPlaylistResponse);
+    rpc GetAllTracksInPlaylist (GetAllTracksInPlaylistRequest) returns (GetAllTracksInPlaylistResponse);
 }
 
 message GetListenerRequest {
@@ -102,4 +108,62 @@ message InteractionsHistoryResponse {
 message HistoryResponse {
     ListenerResponse listener = 1;
     repeated InteractionsHistoryResponse interactions = 2;
+}
+
+message CreatePlaylistRequest {
+    int32 user_id = 1;
+    string title = 2;
+}
+
+message PlaylistResponse {
+    int32 playlist_id = 1;
+    string title = 2;
+}
+
+message DeletePlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+}
+
+message DeletePlaylistResponse {
+    string delete_message = 1;
+}
+
+message GetAllPlaylistsRequest {
+    int32 user_id = 1;
+}
+
+message GetAllPlaylistsResponse {
+    ListenerResponse listener = 1;
+    repeated PlaylistResponse playlists = 2;
+}
+
+message AddNewTrackInPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+    int32 track_id = 3;
+}
+
+message TrackInPlaylistResponse {
+    int32 playlist_id = 1;
+    int32 track_id = 2;
+}
+
+message DeleteTrackFromPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+    int32 track_id = 3;
+}
+
+message DeleteTrackFromPlaylistResponse {
+    string delete_message = 1;
+}
+
+message GetAllTracksInPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+}
+
+message GetAllTracksInPlaylistResponse {
+    repeated TrackInPlaylistResponse tracks = 1;
 }

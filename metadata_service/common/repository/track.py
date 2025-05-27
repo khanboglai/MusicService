@@ -8,7 +8,7 @@ from src.common.models.album import Album
 from src.common.schemas.track import TrackCreate
 from src.common.repository.abstract.track import TrackRepositoryABC
 from src.common.exceptions import *
-from src.common.database.models import Genre
+from src.common.database.models import Genre, track_genres_table, genres_table
 
 class TrackRepository(TrackRepositoryABC):
     def __init__(self, db: AsyncSession):
@@ -18,6 +18,8 @@ class TrackRepository(TrackRepositoryABC):
         logger.info(f"Создание трека {track.title}...")
         try:
             same_track = await self.db.execute(select(Track).where(Track._title == track.title, Track._album_id == track.album_id))
+            same_track = same_track.scalar_one_or_none()
+            # print(f"SAME TRACK {track._title}")
             if same_track is not None:
                 raise AlbumTrackDublicateException(f"В альбоме ID = {track.album_id} уже есть трек с названием {track.title}")
             
@@ -76,3 +78,19 @@ class TrackRepository(TrackRepositoryABC):
             return id
         except IntegrityError as e:
             raise DatabaseException(f"Ошибка удаления трека: {e}")
+        
+    async def get_track_genre(self, track_id: int):
+        """ Метод возврата первого попавшегося жанра трека """
+        logger.info(f"Получение жанра трека с track_id {track_id}")
+        result = await self.db.execute(
+            select(track_genres_table.c.genre_id)
+            .where(track_genres_table.c.track_id == track_id)
+            .limit(1)
+        )
+        genre_id = result.scalar_one_or_none()
+        genre = await self.db.execute(
+            select(genres_table)
+            .where(genres_table.c.id == genre_id)
+        )
+        return genre.first()
+        

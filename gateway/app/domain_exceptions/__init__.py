@@ -11,6 +11,14 @@ from .listener_exceptions import(
     AgeTooSmallException,
     NotExistException,
     UniqueException,
+    ForbiddenDeletingException,
+    ForbiddenInsertingException,
+)
+from .reader_exceptions import (
+    NoSuchTrackException,
+    NoSuchAlbumException,
+    OwnerAlbumDublicateException,
+    AlbumTrackDublicateException,
 )
 
 __all__ = [
@@ -26,4 +34,10 @@ __all__ = [
     "AgeTooSmallException",
     "NotExistException",
     "UniqueException",
+    "NoSuchTrackException",
+    "NoSuchAlbumException",
+    "OwnerAlbumDublicateException",
+    "AlbumTrackDublicateException",
+    "ForbiddenDeletingException",
+    "ForbiddenInsertingException",
 ]

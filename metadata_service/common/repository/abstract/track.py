@@ -25,3 +25,7 @@ class TrackRepositoryABC(ABC):
     async def remove_track(self, track_id: int) -> int:
         """ Удалить трек по его ID """
         ...
+
+    @abstractmethod
+    async def get_track_genre(self, track_id: int):
+        ...

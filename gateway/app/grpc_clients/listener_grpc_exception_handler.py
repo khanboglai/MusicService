@@ -30,6 +30,10 @@ def grpc_listener_client_exception_handler(func):
                     raise NotExistException(e.details())
                 elif "unique" in e.details().lower():
                     raise UniqueException(e.details())
+                elif "delete" in e.details().lower():
+                    raise ForbiddenDeletingException(e.details())
+                elif "insert" in e.details().lower():
+                    raise ForbiddenInsertingException(e.details())
             else:
                 raise ValueError(e.details(), e.code())
     
