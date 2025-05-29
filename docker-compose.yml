@@ -1,0 +1,123 @@
+# общие сервисы
+services:
+#  storage:
+#    image: minio/minio:latest
+#    ports:
+#      - "9000:9000"  # Порт для доступа к MinIO
+#      - "9001:9001"  # Порт для веб-консоли
+#    environment:
+#      MINIO_ACCESS_KEY: storage
+#      MINIO_SECRET_KEY: qwerty1234
+#    networks:
+#      - music_network
+#    command: server /data --console-address ":9001"
+#    volumes:
+#      - minio_data:/data  # Хранение данных MinIO
+#
+#  redis:
+#    image: redis:latest
+#    container_name: redis
+#    restart: unless-stopped
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis_data:/data
+#    networks:
+#      - music_network
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - music_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - music_network
+
+  kafka-connect:
+    image: debezium/connect:2.3
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      GROUP_ID: "connect-cluster"
+      CONFIG_STORAGE_TOPIC: "connect-configs"
+      OFFSET_STORAGE_TOPIC: "connect-offsets"
+      STATUS_STORAGE_TOPIC: "connect-statuses"
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
+      INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
+      # Для Debezium
+      PLUGIN_PATH: "/kafka/connect"
+    volumes:
+      - ./analytic_data/plugins:/kafka/connect
+    depends_on:
+      - kafka
+    networks:
+      - music_network
+
+  clickhouse-server:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+#      - ./clickhouse-config:/etc/clickhouse-server/config.d/custom.xml
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=secret
+    networks:
+      - music_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=qwerty
+    volumes:
+      - ./analytic_data/plugins:/var/lib/grafana/plugins
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - clickhouse-server
+    restart: unless-stopped
+    networks:
+      - music_network
+
+volumes:
+  minio_data:
+  redis_data:
+  clickhouse_data:
+  postgres_data:
+  grafana_data:
+
+networks:
+  music_network:
+    name: music_network

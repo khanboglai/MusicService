@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package listener;
+
+import "google/protobuf/empty.proto";
+
+service ListenerService {
+    rpc GetListener (GetListenerRequest) returns (GetListenerResponse);
+    rpc CreateListener (CreateListenerRequest) returns (CreateListenerResponse);
+    rpc DeleteListener (DeleteListenerRequest) returns (DeleteListenerResponse);
+    rpc Like (LikeRequest) returns (LikeResponse);
+    rpc Interaction (InteractionRequest) returns (InteractionResponse);
+    rpc History (HistoryRequest) returns (HistoryResponse);
+    rpc CreatePlaylist (CreatePlaylistRequest) returns (PlaylistResponse);
+    rpc DeletePlaylist (DeletePlaylistRequest) returns (DeletePlaylistResponse);
+    rpc GetAllPlaylists (GetAllPlaylistsRequest) returns (GetAllPlaylistsResponse);
+    rpc AddNewTrackInPlaylist (AddNewTrackInPlaylistRequest) returns (TrackInPlaylistResponse);
+    rpc DeleteTrackFromPlaylist (DeleteTrackFromPlaylistRequest) returns (DeleteTrackFromPlaylistResponse);
+    rpc GetAllTracksInPlaylist (GetAllTracksInPlaylistRequest) returns (GetAllTracksInPlaylistResponse);
+}
+
+message GetListenerRequest {
+    int32 user_id = 1;
+}
+
+message GetListenerResponse {
+    int32 listener_id = 1;
+    int32 user_id = 2;
+    string first_name = 3;
+    string last_name = 4;
+}
+
+message CreateListenerRequest {
+    int32 user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string birth_date = 4;
+}
+
+message CreateListenerResponse {
+    int32 listener_id = 1;
+    int32 user_id = 2;
+    string first_name = 3;
+    string last_name = 4;
+}
+
+message DeleteListenerRequest {
+    int32 user_id = 1;
+}
+
+message DeleteListenerResponse {
+    string delete_message = 1;
+}
+
+message LikeRequest {
+    int32 user_id = 1;
+    int32 track_id = 2;
+}
+
+message ListenerResponse {
+    int32 listener_id = 1;
+    int32 user_id = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string birth_date = 5;
+    bool subscription = 6;
+}
+
+message LikeData {
+    int32 id = 1;
+    int32 track_id = 2;
+    ListenerResponse listener = 3;
+}
+
+message LikeResponse {
+    oneof result {
+        google.protobuf.Empty deleted = 1;
+        LikeData liked = 2;
+    }
+}
+
+message InteractionRequest {
+    int32 user_id = 1;
+    int32 track_id = 2;
+    string track_name = 3;
+    int32 listen_time = 4;
+    int32 artist_id = 5;
+    string artist_name = 6;
+    int32 genre_id = 7;
+    string genre_name = 8;
+}
+
+message InteractionResponse {
+    ListenerResponse listener = 1;
+    int32 track_id = 2;
+    int32 listen_time = 3;
+}
+
+message HistoryRequest {
+    int32 user_id = 1;
+}
+
+message InteractionsHistoryResponse {
+    int32 track_id = 1;
+    string last_interaction = 2;
+}
+
+message HistoryResponse {
+    ListenerResponse listener = 1;
+    repeated InteractionsHistoryResponse interactions = 2;
+}
+
+message CreatePlaylistRequest {
+    int32 user_id = 1;
+    string title = 2;
+}
+
+message PlaylistResponse {
+    int32 playlist_id = 1;
+    string title = 2;
+}
+
+message DeletePlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+}
+
+message DeletePlaylistResponse {
+    string delete_message = 1;
+}
+
+message GetAllPlaylistsRequest {
+    int32 user_id = 1;
+}
+
+message GetAllPlaylistsResponse {
+    ListenerResponse listener = 1;
+    repeated PlaylistResponse playlists = 2;
+}
+
+message AddNewTrackInPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+    int32 track_id = 3;
+}
+
+message TrackInPlaylistResponse {
+    int32 playlist_id = 1;
+    int32 track_id = 2;
+}
+
+message DeleteTrackFromPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+    int32 track_id = 3;
+}
+
+message DeleteTrackFromPlaylistResponse {
+    string delete_message = 1;
+}
+
+message GetAllTracksInPlaylistRequest {
+    int32 user_id = 1;
+    int32 playlist_id = 2;
+}
+
+message GetAllTracksInPlaylistResponse {
+    repeated TrackInPlaylistResponse tracks = 1;
+}

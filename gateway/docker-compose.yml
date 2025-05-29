@@ -1,0 +1,36 @@
+services:
+  gateway_web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gateway_web
+    networks:
+      - music_network
+    restart: always
+    ports:
+      - "8006:8000"
+#    depends_on:
+#      - postgres_artist
+#      - elasticsearch
+#      - rabbitmq
+#    environment:
+#      DB_USER: artist
+#      DB_PASSWORD: pswd
+#      DB_HOST: artist_service_db
+#      DB_PORT: 5435
+#      DB_NAME: artist_data
+#      SECRET_KEY: 'z9t9w6dluej8fupds3fvefoozz6wlymglropksbavn32ehin9lclertyweco4rhri2weg1r3s0x4024yup42ufg4rgt6830tbfvm'
+#      ALGORITHM: 'HS256'
+#      ELASTICSEARCH_HOST: elasticsearch
+#      ELASTICSEARCH_PORT: 9200
+    volumes:
+      - .:/app
+
+
+networks:
+  music_network:
+    name: music_network
+
+#volumes:
+#  pgdata:
+#    driver: local

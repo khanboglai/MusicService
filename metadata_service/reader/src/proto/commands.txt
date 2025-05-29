@@ -1,0 +1,1 @@
+python -m grpc_tools.protoc -I=src/proto --python_out=src/grpc --grpc_python_out=src/grpc src/proto/reader.proto

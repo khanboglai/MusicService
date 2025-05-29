@@ -12,6 +12,7 @@ app.include_router(login.router)
 app.include_router(me.router)
 app.include_router(admin.router)
 
+
 @app.get("/")
 def idx():
     return "Hello"
