@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field, ValidationError
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import SQLAlchemyError
-from db.models import RoleEnum
-from schemas.user import UserLogin
-from db.requests import get_user, create_user
+from src.db.models import RoleEnum
+from src.schemas.user import UserLogin
+from src.db.requests import get_user, create_user
 
 router = APIRouter(prefix='/register', tags=['Reg'])
 
@@ -22,6 +22,9 @@ async def register_user(user: UserLogin, role: RoleEnum = RoleEnum.LISTNER):
 
         new_user = await create_user(user.login, user.password, role)
         return {"message": "Пользователь создан", "user_id": new_user.id}
+
+    except HTTPException as http_exc:
+        raise http_exc
 
     except SQLAlchemyError:
         raise HTTPException(

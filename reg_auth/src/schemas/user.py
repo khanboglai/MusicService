@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import date
-from db.models import RoleEnum
 
 class UserLogin(BaseModel):
     login: EmailStr = Field(default=..., description="Email")

@@ -1,6 +1,6 @@
 import bcrypt
 from datetime import datetime, timedelta
-from config import settings
+from src.config import settings
 import jwt
 
 def get_access_token_lifetime():

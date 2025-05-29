@@ -1,12 +1,9 @@
-import enum
+
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column
-from db.database import Base
+from src.db.database import Base
+from src.db.enums import RoleEnum
 
-class RoleEnum(str, enum.Enum):
-    LISTNER = "слушатель"
-    AUTHOR = "автор"
-    ADMIN = "админ"
 
 class User(Base):
 

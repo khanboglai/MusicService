@@ -1,9 +1,9 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select
 import bcrypt
-from db.database import async_session_maker as session_fabric
-from db.models import User, RoleEnum
-from utils import create_hash_password
+from src.db.database import async_session_maker as session_fabric
+from src.db.models import User, RoleEnum
+from src.utils import create_hash_password
 
 async def get_user(new_login: str) -> User | None:
     try:
@@ -38,7 +38,22 @@ async def get_password(login: str) -> str | None:
     except SQLAlchemyError as e:
         raise e
 
+async def delete_user(user_login: str) -> bool:
+    try:
+        async with session_fabric() as session:
+            result = await session.execute(select(User).where(User.login == user_login))
+            user = result.scalar_one_or_none()
 
+            if not user:
+                return False  
+
+            await session.delete(user)
+            await session.commit()
+            return True  
+
+    except SQLAlchemyError as e:
+        raise e
+    
 
 # async def check_password():
 

@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field, ValidationError
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import SQLAlchemyError
-from db.models import RoleEnum
-from schemas.user import UserLogin
-from db.requests import get_user, get_password
-from utils import validate_password, encode_jwt, get_access_token_lifetime, get_refresh_token_lifetime, decode_jwt
+from src.db.models import RoleEnum
+from src.schemas.user import UserLogin
+from src.db.requests import get_user, get_password
+from src.utils import validate_password, encode_jwt, get_access_token_lifetime, get_refresh_token_lifetime, decode_jwt
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 router = APIRouter(prefix='/me', tags=['Me'])
@@ -38,6 +38,7 @@ async def get_current_user(request: Request, response: Response):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Пользователя не существует."
             )
+        # user = {user.id, user.login, user.role}
 
         return user
 
@@ -64,6 +65,8 @@ async def get_current_user(request: Request, response: Response):
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Пользователь, указанный в refresh-токене, не существует."
                 )
+            # user = {user.id, user.login, user.role}
+
 
             new_token_payload = {
                 "sub": login,
@@ -93,7 +96,9 @@ async def get_current_user(request: Request, response: Response):
         )
 
 @router.get("/")
-async def get_me(username = Depends(get_current_user)):
+async def get_me(user = Depends(get_current_user)):
     return {
         "message": "Пользователь авторизован",
-        "user_id": username}
+        "user_id": user.id,
+        "user_login": user.login,
+        "user_role": user.role}

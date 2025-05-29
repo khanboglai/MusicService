@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field, ValidationError
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import SQLAlchemyError
-from db.models import RoleEnum
-from schemas.user import UserLogin
-from db.requests import get_user, get_password
-from utils import validate_password, encode_jwt, get_access_token_lifetime, get_refresh_token_lifetime
+from src.db.models import RoleEnum
+from src.schemas.user import UserLogin
+from src.db.requests import get_user, get_password
+from src.utils import validate_password, encode_jwt, get_access_token_lifetime, get_refresh_token_lifetime
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
 
@@ -30,14 +30,12 @@ async def login_user(user: UserLogin, request: Request, response: Response):
         # print("type =", type(existing_user))
 
         jwt_payload = {
-            "sub": existing_user.id,
+            "sub": str(existing_user.id),
             "login": existing_user.login
         }
 
         access_token = encode_jwt(jwt_payload, get_access_token_lifetime())
         refresh_token = encode_jwt(jwt_payload, get_refresh_token_lifetime())
-
-        print(access_token)
 
         response.set_cookie(
             key="access_token",
@@ -54,6 +52,9 @@ async def login_user(user: UserLogin, request: Request, response: Response):
         )
 
         return {"message": "Успешный вход"}
+
+    except HTTPException as http_exc:
+        raise http_exc
 
     except SQLAlchemyError:
         raise HTTPException(
