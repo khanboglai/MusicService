@@ -1,6 +1,6 @@
 from .invalid_id_exception import InvalidIdException
 from .unique_violation_exception import UniqueViolationException
-# from .database_exception import DatabaseException
+from .database_exception import DatabaseException
 from .invalid_mime_type import InvalidMimeType
 from .listener_exceptions import(
     NameTooLongException,
@@ -24,7 +24,7 @@ from .reader_exceptions import (
 __all__ = [
     "InvalidIdException",
     "UniqueViolationException",
-    # "DatabaseException",
+    "DatabaseException",
     "InvalidMimeType",
     "NameTooLongException",
     "EmptyNameException",

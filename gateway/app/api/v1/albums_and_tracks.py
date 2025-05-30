@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
+from fastapi import APIRouter, HTTPException
 
-from src.schemas.track_meta_data import TrackCreate, AlbumCreate
-from src.domain_exceptions import *
-from src.grpc_client.writer_client import WriterClient
+from app.schemas.track_meta_data import TrackCreate, AlbumCreate
+from app.domain_exceptions import *
+from app.grpc_clients.writer_client import WriterClient
 
 router = APIRouter()
 writer_client = WriterClient()

@@ -2,16 +2,16 @@
 
 import grpc
 from datetime import datetime, time
-from src.grpc_client.writer_pb2_grpc import WriterServiceStub
-from src.grpc_client.writer_pb2 import (
+from app.grpc_clients.writer_pb2_grpc import WriterServiceStub
+from app.grpc_clients.writer_pb2 import (
     CreateAlbum_Request,
     RemoveAlbum_Request,
     RemoveAlbumsByOwnerID_Request,
     CreateTrack_Request,
     RemoveTrack_Request
 )
-from src.schemas.track_meta_data import TrackCreate, AlbumCreate
-from src.grpc_client.handler import grpc_client_exception_handler
+from app.schemas.track_meta_data import TrackCreate, AlbumCreate
+from app.grpc_clients.writer_grpc_exception_handler import grpc_client_exception_handler
 
 class WriterClient:
     """ gRPC клиент писателя """

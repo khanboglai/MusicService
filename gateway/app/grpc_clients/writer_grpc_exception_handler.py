@@ -2,7 +2,7 @@ from functools import wraps
 import grpc
 from grpc import StatusCode
 from grpc.aio import AioRpcError
-from src.domain_exceptions.writer_exceptions import *
+from app.domain_exceptions.writer_exceptions import *
 
 
 def grpc_client_exception_handler(func):
