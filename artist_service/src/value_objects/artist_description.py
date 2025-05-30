@@ -1,9 +1,12 @@
+from src.domain_exceptions.invalid_description_size import InvalidDescriptionSize
+
+
 class Description:
-    LIMIT_SIZE = 1000
+    LIMIT_SIZE = 100
 
     def __init__(self, value: str):
         if len(value) > self.LIMIT_SIZE:
-            raise ValueError(f"Maximum description length is {self.LIMIT_SIZE} characters")
+            raise InvalidDescriptionSize(f"Maximum description length is {self.LIMIT_SIZE} characters")
         self.value = value
 
     def __str__(self):

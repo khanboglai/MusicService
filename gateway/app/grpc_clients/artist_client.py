@@ -30,7 +30,7 @@ class ArtistClient:
         )
         # вызываем метод сервера
         response = await self.stub.CreateArtist(request)
-        return response.id
+        return response.artist_id
 
 
     @grpc_client_exception_handler

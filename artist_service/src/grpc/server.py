@@ -28,6 +28,7 @@ class ArtistService:
     @grpc_exception_handler # в декоратор поместил логику обработки ошибок, кода стало в 2 раза меньше
     async def CreateArtist(self, request, context):
         """ Функция для создания исполнителя """
+        logger.info(f"Hui")
         new_artist = Artist(
             name=request.name,
             email=request.email,
@@ -35,9 +36,10 @@ class ArtistService:
             description=Description(request.description),
             user_id=request.user_id
         )
+        logger.info("Here")
         artist = await self.artist_repo.create_artist(new_artist)
         logger.info(f"GRPC: Created new artist {artist.name}")
-        return CreateArtistResponse(id=artist.user_id)
+        return CreateArtistResponse(artist_id=artist.user_id)
 
 
     @grpc_exception_handler

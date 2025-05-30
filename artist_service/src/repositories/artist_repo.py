@@ -36,6 +36,7 @@ class ArtistRepository(ArtistRepositoryABC):
             if "Key (user_id)" in str(e):
                 raise UniqueViolationException(f"Исполнитель с user_id {artist.user_id} уже существует")
             # если какая-то незнакомая ошибка
+            logger.error(e)
             raise DatabaseException(f"Ошибка при создании исполнителя: {e}")
 
     async def get_artist_by_user_id(self, user_id: int) -> Artist:
