@@ -1,18 +1,21 @@
 from datetime import datetime
-import io
-import magic
 import grpc
 import asyncio
-from src.dependencies.repository import ArtistRepositoryFactory
 from grpc import StatusCode
 from concurrent import futures
-import redis.asyncio as redis
+from google.protobuf.timestamp_pb2 import Timestamp
+from src.dependencies.repository import ArtistRepositoryFactory
 from src.repositories.domain_repo import ArtistRepositoryABC
 from src.database.postgres import get_db_session # только так получилось достать сессию для gRPC
 from src.models.artist import Artist
-from src.core.config import settings
 from src.grpc.artist_pb2_grpc import add_ArtistServiceServicer_to_server
-from src.grpc.artist_pb2 import GetDescriptionResponse, CreateArtistResponse, FileChunk, UploadStatus
+from src.grpc.artist_pb2 import (
+    GetArtistDataByUserIdResponse,
+    CreateArtistResponse,
+    GetArtistDataByIdResponse,
+    GetArtistIdResponse,
+    DeleteArtistByUserIdResponse
+)
 from src.value_objects.artist_description import Description
 from src.grpc.grpc_exceptions_handlers.grpc_excaption_handler import grpc_exception_handler
 from src.core.logging import logger
@@ -24,7 +27,7 @@ class ArtistService:
 
     @grpc_exception_handler # в декоратор поместил логику обработки ошибок, кода стало в 2 раза меньше
     async def CreateArtist(self, request, context):
-
+        """ Функция для создания исполнителя """
         new_artist = Artist(
             name=request.name,
             email=request.email,
@@ -38,58 +41,94 @@ class ArtistService:
 
 
     @grpc_exception_handler
-    async def GetDescription(self, request, context):
+    async def GetArtistDataByUserId(self, request, context):
+        """ Функция для получения данных исполнителя по user_id """
         user_id = int(request.user_id)
         artist = await self.artist_repo.get_artist_by_user_id(user_id)
         logger.info(f"GRPC: Getting description for artist {artist.name}")
-        return GetDescriptionResponse(description=str(artist.description))
+        timestamp = Timestamp()
+        timestamp.FromDatetime(artist.registered_at)
+        return GetArtistDataByUserIdResponse(
+            id=artist.oid,
+            name=artist.name,
+            description=str(artist.description),
+            registered_at=timestamp
+        )
+
+    @grpc_exception_handler
+    async def GetArtistDataById(self, request, context):
+        """ Функция для получения данных исполнителя по id из сервиса исполнителя """
+        artist  = await self.artist_repo.get_artist_by_id(request.artist_id)
+        logger.info(f"GRPC: Getting description [by artist id] for artist {artist.name}")
+        timestamp = Timestamp()
+        timestamp.FromDatetime(artist.registered_at)
+        return GetArtistDataByIdResponse(
+            id=artist.oid,
+            name=artist.name,
+            description=str(artist.description),
+            registered_at=timestamp
+        )
 
 
     @grpc_exception_handler
-    async def UploadArtistCover(self, request_iterator, context):
-
-        buffer = io.BytesIO()
-        user_id = None
-
-        try:
-            s3_client = settings.create_minio_client()
-            bucket_name = settings.minio_bucket_name
-            settings.create_bucket_if_not_exists(client=s3_client)
-
-            async for chunk in request_iterator:
-                if user_id is None:
-                    user_id = chunk.user_id
-                buffer.write(chunk.content)
-
-            if user_id is None:
-                return UploadStatus(success=False, message="User id is missing")
-
-            artist = await self.artist_repo.get_artist_by_user_id(user_id)
-            s3_key = f"{artist.oid}/{artist.oid}.jpg"
-            buffer.seek(0) # перемещение указателя на начало буфера
-
-            # проверка типа файла
-            mimetype = magic.from_buffer(buffer.read(1024), mime=True)
-            buffer.seek(0)
-            if mimetype != "image/jpeg":
-                return UploadStatus(success=False, message="Unsupported Media Type")
-            logger.info("GRPC: Checked mime type")
-
-            s3_client.upload_fileobj(
-                Fileobj=buffer,
-                Bucket=bucket_name,
-                Key=s3_key,
-                ExtraArgs={"ContentType": "image/jpeg"}
-            )
-
-            logger.info("GRPC: Uploaded cover")
-            return UploadStatus(success=True, message="Artist Cover Uploaded")
-        finally:
-            buffer.close()
+    async def GetArtistId(self, request, context):
+        """ Функция для получения id исполнителя из сервиса """
+        artist = await self.artist_repo.get_artist_by_id(request.artist_id)
+        logger.info(f"GRPC: Getting artist id for artist {artist.name}")
+        return GetArtistIdResponse(id=artist.oid)
 
 
-    async def UploadFileMP3(self, request_iterator, context):
-        pass
+    @grpc_exception_handler
+    async def DeleteArtistByUserId(self, request, context):
+        """ Функция для удаления исполнителя по user_id """
+        user_id = await self.artist_repo.delete_artist(request.user_id)
+        logger.info(f"GRPC: Delete artist by user_id {user_id}")
+        return DeleteArtistByUserIdResponse(user_id=user_id)
+
+
+
+    # @grpc_exception_handler
+    # async def UploadArtistCover(self, request_iterator, context):
+    #
+    #     buffer = io.BytesIO()
+    #     user_id = None
+    #
+    #     try:
+    #         s3_client = settings.create_minio_client()
+    #         bucket_name = settings.minio_bucket_name
+    #         settings.create_bucket_if_not_exists(client=s3_client)
+    #
+    #         async for chunk in request_iterator:
+    #             if user_id is None:
+    #                 user_id = chunk.user_id
+    #             buffer.write(chunk.content)
+    #
+    #         if user_id is None:
+    #             return UploadStatus(success=False, message="User id is missing")
+    #
+    #         artist = await self.artist_repo.get_artist_by_user_id(user_id)
+    #         s3_key = f"{artist.oid}/{artist.oid}.jpg"
+    #         buffer.seek(0) # перемещение указателя на начало буфера
+    #
+    #         # проверка типа файла
+    #         mimetype = magic.from_buffer(buffer.read(1024), mime=True)
+    #         buffer.seek(0)
+    #         if mimetype != "image/jpeg":
+    #             return UploadStatus(success=False, message="Unsupported Media Type")
+    #         logger.info("GRPC: Checked mime type")
+    #
+    #         s3_client.upload_fileobj(
+    #             Fileobj=buffer,
+    #             Bucket=bucket_name,
+    #             Key=s3_key,
+    #             ExtraArgs={"ContentType": "image/jpeg"}
+    #         )
+    #
+    #         logger.info("GRPC: Uploaded cover")
+    #         return UploadStatus(success=True, message="Artist Cover Uploaded")
+    #     finally:
+    #         buffer.close()
+
 
 
 async def serve(redis_client):

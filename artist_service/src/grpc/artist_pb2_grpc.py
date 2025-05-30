@@ -34,32 +34,37 @@ class ArtistServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetDescription = channel.unary_unary(
-                '/artist.ArtistService/GetDescription',
-                request_serializer=artist__pb2.GetDescriptionRequest.SerializeToString,
-                response_deserializer=artist__pb2.GetDescriptionResponse.FromString,
+        self.GetArtistDataByUserId = channel.unary_unary(
+                '/artist.ArtistService/GetArtistDataByUserId',
+                request_serializer=artist__pb2.GetArtistDataByUserIdRequest.SerializeToString,
+                response_deserializer=artist__pb2.GetArtistDataByUserIdResponse.FromString,
                 _registered_method=True)
         self.CreateArtist = channel.unary_unary(
                 '/artist.ArtistService/CreateArtist',
                 request_serializer=artist__pb2.CreateArtistRequest.SerializeToString,
                 response_deserializer=artist__pb2.CreateArtistResponse.FromString,
                 _registered_method=True)
-        self.UploadFileMP3 = channel.stream_unary(
-                '/artist.ArtistService/UploadFileMP3',
-                request_serializer=artist__pb2.FileChunk.SerializeToString,
-                response_deserializer=artist__pb2.UploadStatus.FromString,
+        self.GetArtistDataById = channel.unary_unary(
+                '/artist.ArtistService/GetArtistDataById',
+                request_serializer=artist__pb2.GetArtistDataByIdRequest.SerializeToString,
+                response_deserializer=artist__pb2.GetArtistDataByIdResponse.FromString,
                 _registered_method=True)
-        self.UploadArtistCover = channel.stream_unary(
-                '/artist.ArtistService/UploadArtistCover',
-                request_serializer=artist__pb2.FileChunk.SerializeToString,
-                response_deserializer=artist__pb2.UploadStatus.FromString,
+        self.GetArtistId = channel.unary_unary(
+                '/artist.ArtistService/GetArtistId',
+                request_serializer=artist__pb2.GetArtistIdRequest.SerializeToString,
+                response_deserializer=artist__pb2.GetArtistIdResponse.FromString,
+                _registered_method=True)
+        self.DeleteArtistByUserId = channel.unary_unary(
+                '/artist.ArtistService/DeleteArtistByUserId',
+                request_serializer=artist__pb2.DeleteArtistByUserIdRequest.SerializeToString,
+                response_deserializer=artist__pb2.DeleteArtistByUserIdResponse.FromString,
                 _registered_method=True)
 
 
 class ArtistServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetDescription(self, request, context):
+    def GetArtistDataByUserId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -71,14 +76,19 @@ class ArtistServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def UploadFileMP3(self, request_iterator, context):
-        """методы для работы с файлами
-        """
+    def GetArtistDataById(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def UploadArtistCover(self, request_iterator, context):
+    def GetArtistId(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteArtistByUserId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -87,25 +97,30 @@ class ArtistServiceServicer(object):
 
 def add_ArtistServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetDescription': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetDescription,
-                    request_deserializer=artist__pb2.GetDescriptionRequest.FromString,
-                    response_serializer=artist__pb2.GetDescriptionResponse.SerializeToString,
+            'GetArtistDataByUserId': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetArtistDataByUserId,
+                    request_deserializer=artist__pb2.GetArtistDataByUserIdRequest.FromString,
+                    response_serializer=artist__pb2.GetArtistDataByUserIdResponse.SerializeToString,
             ),
             'CreateArtist': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateArtist,
                     request_deserializer=artist__pb2.CreateArtistRequest.FromString,
                     response_serializer=artist__pb2.CreateArtistResponse.SerializeToString,
             ),
-            'UploadFileMP3': grpc.stream_unary_rpc_method_handler(
-                    servicer.UploadFileMP3,
-                    request_deserializer=artist__pb2.FileChunk.FromString,
-                    response_serializer=artist__pb2.UploadStatus.SerializeToString,
+            'GetArtistDataById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetArtistDataById,
+                    request_deserializer=artist__pb2.GetArtistDataByIdRequest.FromString,
+                    response_serializer=artist__pb2.GetArtistDataByIdResponse.SerializeToString,
             ),
-            'UploadArtistCover': grpc.stream_unary_rpc_method_handler(
-                    servicer.UploadArtistCover,
-                    request_deserializer=artist__pb2.FileChunk.FromString,
-                    response_serializer=artist__pb2.UploadStatus.SerializeToString,
+            'GetArtistId': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetArtistId,
+                    request_deserializer=artist__pb2.GetArtistIdRequest.FromString,
+                    response_serializer=artist__pb2.GetArtistIdResponse.SerializeToString,
+            ),
+            'DeleteArtistByUserId': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteArtistByUserId,
+                    request_deserializer=artist__pb2.DeleteArtistByUserIdRequest.FromString,
+                    response_serializer=artist__pb2.DeleteArtistByUserIdResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -119,7 +134,7 @@ class ArtistService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetDescription(request,
+    def GetArtistDataByUserId(request,
             target,
             options=(),
             channel_credentials=None,
@@ -132,9 +147,9 @@ class ArtistService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/artist.ArtistService/GetDescription',
-            artist__pb2.GetDescriptionRequest.SerializeToString,
-            artist__pb2.GetDescriptionResponse.FromString,
+            '/artist.ArtistService/GetArtistDataByUserId',
+            artist__pb2.GetArtistDataByUserIdRequest.SerializeToString,
+            artist__pb2.GetArtistDataByUserIdResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -173,7 +188,7 @@ class ArtistService(object):
             _registered_method=True)
 
     @staticmethod
-    def UploadFileMP3(request_iterator,
+    def GetArtistDataById(request,
             target,
             options=(),
             channel_credentials=None,
@@ -183,12 +198,12 @@ class ArtistService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(
-            request_iterator,
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            '/artist.ArtistService/UploadFileMP3',
-            artist__pb2.FileChunk.SerializeToString,
-            artist__pb2.UploadStatus.FromString,
+            '/artist.ArtistService/GetArtistDataById',
+            artist__pb2.GetArtistDataByIdRequest.SerializeToString,
+            artist__pb2.GetArtistDataByIdResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -200,7 +215,7 @@ class ArtistService(object):
             _registered_method=True)
 
     @staticmethod
-    def UploadArtistCover(request_iterator,
+    def GetArtistId(request,
             target,
             options=(),
             channel_credentials=None,
@@ -210,12 +225,39 @@ class ArtistService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(
-            request_iterator,
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            '/artist.ArtistService/UploadArtistCover',
-            artist__pb2.FileChunk.SerializeToString,
-            artist__pb2.UploadStatus.FromString,
+            '/artist.ArtistService/GetArtistId',
+            artist__pb2.GetArtistIdRequest.SerializeToString,
+            artist__pb2.GetArtistIdResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteArtistByUserId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/artist.ArtistService/DeleteArtistByUserId',
+            artist__pb2.DeleteArtistByUserIdRequest.SerializeToString,
+            artist__pb2.DeleteArtistByUserIdResponse.FromString,
             options,
             channel_credentials,
             insecure,

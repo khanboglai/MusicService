@@ -20,5 +20,5 @@ class ArtistRepositoryFactory:
     async def create(db: AsyncSession = Depends(get_session), use_cache: bool = False, redis_client=None) -> ArtistRepositoryABC:
         repo = ArtistRepository(db)
         if use_cache and redis_client:
-            return CachedArtistRepo(repo, redis_client)
+            return CachedArtistRepo(repo=repo, redis=redis_client)
         return repo

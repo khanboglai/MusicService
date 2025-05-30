@@ -52,6 +52,6 @@ class ArtistRepository(ArtistRepositoryABC):
             artist = await self.get_artist_by_user_id(user_id)
             await self.db.delete(artist)
             await self.db.commit()
-            return artist.name
+            return artist.user_id
         except IntegrityError as e:
             raise DatabaseException(f"Ошибка удаления исполнителя: {e}")

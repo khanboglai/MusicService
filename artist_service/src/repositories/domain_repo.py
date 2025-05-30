@@ -14,7 +14,7 @@ class ArtistRepositoryABC(ABC):
         pass
 
     @abstractmethod
-    async def delete_artist(self, artist_id: int) -> Artist:
+    async def delete_artist(self, user_id: int) -> Artist:
         pass
 
     @abstractmethod

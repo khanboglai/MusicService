@@ -2,23 +2,39 @@ syntax = "proto3";
 
 package artist;
 
-service ArtistService {
-    rpc GetDescription (GetDescriptionRequest) returns (GetDescriptionResponse);
-    rpc CreateArtist (CreateArtistRequest) returns (CreateArtistResponse);
+import "google/protobuf/timestamp.proto";
 
-    // методы для работы с файлами
-    rpc UploadFileMP3 (stream FileChunk) returns (UploadStatus);
-    rpc UploadArtistCover (stream FileChunk) returns (UploadStatus);
+service ArtistService {
+    rpc GetArtistDataByUserId (GetArtistDataByUserIdRequest) returns (GetArtistDataByUserIdResponse);
+    rpc CreateArtist (CreateArtistRequest) returns (CreateArtistResponse);
+    rpc GetArtistDataById (GetArtistDataByIdRequest) returns (GetArtistDataByIdResponse);
+    rpc GetArtistId (GetArtistIdRequest) returns (GetArtistIdResponse);
+    rpc DeleteArtistByUserId (DeleteArtistByUserIdRequest) returns (DeleteArtistByUserIdResponse);
 }
 
-message GetDescriptionRequest {
+message GetArtistDataByUserIdRequest {
     int32 user_id = 1;
 }
 
-message GetDescriptionResponse {
-    string description = 1;
+message GetArtistDataByIdRequest { // по локальному id исполнителя
+    int32 artist_id = 1;
 }
 
+message GetArtistDataByUserIdResponse {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp registered_at = 4;
+}
+
+message GetArtistDataByIdResponse {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp registered_at = 4;
+}
+
+// создание исполнителя
 message CreateArtistRequest {
     string name = 1;
     string email = 2;
@@ -27,20 +43,23 @@ message CreateArtistRequest {
 }
 
 message CreateArtistResponse {
-    int32 id = 1; // ID созданного исполнителя
+    int32 artist_id = 1; // ID созданного исполнителя
+}
+
+// получения id исполнителя
+message GetArtistIdRequest {
+    int32 user_id = 1;
+}
+
+message GetArtistIdResponse {
+    int32 id = 1;
 }
 
 
-message FileRequest {
-    string file_name = 1; // Имя файла
+message DeleteArtistByUserIdRequest {
+    int32 user_id = 1;
 }
 
-message FileChunk {
-    bytes content = 1;
-    int32 user_id = 2;
-}
-
-message UploadStatus {
-    bool success = 1;
-    string message = 2;
+message DeleteArtistByUserIdResponse {
+    int32 user_id = 1;
 }
