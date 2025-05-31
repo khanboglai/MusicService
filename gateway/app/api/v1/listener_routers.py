@@ -271,7 +271,7 @@ async def search_tracks(query: str, page: int):
     for hit in r:
         track = await reader_client.get_track(int(hit["_id"]))
         result.append({
-            "track_id": track.album_id,
+            "track_id": track.track_id,
             "title": track.title,
             "album_id": track.album_id,
             "explicit": track.explicit

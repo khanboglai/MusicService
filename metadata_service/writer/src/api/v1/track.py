@@ -19,7 +19,7 @@ router = APIRouter()
 async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:
         created_track = await track_repo.create_track(track)
-        r = await add_track_to_es(album_id=track.oid, title=track.title)
+        r = await add_track_to_es(track_id=created_track.oid, title=track.title)
         return {"message": f"{created_track.oid}"}
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
@@ -28,7 +28,7 @@ async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(ge
 async def delete(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:
         id = await track_repo.remove_track(track_id)
-        r = await rmv_track_to_es(track_id=id)
+        r = await rmv_track_from_es(track_id=id)
         return JSONResponse({"status": "OK", "message": id})
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))

@@ -120,6 +120,8 @@ services:
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
+    networks:
+      - music_network
     volumes:
       - esdata:/usr/share/elasticsearch/data
     healthcheck:
@@ -135,6 +137,8 @@ services:
           memory: 1G
 
 volumes:
+  esdata:
+      driver: local
   minio_data:
   redis_data:
   clickhouse_data:
