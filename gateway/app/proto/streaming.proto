@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package stream;
+
+service StreamingService {
+    rpc StreamFileMp3 (FileRequest) returns (stream FileChunk);
+}
+
+
+message FileRequest {
+    string file_key = 1;
+}
+
+message FileChunk {
+    bytes data = 1;
+}
