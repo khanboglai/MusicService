@@ -32,6 +32,8 @@ def grpc_auth_client_exception_handler(func):
                     raise DamagedTokenException(e.details())
             elif e.code() == grpc.StatusCode.ABORTED:
                 raise SQLConnectException(e.details())
+            elif e.code() == grpc.StatusCode.INVALID_ARGUMENT:
+                raise PydanticValidationError(e.details())
             else:
                 raise ValueError(e.details(), e.code())
     

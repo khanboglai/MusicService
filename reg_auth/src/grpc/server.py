@@ -63,7 +63,7 @@ class AuthService:
         
         user, access_token = await get_current_user(access_token=access_token, refresh_token=refresh_token)
 
-        return GetMeResponse(user_id=user.id, login=user.login, role=str(user.role), access_token=access_token) # возвращаем токены, чтобы на гейтвее вписать их в куку
+        return GetMeResponse(user_id=user.id, login=user.login, role=user.role.value, access_token=access_token) # возвращаем токены, чтобы на гейтвее вписать их в куку
     
     @grpc_exception_handler
     async def UserRegister(self, request, context):

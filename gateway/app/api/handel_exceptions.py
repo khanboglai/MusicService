@@ -65,6 +65,8 @@ def handle_exceptions(func):
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except UniqueUserException as e:
             raise HTTPException(status_code=e.status_code, detail=str(e))
+        except PydanticValidationError as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
         
         except Exception as e:
             # Для неопознанных ошибок

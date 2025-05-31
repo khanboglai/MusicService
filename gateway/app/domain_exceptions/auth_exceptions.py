@@ -39,3 +39,8 @@ class UniqueUserException(DomainException):
     """ Исключение для существующего пользователя в бд """
     def __init__(self, message: str = "Пользователь уже существует"):
         super().__init__(message, status_code=409)
+
+class PydanticValidationError(DomainException):
+    """ Исключение для валидации поля в схеме pydantic """
+    def __init__(self, message: str):
+        super().__init__(message, status_code=422)

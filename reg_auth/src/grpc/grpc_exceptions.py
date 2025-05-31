@@ -3,6 +3,7 @@ import grpc
 from functools import wraps
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
+from pydantic import ValidationError
 
 def grpc_exception_handler(func):
     """ Декоратор для отлавливания исключений """
@@ -19,6 +20,12 @@ def grpc_exception_handler(func):
         except SQLAlchemyError as e:
             context.set_code(grpc.StatusCode.ABORTED)
             context.set_details("Ошибка подключения к серверу")
+        except ValidationError as e:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            error_message = ''
+            for error in e.errors():
+                error_message += error["msg"]
+            context.set_details(error_message)
         except Exception as e:
             await context.abort(grpc.StatusCode.UNKNOWN, f"Unexpected error: {str(e)}")
 

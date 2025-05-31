@@ -31,6 +31,7 @@ from .auth_exceptions import (
     ExpiredTokenException,
     DamagedTokenException,
     UniqueUserException,
+    PydanticValidationError,
 )
 
 __all__ = [
@@ -61,4 +62,5 @@ __all__ = [
     "ExpiredTokenException",
     "DamagedTokenException",
     "UniqueUserException",
+    "PydanticValidationError",
 ]
