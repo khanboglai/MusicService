@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from app.grpc_clients.listener_client import ListenerClient
 from app.grpc_clients.reader_client import ReaderClient
 from app.api.handel_exceptions import handle_exceptions, InvalidMimeType
-
+from app.search import search_for
 
 router = APIRouter()
 listener_client = ListenerClient()
@@ -248,9 +248,32 @@ async def get_all_tracks_in_playlist(user_id: int, playlist_id: int):
 @router.get("/search/albums/{query}/page={page}")
 @handle_exceptions
 async def search_albums(query: str, page: int):
-    ...
+    r = await search_for("albums", query, page)
+
+    result = []
+    for hit in r:
+        album = await reader_client.get_album(int(hit["_id"]))
+        result.append({
+            "album_id": album.album_id,
+            "title": album.title,
+            "owner_id": album.artist_id,
+            "release_date": album.release_date
+        })
+    return result
+
 
 @router.get("/search/tracks/{query}/page={page}")
 @handle_exceptions
 async def search_tracks(query: str, page: int):
-    ...
+    r = await search_for("tracks", query, page)
+
+    result = []
+    for hit in r:
+        track = await reader_client.get_track(int(hit["_id"]))
+        result.append({
+            "track_id": track.album_id,
+            "title": track.title,
+            "album_id": track.album_id,
+            "explicit": track.explicit
+        })
+    return result
