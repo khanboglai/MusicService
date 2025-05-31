@@ -244,3 +244,13 @@ async def get_all_tracks_in_playlist(user_id: int, playlist_id: int):
     return {
         "playlist": tracks_in_playlist,
     }
+
+@router.get("/search/albums/{query}/page={page}")
+@handle_exceptions
+async def search_albums(query: str, page: int):
+    ...
+
+@router.get("/search/tracks/{query}/page={page}")
+@handle_exceptions
+async def search_tracks(query: str, page: int):
+    ...

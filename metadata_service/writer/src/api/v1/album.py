@@ -11,7 +11,7 @@ from src.common.models.track import Track
 from src.common.schemas.album import AlbumCreate
 from src.common.schemas.track import TrackCreate
 from src.common.exceptions import *
-from src.common.search import add_album_to_es
+from src.common.search import add_album_to_es, rmv_album_from_es
 
 router = APIRouter()
 
@@ -34,6 +34,7 @@ async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(ge
 async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
     try:
         id = await album_repo.remove_album(album_id)
+        r = await rmv_album_from_es(album_id=id)
         return JSONResponse({"status": "OK", "message": id})
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
@@ -42,6 +43,8 @@ async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_alb
 async def delete_by_owner_id(owner_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
     try:
         ids = await album_repo.remove_albums_by_owner_id(owner_id)
+        for id in ids:
+            r = await rmv_album_from_es(album_id=id)
         return JSONResponse({
             "status": "OK",
             "message": ids

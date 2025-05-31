@@ -11,7 +11,7 @@ from src.common.models.track import Track
 from src.common.schemas.album import AlbumCreate
 from src.common.schemas.track import TrackCreate
 from src.common.exceptions import *
-from src.common.search import add_track_to_es
+from src.common.search import add_track_to_es, rmv_track_from_es
 
 router = APIRouter()
 
@@ -28,6 +28,7 @@ async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(ge
 async def delete(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:
         id = await track_repo.remove_track(track_id)
+        r = await rmv_track_to_es(track_id=id)
         return JSONResponse({"status": "OK", "message": id})
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
