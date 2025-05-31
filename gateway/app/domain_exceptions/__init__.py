@@ -22,6 +22,18 @@ from .reader_exceptions import (
     AlbumTrackDublicateException,
 )
 
+from .auth_exceptions import (
+    UserExistanceException,
+    SQLConnectException,
+    InvalidLoginPasswordException,
+    TokenExistanceException,
+    IncorrectTokenDataException,
+    ExpiredTokenException,
+    DamagedTokenException,
+    UniqueUserException,
+    PydanticValidationError,
+)
+
 __all__ = [
     "InvalidIdException",
     "UniqueViolationException",
@@ -42,4 +54,13 @@ __all__ = [
     "AlbumTrackDublicateException",
     "ForbiddenDeletingException",
     "ForbiddenInsertingException",
+    "UserExistanceException",
+    "SQLConnectException",
+    "InvalidLoginPasswordException",
+    "TokenExistanceException",
+    "IncorrectTokenDataException",
+    "ExpiredTokenException",
+    "DamagedTokenException",
+    "UniqueUserException",
+    "PydanticValidationError",
 ]

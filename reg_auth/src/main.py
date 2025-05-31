@@ -1,11 +1,20 @@
+import asyncio
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
 import uvicorn
-from src.api import register, login, me, admin
 
-app = FastAPI()
+from src.api import register, login, me, admin
+from src.grpc.server import serve
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    asyncio.create_task(serve())
+    yield
+
+app = FastAPI(
+    lifespan=lifespan,
+)
 
 app.include_router(register.router)
 app.include_router(login.router)

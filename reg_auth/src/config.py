@@ -1,10 +1,23 @@
 import os
+import yaml
+import logging
+import logging.config
 from pathlib import Path
 from pydantic import BaseModel
 from src.schemas.user import UserLogin
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 BASE_DIR = Path(__file__).parent
+
+config_path: Path = BASE_DIR / "logger" / "log_conf.yaml"
+
+with open(config_path, 'r', encoding='utf-8') as f:
+    config = yaml.safe_load(f.read())
+
+logging.config.dictConfig(config)
+logger = logging.getLogger(__name__)
+
 
 class AuthJWT(BaseModel):
     private_key_path: Path = BASE_DIR / "certs" / "private.pem"

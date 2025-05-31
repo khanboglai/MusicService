@@ -49,6 +49,24 @@ def handle_exceptions(func):
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except ForbiddenInsertingException as e:
             raise HTTPException(status_code=e.status_code, detail=str(e))
+        except UserExistanceException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except SQLConnectException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except InvalidLoginPasswordException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except TokenExistanceException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except IncorrectTokenDataException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except ExpiredTokenException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except DamagedTokenException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except UniqueUserException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
+        except PydanticValidationError as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
         
         except Exception as e:
             # Для неопознанных ошибок

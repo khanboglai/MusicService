@@ -1,5 +1,5 @@
 #!/bin/bash
-exec >> init.log 2>&1
+# exec >> init.log 2>&1
 set -e
 
 set -a
@@ -23,9 +23,11 @@ echo "[*] Иницилизации Базы Данных..."
 
 if [ ! -f ./src/certs/private.pem ]; then
   echo "[*] Генерация RSA ключей..."
+  cd src
   mkdir -p certs
   openssl genrsa -out certs/private.pem 2048
   openssl rsa -in certs/private.pem -pubout -out certs/public.pem
+  cd ..
 fi
 
 alembic upgrade head
