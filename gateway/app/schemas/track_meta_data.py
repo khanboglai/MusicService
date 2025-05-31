@@ -4,7 +4,7 @@ from datetime import date
 
 class AlbumCreate(BaseModel):
     title: str
-    owner_id: int
+    # owner_id: int
     release_date: date
 
 class TrackCreate(BaseModel):

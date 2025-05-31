@@ -39,7 +39,7 @@ class ArtistService:
         logger.info("Here")
         artist = await self.artist_repo.create_artist(new_artist)
         logger.info(f"GRPC: Created new artist {artist.name}")
-        return CreateArtistResponse(artist_id=artist.user_id)
+        return CreateArtistResponse(artist_id=artist.oid) ## тут artist_id
 
 
     @grpc_exception_handler
@@ -75,7 +75,7 @@ class ArtistService:
     @grpc_exception_handler
     async def GetArtistId(self, request, context):
         """ Функция для получения id исполнителя из сервиса """
-        artist = await self.artist_repo.get_artist_by_id(request.artist_id)
+        artist = await self.artist_repo.get_artist_by_user_id(request.user_id)
         logger.info(f"GRPC: Getting artist id for artist {artist.name}")
         return GetArtistIdResponse(id=artist.oid)
 
