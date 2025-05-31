@@ -34,10 +34,10 @@ app = FastAPI(
 
 app.add_exception_handler(DomainException, domain_exception_handler)
 
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(artists_router, prefix="/api/v1/artists", tags=["Исполнители"])
 app.include_router(listener_router, prefix="/api/v1/listener", tags=["Слушатели"])
 app.include_router(writer_router, prefix="/api/v1/writer", tags=["Writer"])
-app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 
 
 if __name__ == "__main__":
