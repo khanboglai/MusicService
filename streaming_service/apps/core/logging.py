@@ -67,12 +67,4 @@ LOGGING = {
 
 
 dictConfig(LOGGING)
-# logging.basicConfig(
-#     level=logging.INFO,  # Уровень логирования (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Формат сообщения
-#     handlers=[
-#         logging.StreamHandler(),  # Вывод в консоль
-#         logging.FileHandler("apps.log")  # Вывод в файл
-#     ]
-# )
 logger = logging.getLogger(__name__)
