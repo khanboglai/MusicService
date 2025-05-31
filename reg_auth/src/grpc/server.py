@@ -17,6 +17,7 @@ from src.grpc.auth_pb2 import (
 )
 from src.grpc.grpc_exceptions import grpc_exception_handler
 from src.db.enums import RoleEnum
+from src.config import logger
 
 
 class AuthService:
@@ -48,6 +49,8 @@ class AuthService:
         access_token = encode_jwt(jwt_payload, get_access_token_lifetime())
         refresh_token = encode_jwt(jwt_payload, get_refresh_token_lifetime())
 
+        logger.info(f"Выданы токены пользователю с логином {login}")
+
         return UserLoginResponse(access_token=access_token, refresh_token=refresh_token) # возвращаем токены, чтобы на гейтвее вписать их в куку
     
     @grpc_exception_handler
@@ -62,6 +65,8 @@ class AuthService:
             refresh_token = None
         
         user, access_token = await get_current_user(access_token=access_token, refresh_token=refresh_token)
+
+        logger.info(f"Выдана информация по пользователю с логином {user.login}")
 
         return GetMeResponse(user_id=user.id, login=user.login, role=user.role.value, access_token=access_token) # возвращаем токены, чтобы на гейтвее вписать их в куку
     
@@ -81,6 +86,8 @@ class AuthService:
         user = UserLogin(login=login, password=password)
         new_user = await create_user(login, password, RoleEnum(role))
 
+        logger.info(f"Создан новый пользователь login: {new_user.login}, user_id: {new_user.id}")
+
         return UserRegisterResponse(message=f"Пользователь создан с user_id {new_user.id}")
     
     @grpc_exception_handler
@@ -94,6 +101,8 @@ class AuthService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Пользователя с таким логином не найдено"
             )
+        
+        logger.info(f"Пользователь с логином {login} был удален")
         
         return UserDeleteResponse(message="Пользователь был успешно удален")
 
