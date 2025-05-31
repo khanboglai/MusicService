@@ -56,7 +56,7 @@ services:
       DB_USER: debug
       DB_PASSWORD: pswd
       DB_HOST: listener_postgres_db
-      DB_PORT: 5433
+      DB_PORT: 5432
       DB_NAME: listener
       # SECRET_KEY: 'z9t9w6dluej8fupds3fvefoozz6wlymglropksbavn32ehin9lclertyweco4rhri2weg1r3s0x4024yup42ufg4rgt6830tbfvm'
       # ALGORITHM: 'HS256'
