@@ -11,6 +11,7 @@ from src.common.models.track import Track
 from src.common.schemas.album import AlbumCreate
 from src.common.schemas.track import TrackCreate
 from src.common.exceptions import *
+from src.common.search import add_album_to_es
 
 router = APIRouter()
 
@@ -24,6 +25,7 @@ async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(ge
 
     try:
         created_album = await album_repo.create_album(new_album)
+        r = await add_album_to_es(album_id=created_album.oid, title=album.title)
         return {"message": f"{created_album.oid}"}
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))

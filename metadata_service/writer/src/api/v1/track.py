@@ -11,6 +11,7 @@ from src.common.models.track import Track
 from src.common.schemas.album import AlbumCreate
 from src.common.schemas.track import TrackCreate
 from src.common.exceptions import *
+from src.common.search import add_track_to_es
 
 router = APIRouter()
 
@@ -18,6 +19,7 @@ router = APIRouter()
 async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:
         created_track = await track_repo.create_track(track)
+        r = await add_track_to_es(album_id=track.oid, title=track.title)
         return {"message": f"{created_track.oid}"}
     except DatabaseException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e))
