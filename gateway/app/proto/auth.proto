@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package auth;
+
+
+service AuthService {
+    rpc UserLogin (UserLoginRequest) returns (UserLoginResponse);
+    // rpc UserLogout (UserLogoutRequest) returns (UserLogoutResponse);
+    rpc GetMe (GetMeRequest) returns (GetMeResponse);
+    rpc UserRegister (UserRegisterRequest) returns (UserRegisterResponse);
+    rpc UserDelete (UserDeleteRequest) returns (UserDeleteResponse);
+}
+
+message UserLoginRequest {
+    string login = 1;
+    string password = 2;
+}
+
+message UserLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message GetMeRequest {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message GetMeResponse {
+    int32 user_id = 1;
+    string login = 2;
+    string role = 3;
+    string access_token = 4;
+}
+
+message UserRegisterRequest {
+    string login = 1;
+    string password = 2;
+    string role = 3;
+}
+
+message UserRegisterResponse {
+    string message = 1;
+}
+
+message UserDeleteRequest {
+    string login = 1;
+}
+
+message UserDeleteResponse {
+    string message = 1;
+}

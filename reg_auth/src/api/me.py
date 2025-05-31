@@ -12,9 +12,9 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 router = APIRouter(prefix='/me', tags=['Me'])
 
 
-async def get_current_user(request: Request, response: Response):
-    access_token = request.cookies.get("access_token")
-    refresh_token = request.cookies.get("refresh_token")
+async def get_current_user(access_token: str, refresh_token: str):
+    # access_token = request.cookies.get("access_token")
+    # refresh_token = request.cookies.get("refresh_token")
 
     if not access_token:
         raise HTTPException(
@@ -40,13 +40,13 @@ async def get_current_user(request: Request, response: Response):
             )
         # user = {user.id, user.login, user.role}
 
-        return user
+        return user, access_token
 
     except ExpiredSignatureError:
         if not refresh_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Скрок действия токена истек. Необходима авторизация."
+                detail="Срок действия токена истек. Необходима авторизация."
             )
 
         try:
@@ -74,14 +74,14 @@ async def get_current_user(request: Request, response: Response):
             }
             new_token = encode_jwt(new_token_payload, get_access_token_lifetime())
 
-            response.set_cookie(
-                key="access_token",
-                value=new_token,
-                httponly=True,
-                samesite="lax"
-            )
+            # response.set_cookie(
+            #     key="access_token",
+            #     value=new_token,
+            #     httponly=True,
+            #     samesite="lax"
+            # )
 
-            return user
+            return user, new_token
 
         except (ExpiredSignatureError, InvalidTokenError):
             raise HTTPException(
