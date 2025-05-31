@@ -9,7 +9,7 @@ from src.common.repository.abstract.track import TrackRepositoryABC
 from src.common.database.session import get_db_session
 from src.common.models.album import Album
 from src.common.schemas.track import TrackCreate
-from src.search import add_track_to_es, add_album_to_es, rmv_track_from_es, rmv_album_from_es
+from src.common.search import add_track_to_es, add_album_to_es, rmv_track_from_es, rmv_album_from_es
 from src.config import settings
 
 from src.grpc.writer_pb2_grpc import add_WriterServiceServicer_to_server
@@ -51,10 +51,12 @@ class WriterService:
         """ Процедура удаления альбома """
         album_id = request.album_id
         
-        tids = [track.track_id for track in self.track_repo.get_tracks_by_album_id(album_id)]
+        tracks = await self.track_repo.get_tracks_by_album_id(album_id)
+        tids = [t.oid for t in tracks]
 
         id = await self.album_repo.remove_album(album_id)
 
+        r = await rmv_album_from_es(album_id)
         for tid in tids:
             r = await rmv_track_from_es(tid)
 
@@ -68,7 +70,8 @@ class WriterService:
 
         ids = await self.album_repo.remove_albums_by_owner_id(owner_id)
         for id in ids:
-            tids = [track.track_id for track in self.track_repo.get_tracks_by_album_id(id)]
+            tracks = await self.track_repo.get_tracks_by_album_id(id)
+            tids = [t.oid for t in tracks]
             r = await rmv_album_from_es(album_id=id)
             for tid in tids:
                 r = await rmv_track_from_es(tid)
