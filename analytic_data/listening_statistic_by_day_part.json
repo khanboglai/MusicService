@@ -1,0 +1,157 @@
+{
+  "id": 5,
+  "type": "barchart",
+  "title": "Listening statistic by day part",
+  "gridPos": {
+    "x": 0,
+    "y": 22,
+    "h": 11,
+    "w": 13
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "lineWidth": 1,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "value": null,
+            "color": "green"
+          },
+          {
+            "value": 80,
+            "color": "red"
+          }
+        ]
+      },
+      "unit": "short"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "total_plays"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "mode": "fixed",
+              "fixedColor": "purple"
+            }
+          }
+        ]
+      },
+      {
+        "__systemRef": "hideSeriesFrom",
+        "matcher": {
+          "id": "byNames",
+          "options": {
+            "mode": "exclude",
+            "names": [
+              "interactions_"
+            ],
+            "prefix": "All except:",
+            "readOnly": true
+          }
+        },
+        "properties": [
+          {
+            "id": "custom.hideFrom",
+            "value": {
+              "viz": true,
+              "legend": false,
+              "tooltip": false
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "interactions_"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "mode": "fixed",
+              "fixedColor": "purple"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pluginVersion": "12.0.1",
+  "targets": [
+    {
+      "refId": "A",
+      "editorType": "sql",
+      "queryType": "table",
+      "rawSql": "SELECT\n    CASE\n        WHEN toHour(interaction_date) BETWEEN 6 AND 11 THEN 'Утро (06:00-12:00)'\n        WHEN toHour(interaction_date) BETWEEN 12 AND 17 THEN 'День (12:00-18:00)'\n        WHEN toHour(interaction_date) BETWEEN 18 AND 23 THEN 'Вечер (18:00-00:00)'\n        ELSE 'Ночь (00:00-06:00)'\n    END AS time_period,\n    count() AS interactions_\nFROM interactions\nGROUP BY time_period\nORDER BY\n    CASE time_period\n        WHEN 'Утро (06:00-12:00)' THEN 1\n        WHEN 'День (12:00-18:00)' THEN 2\n        WHEN 'Вечер (18:00-00:00)' THEN 3\n        ELSE 4\n    END;",
+      "format": 1,
+      "meta": {
+        "builderOptions": {
+          "database": "",
+          "table": "",
+          "queryType": "table",
+          "columns": [],
+          "mode": "list",
+          "limit": 1000
+        }
+      },
+      "pluginVersion": "4.9.0"
+    }
+  ],
+  "datasource": {
+    "uid": "bennu4nqfywhsc",
+    "type": "grafana-clickhouse-datasource"
+  },
+  "options": {
+    "orientation": "auto",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0,
+    "showValue": "never",
+    "stacking": "none",
+    "groupWidth": 0.7,
+    "barWidth": 0.97,
+    "barRadius": 0,
+    "fullHighlight": false,
+    "tooltip": {
+      "mode": "single",
+      "sort": "none",
+      "hideZeros": false
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "right",
+      "calcs": []
+    }
+  }
+}

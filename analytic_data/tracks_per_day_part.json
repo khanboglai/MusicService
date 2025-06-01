@@ -1,12 +1,12 @@
 {
-  "id": 3,
+  "id": 7,
   "type": "barchart",
-  "title": "Top3 tracks per 30 days",
+  "title": "Track per day",
   "gridPos": {
     "x": 0,
-    "y": 44,
-    "h": 8,
-    "w": 12
+    "y": 0,
+    "h": 11,
+    "w": 13
   },
   "fieldConfig": {
     "defaults": {
@@ -39,50 +39,66 @@
         "mode": "absolute",
         "steps": [
           {
-            "color": "green",
-            "value": null
+            "value": null,
+            "color": "green"
           },
           {
-            "color": "red",
-            "value": 80
+            "value": 80,
+            "color": "red"
           }
         ]
       },
       "unit": "short"
     },
-    "overrides": []
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Вечер (18:00-00:00)"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "mode": "fixed",
+              "fixedColor": "dark-blue"
+            }
+          }
+        ]
+      }
+    ]
   },
   "pluginVersion": "12.0.1",
   "targets": [
     {
+      "refId": "A",
       "editorType": "sql",
+      "queryType": "table",
+      "rawSql": "SELECT\n    track_name,\n    sum(toHour(interaction_date) BETWEEN 6 AND 11) AS \"Утро (6:00-12:00)\",\n    sum(toHour(interaction_date) BETWEEN 12 AND 17) AS \"День (12:00-18:00)\",\n    sum(toHour(interaction_date) BETWEEN 18 AND 23) AS \"Вечер (18:00-00:00)\",\n    sum(toHour(interaction_date) BETWEEN 0 AND 5 OR toHour(interaction_date) = 23) AS \"Ночь (00:00-6:00)\"\nFROM interactions\nGROUP BY track_name\nLIMIT 20;",
       "format": 1,
       "meta": {
         "builderOptions": {
-          "columns": [],
           "database": "",
-          "limit": 1000,
-          "mode": "list",
+          "table": "",
           "queryType": "table",
-          "table": ""
+          "columns": [],
+          "mode": "list",
+          "limit": 1000
         }
       },
-      "pluginVersion": "4.9.0",
-      "queryType": "table",
-      "rawSql": "SELECT\n    track_name,\n    count(*) AS interactions\nFROM interactions\nWHERE interaction_date >= toDate(now() - toIntervalMonth(1))\nGROUP BY track_name\nORDER BY interactions DESC\nLIMIT 3;",
-      "refId": "A"
+      "pluginVersion": "4.9.0"
     }
   ],
   "datasource": {
-    "type": "grafana-clickhouse-datasource",
-    "uid": "bennu4nqfywhsc"
+    "uid": "bennu4nqfywhsc",
+    "type": "grafana-clickhouse-datasource"
   },
   "options": {
     "orientation": "auto",
     "xTickLabelRotation": 0,
     "xTickLabelSpacing": 0,
     "showValue": "never",
-    "stacking": "none",
+    "stacking": "normal",
     "groupWidth": 0.7,
     "barWidth": 0.97,
     "barRadius": 0,

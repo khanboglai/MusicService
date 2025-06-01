@@ -1,0 +1,74 @@
+{
+  "id": 6,
+  "type": "table",
+  "title": "Top artist per seasons",
+  "gridPos": {
+    "x": 0,
+    "y": 11,
+    "h": 11,
+    "w": 13
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "align": "auto",
+        "cellOptions": {
+          "type": "auto"
+        },
+        "inspect": false
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "value": null,
+            "color": "green"
+          },
+          {
+            "value": 80,
+            "color": "red"
+          }
+        ]
+      }
+    },
+    "overrides": []
+  },
+  "pluginVersion": "12.0.1",
+  "targets": [
+    {
+      "refId": "A",
+      "editorType": "sql",
+      "queryType": "table",
+      "rawSql": "SELECT \n    season,\n    artist_name,\n    interactions\nFROM (\n    SELECT \n        CASE \n            WHEN toMonth(interaction_date) IN (12, 1, 2) THEN 'Winter'\n            WHEN toMonth(interaction_date) IN (3, 4, 5) THEN 'Spring'\n            WHEN toMonth(interaction_date) IN (6, 7, 8) THEN 'Summer'\n            WHEN toMonth(interaction_date) IN (9, 10, 11) THEN 'Autumn'\n        END AS season,\n        artist_name,\n        count() AS interactions,\n        row_number() OVER (PARTITION BY \n            CASE \n                WHEN toMonth(interaction_date) IN (12, 1, 2) THEN 'Winter'\n                WHEN toMonth(interaction_date) IN (3, 4, 5) THEN 'Spring'\n                WHEN toMonth(interaction_date) IN (6, 7, 8) THEN 'Summer'\n                WHEN toMonth(interaction_date) IN (9, 10, 11) THEN 'Autumn'\n            END \n            ORDER BY count() DESC) AS rank\n    FROM interactions\n    WHERE toYear(interaction_date) = 2024\n    GROUP BY \n        artist_name,\n        season\n) t\nWHERE rank <= 3\nORDER BY \n    CASE season\n        WHEN 'Winter' THEN 1\n        WHEN 'Spring' THEN 2\n        WHEN 'Summer' THEN 3\n        WHEN 'Autumn' THEN 4\n    END,\n    interactions DESC",
+      "format": 1,
+      "meta": {
+        "builderOptions": {
+          "database": "",
+          "table": "",
+          "queryType": "table",
+          "columns": [],
+          "mode": "list",
+          "limit": 1000
+        }
+      },
+      "pluginVersion": "4.9.0"
+    }
+  ],
+  "datasource": {
+    "uid": "bennu4nqfywhsc",
+    "type": "grafana-clickhouse-datasource"
+  },
+  "options": {
+    "showHeader": true,
+    "cellHeight": "sm",
+    "footer": {
+      "show": false,
+      "reducer": [
+        "sum"
+      ],
+      "countRows": false,
+      "fields": ""
+    }
+  }
+}

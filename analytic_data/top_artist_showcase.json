@@ -1,10 +1,10 @@
 {
-  "id": 2,
+  "id": 1,
   "type": "barchart",
-  "title": "Top 3 artists",
+  "title": "Top 3 artists per 30 days",
   "gridPos": {
     "x": 0,
-    "y": 0,
+    "y": 60,
     "h": 8,
     "w": 12
   },
@@ -14,8 +14,8 @@
         "lineWidth": 1,
         "fillOpacity": 80,
         "gradientMode": "none",
-        "axisPlacement": "left",
-        "axisLabel": "Interactions",
+        "axisPlacement": "auto",
+        "axisLabel": "",
         "axisColorMode": "text",
         "axisBorderShow": false,
         "scaleDistribution": {
@@ -52,25 +52,16 @@
     },
     "overrides": [
       {
-        "__systemRef": "hideSeriesFrom",
         "matcher": {
-          "id": "byNames",
-          "options": {
-            "mode": "exclude",
-            "names": [
-              "interactions"
-            ],
-            "prefix": "All except:",
-            "readOnly": true
-          }
+          "id": "byName",
+          "options": "interactions"
         },
         "properties": [
           {
-            "id": "custom.hideFrom",
+            "id": "color",
             "value": {
-              "legend": false,
-              "tooltip": false,
-              "viz": true
+              "fixedColor": "yellow",
+              "mode": "fixed"
             }
           }
         ]
@@ -80,6 +71,10 @@
   "pluginVersion": "12.0.1",
   "targets": [
     {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "bennu4nqfywhsc"
+      },
       "editorType": "sql",
       "format": 1,
       "meta": {
@@ -94,13 +89,13 @@
       },
       "pluginVersion": "4.9.0",
       "queryType": "table",
-      "rawSql": "SELECT\n    artist_name,\n    sum(total_interactions) AS interactions\nFROM\n    top_artists\nGROUP BY\n    artist_name\nORDER BY\n    interactions DESC\nLIMIT\n    3;",
+      "rawSql": "SELECT\n    artist_name,\n    count(*) AS interactions\nFROM interactions\nWHERE interaction_date >= toDate(now() - toIntervalMonth(1))\nGROUP BY artist_name\nORDER BY interactions DESC\nLIMIT 3;",
       "refId": "A"
     }
   ],
   "datasource": {
     "type": "grafana-clickhouse-datasource",
-    "uid": "eemzgp75t1kowf"
+    "uid": "bennu4nqfywhsc"
   },
   "options": {
     "orientation": "auto",
@@ -122,8 +117,6 @@
       "displayMode": "list",
       "placement": "right",
       "calcs": []
-    },
-    "colorByField": "artist_name",
-    "xField": "artist_name"
+    }
   }
 }
