@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('login', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
-    sa.Column('role', sa.Enum('LISTNER', 'AUTHOR', 'ADMIN', name='roleenum', create_type=False), server_default=sa.text("'LISTNER'"), nullable=False),
+    sa.Column('role', sa.Enum('LISTNER', 'ARTIST', 'ADMIN', name='roleenum', create_type=False), server_default=sa.text("'LISTNER'"), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('login')
