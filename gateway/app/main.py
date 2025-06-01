@@ -7,7 +7,6 @@ from app.core.config import settings
 
 from app.api.v1.artists_routers import router as artists_router
 from app.api.v1.listener_routers import router as listener_router
-from app.api.v1.albums_and_tracks import router as writer_router
 from app.api.v1.streaming_routers import router as streaming_router
 from app.api.v1.auth_routers import router as auth_router
 from app.api.exception_handlers import domain_exception_handler
@@ -38,7 +37,6 @@ app.add_exception_handler(DomainException, domain_exception_handler)
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(artists_router, prefix="/api/v1/artists", tags=["Исполнители"])
 app.include_router(listener_router, prefix="/api/v1/listener", tags=["Слушатели"])
-app.include_router(writer_router, prefix="/api/v1/writer", tags=["Writer"])
 app.include_router(streaming_router, prefix="/api/v1/streaming", tags=["Streaming"])
 
 

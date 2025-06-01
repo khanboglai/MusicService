@@ -23,7 +23,7 @@ writer_client = WriterClient()
 
 @router.get('/data/userid/')
 @handle_exceptions
-async def get_artist_data_by_user_id(user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def get_artist_data_by_user_id(user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ ручка для получения описания пользователя """
     artist = await artist_client.get_data_by_user_id(user.user_id)
     return artist
@@ -31,14 +31,14 @@ async def get_artist_data_by_user_id(user = Depends(check_role(RoleEnum.LISTNER.
 
 @router.get('/data/{id}')
 @handle_exceptions
-async def get_artist_data_by_artist_id(artist_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def get_artist_data_by_artist_id(artist_id: int, user = Depends(check_role(RoleEnum.ARTIST.value))):
     artist = await artist_client.get_data_by_artist_id(artist_id)
     return artist
 
 
 @router.post('/create_artist')
 @handle_exceptions
-async def create_artist(artist: ArtistCreate, user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def create_artist(artist: ArtistCreate, user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для создания исполнителя """
     artist_id = await artist_client.create_artist(artist, user.user_id)
     return {"id": f"{artist_id}"}
@@ -46,7 +46,7 @@ async def create_artist(artist: ArtistCreate, user = Depends(check_role(RoleEnum
 
 @router.delete('/delete_artist/')
 @handle_exceptions
-async def delete_artist(user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def delete_artist(user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для удаления исполнителя """
     artist_user_id = await artist_client.delete_artist(user.user_id)
     return {"user_id": f"{artist_user_id}"}
@@ -54,14 +54,14 @@ async def delete_artist(user = Depends(check_role(RoleEnum.LISTNER.value))):
 
 @router.get("/artist_id/")
 @handle_exceptions
-async def get_artist_id(user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def get_artist_id(user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для получения artist_id по user_id """
     id = await artist_client.get_artist_id(user.user_id)
     return id
 
 
 @router.post("/create_track")
-async def create_track(track_data: str = Form(...), file: UploadFile = File(...), user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def create_track(track_data: str = Form(...), file: UploadFile = File(...), user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для создания трека """
     track_id = None
     try:
@@ -94,7 +94,7 @@ async def create_track(track_data: str = Form(...), file: UploadFile = File(...)
 
 
 @router.delete("/delete_track")
-async def delete_track(track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def delete_track(track_id: int, user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для удаления трека """
     try:
         id = await writer_client.remove_track(track_id)
@@ -104,7 +104,7 @@ async def delete_track(track_id: int, user = Depends(check_role(RoleEnum.LISTNER
 
 
 @router.post("/create_album")
-async def create_album(album: AlbumCreate, user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def create_album(album: AlbumCreate, user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для создания альбома """
     try:
         artist_id = await artist_client.get_artist_id(user.user_id)
@@ -116,7 +116,7 @@ async def create_album(album: AlbumCreate, user = Depends(check_role(RoleEnum.LI
 
 
 @router.delete("/delete_album")
-async def delete_album(album_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def delete_album(album_id: int, user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для удаления альбома """
     try:
         id = await writer_client.remove_album(album_id)
@@ -126,7 +126,7 @@ async def delete_album(album_id: int, user = Depends(check_role(RoleEnum.LISTNER
 
 
 @router.delete("/delete_albums_by_owner_id")
-async def delete_albums_by_owner_id(user = Depends(check_role(RoleEnum.LISTNER.value))):
+async def delete_albums_by_owner_id(user = Depends(check_role(RoleEnum.ARTIST.value))):
     """ Ручка для удаления альбома по artist_id """
     try:
         owner_id = await artist_client.get_artist_id(user.user_id)
