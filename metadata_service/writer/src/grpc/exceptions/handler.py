@@ -4,6 +4,7 @@ from src.common.exceptions import *
 
 
 def grpc_exception_handler(func):
+    """ Обработчик ошибок для gRPC """
     @wraps(func)
     async def wrapper(self, request, context):
         try:
