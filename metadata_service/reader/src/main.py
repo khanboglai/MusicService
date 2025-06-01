@@ -38,6 +38,6 @@ app.add_exception_handler(DomainException, domain_exception_handler)
 app.include_router(album_router, prefix="/api/v1/album", tags=["Чтение метаданных альбомов"])
 app.include_router(track_router, prefix="/api/v1/track", tags=["Чтение метаданных треков"])
 
-
+# Точка входа
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8802, log_config=LOGGING)
