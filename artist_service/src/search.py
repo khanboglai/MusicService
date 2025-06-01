@@ -11,7 +11,7 @@ es = Elasticsearch(f"http://elasticsearch:9200")
 SEARCH_SIZE = 10
 
 async def add_artist_to_es(artist_id: int, title: str):
-    """ Добавляет альбом в Elasticsearch """
+    """ Добавляет исполнителя в Elasticsearch """
     
     document = {
         "title": title
@@ -21,7 +21,7 @@ async def add_artist_to_es(artist_id: int, title: str):
     return response
 
 async def rmv_artist_from_es(artist_id: int):
-    """ Удаляет альбом из Elasticsearch """
+    """ Удаляет исполнителя из Elasticsearch """
 
     response = es.delete(index="artists", id=artist_id)
     logger.info(f"Исполнитель с ID {artist_id} удален из Elasticsearch")

@@ -19,6 +19,7 @@ from src.grpc.artist_pb2 import (
 from src.value_objects.artist_description import Description
 from src.grpc.grpc_exceptions_handlers.grpc_excaption_handler import grpc_exception_handler
 from src.core.logging import logger
+from src.search import add_artist_to_es, rmv_artist_from_es
 
 
 class ArtistService:
@@ -28,7 +29,6 @@ class ArtistService:
     @grpc_exception_handler # в декоратор поместил логику обработки ошибок, кода стало в 2 раза меньше
     async def CreateArtist(self, request, context):
         """ Функция для создания исполнителя """
-        logger.info(f"Hui")
         new_artist = Artist(
             name=request.name,
             email=request.email,
@@ -36,11 +36,11 @@ class ArtistService:
             description=Description(request.description),
             user_id=request.user_id
         )
-        logger.info("Here")
+
         artist = await self.artist_repo.create_artist(new_artist)
+        r = await add_artist_to_es(artist_id=artist.oid, title=artist.name)
         logger.info(f"GRPC: Created new artist {artist.name}")
         return CreateArtistResponse(artist_id=artist.oid) ## тут artist_id
-
 
     @grpc_exception_handler
     async def GetArtistDataByUserId(self, request, context):
@@ -83,11 +83,11 @@ class ArtistService:
     @grpc_exception_handler
     async def DeleteArtistByUserId(self, request, context):
         """ Функция для удаления исполнителя по user_id """
+        artist = await self.artist_repo.get_artist_by_user_id(request.user_id)
         user_id = await self.artist_repo.delete_artist(request.user_id)
+        r = await rmv_artist_from_es(artist_id=artist.oid)
         logger.info(f"GRPC: Delete artist by user_id {user_id}")
         return DeleteArtistByUserIdResponse(user_id=user_id)
-
-
 
     # @grpc_exception_handler
     # async def UploadArtistCover(self, request_iterator, context):
