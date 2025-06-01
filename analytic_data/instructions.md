@@ -54,7 +54,8 @@ curl -i -X POST -H "Accept:application/json" \
       "key.converter": "org.apache.kafka.connect.json.JsonConverter",
       "value.converter": "org.apache.kafka.connect.json.JsonConverter",
       "key.converter.schemas.enable": "false",
-      "value.converter.schemas.enable": "false"
+      "value.converter.schemas.enable": "false",
+      "time.precision.mode": "connect"
     }
 }'
 ```
