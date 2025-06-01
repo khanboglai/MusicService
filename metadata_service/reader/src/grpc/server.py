@@ -1,4 +1,5 @@
-""" Cерверная часть сервиса ридера """
+""" Cерверная часть сервиса читателя """
+
 import grpc
 import asyncio
 from concurrent import futures
@@ -22,7 +23,8 @@ from src.grpc.exceptions.handler import grpc_exception_handler
 
 
 class ReaderService:
-    """ Сервис ридера """
+    """ gRPC Сервис читателя """
+
     def __init__(self, track_repo, album_repo):
         self.track_repo = track_repo
         self.album_repo = album_repo
@@ -80,11 +82,6 @@ async def serve():
     server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
 
     async with get_db_session() as db:
-        # repo = await ArtistRepositoryFactory.create(
-        #     db=db,
-        #     use_cache=True,
-        #     redis_client=redis_client
-        # )
         album_repo = await AlbumRepositoryFactory.create(db)
         track_repo = await TrackRepositoryFactory.create(db)
 
@@ -96,6 +93,7 @@ async def serve():
     add_ReaderServiceServicer_to_server(service, server)
     server.add_insecure_port('[::]:50051')
     print("gRPC server is running on port 50051")
+
     await server.start()
     await server.wait_for_termination()
 

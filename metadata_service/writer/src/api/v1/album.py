@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.post("/create", response_model=None)
 async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
+    """ API ручка для записи информации об альбоме """
     new_album = Album(
         title=album.title,
         owner_id=album.owner_id,
@@ -32,6 +33,7 @@ async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(ge
 
 @router.delete("/delete", response_model=None)
 async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository), track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для удаления информации об альбоме по его ID """
     try:
         tids = [track.oid for track in await track_repo.get_tracks_by_album_id(album_id)]
 
@@ -46,6 +48,7 @@ async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_alb
 
 @router.delete("/delete_by_owner_id", response_model=None)
 async def delete_by_owner_id(owner_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository), track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для удаления информации обо всех альбомах от исполнителя по его ID """
     try:
         ids = await album_repo.remove_albums_by_owner_id(owner_id)
         for id in ids:

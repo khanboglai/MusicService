@@ -6,4 +6,5 @@ class Entity(ABC):
 
     @abstractmethod
     def to_json(self) -> dict:
+        """ Представление сущности в виде JSON """
         ...

@@ -5,13 +5,13 @@ LOG_FORMAT = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,  # Не отключать существующие логгеры
+    "disable_existing_loggers": False,
     "formatters": {
         "verbose": {"format": LOG_FORMAT},
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
             "fmt": "%(levelprefix)s %(message)s",
-            "use_colors": True,  # Использовать цвета в консоли
+            "use_colors": True,
         },
         "access": {
             "()": "uvicorn.logging.AccessFormatter",
@@ -37,13 +37,13 @@ LOGGING = {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "app.log",  # Файл для записи логов
+            "filename": "app.log",
             "formatter": "verbose",
         },
     },
     "loggers": {
-        "": {  # Корневой логгер
-            "handlers": ["console", "file"],  # Вывод в консоль и файл
+        "": {
+            "handlers": ["console", "file"],
             "level": "INFO",
             "propagate": False,
         },

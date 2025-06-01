@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.post("/create", response_model=None)
 async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для записи информации о треке """
     try:
         created_track = await track_repo.create_track(track)
         r = await add_track_to_es(track_id=created_track.oid, title=track.title)
@@ -26,6 +27,7 @@ async def create(track: TrackCreate, track_repo: TrackRepositoryABC = Depends(ge
 
 @router.delete("/delete", response_model=None)
 async def delete(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для удаления информации о треке по его ID """
     try:
         id = await track_repo.remove_track(track_id)
         r = await rmv_track_from_es(track_id=id)

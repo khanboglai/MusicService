@@ -6,11 +6,14 @@ from src.common.repository.album import AlbumRepository
 
 
 def get_album_repository(db: AsyncSession = Depends(get_session)) -> AlbumRepositoryABC:
+    """ Получение репозитория альбомов """
     return AlbumRepository(db)
 
 class AlbumRepositoryFactory:
+    """ Фабрика репозитория альбомов """
     @staticmethod
     async def create(db: AsyncSession = Depends(get_session), use_cache: bool = False, redis_client=None) -> AlbumRepositoryABC:
+        """ Создает репозиторий альбомов """
         if use_cache and redis_client:
             return ...
         return AlbumRepository(db)

@@ -293,3 +293,19 @@ async def search_tracks(query: str, page: int, user = Depends(check_role(RoleEnu
             "explicit": track.explicit
         })
     return result
+
+@router.get("/search/artists/{query}/page={page}")
+@handle_exceptions
+async def search_artists(query: str, page: int):
+    r = await search_for("artists", query, page)
+
+    result = []
+    for hit in r:
+        artist = await artist_client.get_data_by_artist_id(int(hit["_id"]))
+        result.append({
+            "artist_id": artist[0],
+            "name": artist[1],
+            "description": artist[2],
+            "registered_at" : artist[3]
+        })
+    return result

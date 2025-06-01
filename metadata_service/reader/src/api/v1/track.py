@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.get("/get_by_id", response_model=None)
 async def get_by_id(track_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для получения информации о треке по его ID"""
     try:
         track = await track_repo.get_track_by_id(track_id)
         return JSONResponse(track.to_json())
@@ -25,6 +26,7 @@ async def get_by_id(track_id: int, track_repo: TrackRepositoryABC = Depends(get_
     
 @router.get("/get_by_album_id", response_model=None)
 async def get_by_album_id(album_id: int, track_repo: TrackRepositoryABC = Depends(get_track_repository)):
+    """ API ручка для получения списка треков из альбома по ID альбома """
     try:
         tracks = await track_repo.get_tracks_by_album_id(album_id)
         json_tracks = []

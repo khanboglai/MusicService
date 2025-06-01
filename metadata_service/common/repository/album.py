@@ -9,6 +9,8 @@ from src.common.exceptions import *
 
 
 class AlbumRepository(AlbumRepositoryABC):
+    """ Основной репозиторий альбомов (без кеширования) """
+    
     def __init__(self, db: AsyncSession):
         self.db = db
 

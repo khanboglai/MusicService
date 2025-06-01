@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 
 es = Elasticsearch(f"http://elasticsearch:9200")
 
-SEARCH_SIZE = 10
+SEARCH_SIZE = 10 # максимальный размер страницы
+
 
 async def add_album_to_es(album_id: int, title: str):
     """ Добавляет альбом в Elasticsearch """

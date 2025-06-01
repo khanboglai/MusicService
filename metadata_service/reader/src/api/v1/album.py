@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.get("/get_by_id", response_model=None)
 async def get_by_id(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
+    """ API ручка для получения информации об альбоме по его ID """
     try:
         album = await album_repo.get_album_by_id(album_id)
         return JSONResponse(album.to_json())
@@ -25,6 +26,7 @@ async def get_by_id(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_
 
 @router.get("/get_by_owner_id", response_model=None)
 async def get_by_owner_id(owner_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository)):
+    """ API ручка для получения списка альбомов по ID автора """
     albums = await album_repo.get_albums_by_owner_id(owner_id)
     json_albums = []
     for album in albums:

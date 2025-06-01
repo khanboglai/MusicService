@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """ Класс настроек приложения """
     model_config = SettingsConfigDict(env_prefix="", env_file=".env", extra='ignore')
     project_name: str = Field("Сервис для сохранения метаданных", alias="PROJECT_NAME")
     description: str = Field(

@@ -10,7 +10,7 @@ es = Elasticsearch(f"http://elasticsearch:9200")
 
 SEARCH_SIZE = 10
 
-async def search_for(what: Literal["albums", "tracks"], phrase: str, page: int):
+async def search_for(what: Literal["albums", "tracks", "artists"], phrase: str, page: int):
     """ Поиск в Elasticsearch """
     response = es.search(
         index=what,
