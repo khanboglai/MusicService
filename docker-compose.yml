@@ -111,7 +111,34 @@ services:
 #    networks:
 #      - music_network
 
+  elasticsearch:
+    image: elasticsearch:7.17.26
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - music_network
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
 volumes:
+  esdata:
+      driver: local
   minio_data:
   redis_data:
   clickhouse_data:

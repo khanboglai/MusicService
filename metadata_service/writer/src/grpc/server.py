@@ -9,6 +9,7 @@ from src.common.repository.abstract.track import TrackRepositoryABC
 from src.common.database.session import get_db_session
 from src.common.models.album import Album
 from src.common.schemas.track import TrackCreate
+from src.common.search import add_track_to_es, add_album_to_es, rmv_track_from_es, rmv_album_from_es
 from src.config import settings
 
 from src.grpc.writer_pb2_grpc import add_WriterServiceServicer_to_server
@@ -40,6 +41,8 @@ class WriterService:
             release_date=request.release_date.ToDatetime().date(),
         )
         album = await self.album_repo.create_album(new_album)
+        r = await add_album_to_es(album_id=album.oid, title=new_album.title)
+
         logger.info(f"gRPC -> CreateAlbum -> {album.oid}")
         return CreateAlbum_Response(album_id=album.oid)
 
@@ -47,8 +50,16 @@ class WriterService:
     async def RemoveAlbum(self, request, context):
         """ Процедура удаления альбома """
         album_id = request.album_id
+        
+        tracks = await self.track_repo.get_tracks_by_album_id(album_id)
+        tids = [t.oid for t in tracks]
 
         id = await self.album_repo.remove_album(album_id)
+
+        r = await rmv_album_from_es(album_id)
+        for tid in tids:
+            r = await rmv_track_from_es(tid)
+
         logger.info(f"gRPC -> RemoveAlbum -> {id}")
         return RemoveAlbum_Response(album_id=id)
 
@@ -58,6 +69,12 @@ class WriterService:
         owner_id = request.owner_id
 
         ids = await self.album_repo.remove_albums_by_owner_id(owner_id)
+        for id in ids:
+            tracks = await self.track_repo.get_tracks_by_album_id(id)
+            tids = [t.oid for t in tracks]
+            r = await rmv_album_from_es(album_id=id)
+            for tid in tids:
+                r = await rmv_track_from_es(tid)
         logger.info(f"gRPC -> RemoveAlbumsByOwnerID -> {ids}")
         return RemoveAlbumsByOwnerID_Response(album_ids=ids)
 
@@ -71,6 +88,8 @@ class WriterService:
             genre_names=request.genre_names
         )
         track = await self.track_repo.create_track(new_track)
+        r = await add_track_to_es(track_id=track.oid, title=new_track.title)
+
         logger.info(f"gRPC -> CreateTrack -> {track.oid}")
         return CreateTrack_Response(track_id=track.oid)
 
@@ -80,6 +99,8 @@ class WriterService:
         track_id = request.track_id
 
         id = await self.track_repo.remove_track(track_id)
+        r = await rmv_track_from_es(track_id=id)
+
         logger.info(f"gRPC -> RemoveTrack -> {id}")
         return RemoveTrack_Response(track_id=id)
 

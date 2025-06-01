@@ -70,5 +70,5 @@ def handle_exceptions(func):
         
         except Exception as e:
             # Для неопознанных ошибок
-            raise HTTPException(status_code=500, detail="Internal Server Error")
+            raise HTTPException(status_code=500, detail=str(e))
     return wrapper
