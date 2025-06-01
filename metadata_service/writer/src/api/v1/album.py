@@ -33,7 +33,7 @@ async def create(album: AlbumCreate, album_repo: AlbumRepositoryABC = Depends(ge
 @router.delete("/delete", response_model=None)
 async def delete(album_id: int, album_repo: AlbumRepositoryABC = Depends(get_album_repository), track_repo: TrackRepositoryABC = Depends(get_track_repository)):
     try:
-        tids = [track.track_id for track in await track_repo.get_tracks_by_album_id(album_id)]
+        tids = [track.oid for track in await track_repo.get_tracks_by_album_id(album_id)]
 
         id = await album_repo.remove_album(album_id)
         r = await rmv_album_from_es(album_id=id)
@@ -49,7 +49,7 @@ async def delete_by_owner_id(owner_id: int, album_repo: AlbumRepositoryABC = Dep
     try:
         ids = await album_repo.remove_albums_by_owner_id(owner_id)
         for id in ids:
-            tids = [track.track_id for track in await track_repo.get_tracks_by_album_id(id)]
+            tids = [track.oid for track in await track_repo.get_tracks_by_album_id(id)]
             r = await rmv_album_from_es(album_id=id)
             for tid in tids:
                 r = await rmv_track_from_es(tid)
