@@ -1,21 +1,27 @@
 """ Ручки клиента слушателя """
 import os
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.grpc_clients.listener_client import ListenerClient
 from app.grpc_clients.reader_client import ReaderClient
+from app.grpc_clients.artist_client import ArtistClient
 from app.api.handel_exceptions import handle_exceptions, InvalidMimeType
 from app.search import search_for
+from app.api.v1.auth_routers import check_role
+from app.schemas.role_enum import RoleEnum
+
 
 router = APIRouter()
+# подключаем клиентов других сервисов
 listener_client = ListenerClient()
 reader_client = ReaderClient()
+artist_client = ArtistClient()
 
 
 @router.get('/listener/get')
 @handle_exceptions
-async def read_listener(user_id: int):
-    listener = await listener_client.get_listener(user_id)
+async def read_listener(user = Depends(check_role(RoleEnum.LISTNER.value))):
+    listener = await listener_client.get_listener(user.user_id)
     return {
         "listener_id": int(listener.listener_id),
         "user_id": int(listener.user_id),
@@ -26,13 +32,13 @@ async def read_listener(user_id: int):
 @router.post('/listener/add')
 @handle_exceptions
 async def add_listener(
-        user_id: int, # временно, потом будем получать из куки
         first_name: str,
         last_name: str,
         birth_date: str,
+        user = Depends(check_role(RoleEnum.LISTNER.value)),
     ):
     listener = await listener_client.create_listener(
-            user_id,
+            user.user_id,
             first_name,
             last_name,
             birth_date,
@@ -46,15 +52,15 @@ async def add_listener(
 
 @router.delete('/listener/delete')
 @handle_exceptions
-async def erase_listener(user_id: int):
-    message = await listener_client.delete_listener(user_id)
+async def erase_listener(user = Depends(check_role(RoleEnum.LISTNER.value))):
+    message = await listener_client.delete_listener(user.user_id)
     return {
         "message": str(message.delete_message)
     }
 
 @router.get('/albums')
 @handle_exceptions
-async def get_all_albums():
+async def get_all_albums(user = Depends(check_role(RoleEnum.LISTNER.value))):
     albums = await reader_client.get_all_albums()
     return {
         "albums": [
@@ -70,7 +76,7 @@ async def get_all_albums():
 
 @router.get('/album/{album_id}')
 @handle_exceptions
-async def get_tracks_in_album(album_id: int):
+async def get_tracks_in_album(album_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
     tracks = await reader_client.get_tracks_in_album(album_id)
     return {
         "tracks": [
@@ -85,7 +91,7 @@ async def get_tracks_in_album(album_id: int):
 
 @router.get('/artist/{artist_id}')
 @handle_exceptions
-async def get_albums_in_artist(artist_id: int):
+async def get_albums_in_artist(artist_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
     albums = await reader_client.get_albums_in_artist(artist_id)
     return {
         "albums": [
@@ -101,7 +107,7 @@ async def get_albums_in_artist(artist_id: int):
 
 @router.get('/tracks/{track_id}')
 @handle_exceptions
-async def get_track_info(track_id: int):
+async def get_track_info(track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
     track = await reader_client.get_track(track_id)
     return {
         "track_id": track.track_id,
@@ -111,8 +117,8 @@ async def get_track_info(track_id: int):
 
 @router.post('/like')
 @handle_exceptions
-async def liking(user_id: int, track_id: int):
-    like = await listener_client.like(user_id, track_id)
+async def liking(track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    like = await listener_client.like(user.user_id, track_id)
     if not like.HasField("deleted"):
         return {
             "like": {
@@ -129,22 +135,34 @@ async def liking(user_id: int, track_id: int):
         }
     return {"message": "Like deleted successfully!"}
 
+
 @router.post('/interaction')
 @handle_exceptions
 async def interacting(
-        user_id: int, # временно
         track_id: int, # это останется здесь (тк на фронте когда мы нажимаем на кнопку трека, то с фронта на бэк идет айдишник)
         # track_name: str, # перенесется в тело функции (запрос к сервису ридера)
         listen_time: int,
         # artist_id: int, # перенесется в тело функции (запрос к сервису ридера)
-        artist_name: str, # перенесется в тело функции (запрос к сервису артиста)
+        # artist_name: str, # перенесется в тело функции (запрос к сервису артиста)
         # genre_id: int, # перенесется в тело функции (запрос к сервису ридера)
         # genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
+        user = Depends(check_role(RoleEnum.LISTNER.value))
     ):
     track_info = await reader_client.get_track(track_id)
     album_info = await reader_client.get_album(int(track_info.album_id))
     genre_info = await reader_client.get_track_genre(track_id)
-    interaction = await listener_client.interaction(user_id, track_id, listen_time, str(track_info.title), int(album_info.artist_id), artist_name, int(genre_info.genre_id), str(genre_info.genre_name))
+    artist_name = (await artist_client.get_data_by_artist_id(int(album_info.artist_id)))[1]
+    interaction = await listener_client.interaction(
+        user.user_id,
+        track_id,
+        listen_time,
+        str(track_info.title),
+        int(album_info.artist_id),
+        artist_name,
+        int(genre_info.genre_id),
+        str(genre_info.genre_name)
+    )
+
     return {
         "track_id": int(interaction.track_id),
         "listen_time": int(interaction.listen_time),
@@ -159,8 +177,8 @@ async def interacting(
 
 @router.get('/history')
 @handle_exceptions
-async def load_history(user_id: int):
-    history = await listener_client.history(user_id)
+async def load_history(user = Depends(check_role(RoleEnum.LISTNER.value))):
+    history = await listener_client.history(user.user_id)
     tracks_in_history = []
     for interaction in history.interactions:
         track_info = await reader_client.get_track(interaction.track_id)
@@ -178,8 +196,8 @@ async def load_history(user_id: int):
 
 @router.post('/playlist/create')
 @handle_exceptions
-async def create_playlist(user_id: int, title: str):
-    playlist = await listener_client.create_playlist(user_id, title)
+async def create_playlist(title: str, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    playlist = await listener_client.create_playlist(user.user_id, title)
     return {
         "playlist_id": int(playlist.playlist_id),
         "title": str(playlist.title),
@@ -187,16 +205,16 @@ async def create_playlist(user_id: int, title: str):
 
 @router.delete('/playlists/delete')
 @handle_exceptions
-async def delete_playlist(user_id: int, playlist_id: int):
-    message = await listener_client.delete_playlist(user_id, playlist_id)
+async def delete_playlist(playlist_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    message = await listener_client.delete_playlist(user.user_id, playlist_id)
     return {
         "message": str(message.delete_message)
     }
 
 @router.get('/playlists')
 @handle_exceptions
-async def get_all_playlists(user_id: int):
-    playlists = await listener_client.get_all_playlists(user_id)
+async def get_all_playlists(user = Depends(check_role(RoleEnum.LISTNER.value))):
+    playlists = await listener_client.get_all_playlists(user.user_id)
     return {
         "listener": {
         "listener_id": int(playlists.listener.listener_id),
@@ -214,10 +232,11 @@ async def get_all_playlists(user_id: int):
         ]
     }
 
+
 @router.post('/playlists/{playlist_id}/add_track')
 @handle_exceptions
-async def add_new_track_in_playlist(user_id: int, playlist_id: int, track_id: int):
-    track = await listener_client.add_new_track_in_playlist(user_id, playlist_id, track_id)
+async def add_new_track_in_playlist(playlist_id: int, track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    track = await listener_client.add_new_track_in_playlist(user.user_id, playlist_id, track_id)
     track_info = await reader_client.get_track(track_id)
     return {
         "playlist_id": int(track.playlist_id),
@@ -225,18 +244,19 @@ async def add_new_track_in_playlist(user_id: int, playlist_id: int, track_id: in
         "track_title": str(track_info.title),
     }
 
+
 @router.delete('/playlists/{playlist_id}/delete_track')
 @handle_exceptions
-async def delete_track_from_playlist(user_id: int, playlist_id: int, track_id: int):
-    message = await listener_client.delete_track_from_playlist(user_id, playlist_id, track_id)
+async def delete_track_from_playlist(playlist_id: int, track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    message = await listener_client.delete_track_from_playlist(user.user_id, playlist_id, track_id)
     return {
         "message": str(message.delete_message),
     }
 
 @router.get('/playlists/{playlist_id}/tracks')
 @handle_exceptions
-async def get_all_tracks_in_playlist(user_id: int, playlist_id: int):
-    tracks = await listener_client.get_all_tracks_in_playlist(user_id, playlist_id)
+async def get_all_tracks_in_playlist(playlist_id: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
+    tracks = await listener_client.get_all_tracks_in_playlist(user.user_id, playlist_id)
     tracks_in_playlist = []
     for track in tracks.tracks:
         track_info = await reader_client.get_track(track.track_id)
@@ -245,9 +265,10 @@ async def get_all_tracks_in_playlist(user_id: int, playlist_id: int):
         "playlist": tracks_in_playlist,
     }
 
+
 @router.get("/search/albums/{query}/page={page}")
 @handle_exceptions
-async def search_albums(query: str, page: int):
+async def search_albums(query: str, page: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
     r = await search_for("albums", query, page)
 
     result = []
@@ -264,7 +285,7 @@ async def search_albums(query: str, page: int):
 
 @router.get("/search/tracks/{query}/page={page}")
 @handle_exceptions
-async def search_tracks(query: str, page: int):
+async def search_tracks(query: str, page: int, user = Depends(check_role(RoleEnum.LISTNER.value))):
     r = await search_for("tracks", query, page)
 
     result = []
