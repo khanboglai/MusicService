@@ -19,6 +19,7 @@ from sqlalchemy.orm import column_property, registry, relationship
 mapper_registry = registry()
 
 class Genre:
+    """ Класс жанра треков """
     _name: str
 
     def __init__(self, name):
@@ -28,6 +29,7 @@ class Genre:
     def name(self):
         return self._name
 
+# Таблица жанров
 genres_table = Table(
     "genres",
     mapper_registry.metadata,
@@ -35,6 +37,7 @@ genres_table = Table(
     Column("_name", String, unique=True, nullable=False),
 )
 
+# Таблица альомов
 albums_table = Table(
     "albums",
     mapper_registry.metadata,
@@ -44,6 +47,7 @@ albums_table = Table(
     Column("_release_date", Date, nullable=False),
 )
 
+# Таблица треков
 tracks_table = Table(
     "tracks",
     mapper_registry.metadata,
@@ -53,6 +57,7 @@ tracks_table = Table(
     Column("_explicit", Boolean),
 )
 
+# Таблица связи трек-жанр
 track_genres_table = Table(
     "track_genres",
     mapper_registry.metadata,

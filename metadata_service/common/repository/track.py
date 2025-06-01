@@ -11,6 +11,8 @@ from src.common.exceptions import *
 from src.common.database.models import Genre, track_genres_table, genres_table
 
 class TrackRepository(TrackRepositoryABC):
+    """ Основной репозиторий треков (без кеширования) """
+
     def __init__(self, db: AsyncSession):
         self.db = db
 

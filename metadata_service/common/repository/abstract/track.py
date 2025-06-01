@@ -28,4 +28,5 @@ class TrackRepositoryABC(ABC):
 
     @abstractmethod
     async def get_track_genre(self, track_id: int):
+        """ Получить жанр трека по его ID """
         ...
