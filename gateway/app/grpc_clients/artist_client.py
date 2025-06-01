@@ -34,7 +34,7 @@ class ArtistClient:
 
 
     @grpc_client_exception_handler
-    async def get_description_by_user_id(self, user_id: int):
+    async def get_data_by_user_id(self, user_id: int):
         """ Функция для передачи запроса с user_id исполнителя и возврата описания исполнителя """
         request = GetArtistDataByUserIdRequest(user_id=user_id)
         response = await self.stub.GetArtistDataByUserId(request)
@@ -42,7 +42,7 @@ class ArtistClient:
 
 
     @grpc_client_exception_handler
-    async def get_description_by_artist_id(self, artist_id: int):
+    async def get_data_by_artist_id(self, artist_id: int):
         """ Функция для передачи запроса с id исполнителя и возврата его описания """
         request = GetArtistDataByIdRequest(artist_id=artist_id)
         response = await self.stub.GetArtistDataById(request)
