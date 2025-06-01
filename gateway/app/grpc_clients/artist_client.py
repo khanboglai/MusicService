@@ -19,14 +19,14 @@ class ArtistClient:
         self.stub = ArtistServiceStub(self.channel)
 
     @grpc_client_exception_handler
-    async def create_artist(self, artist: ArtistCreate):
+    async def create_artist(self, artist: ArtistCreate, user_id: int):
         """ Функция для передачи запроса для создания исполнителя """
         # создаем запрос
         request = CreateArtistRequest(
             name=artist.name,
             email=artist.email,
             description=artist.description,
-            user_id=artist.user_id,
+            user_id=user_id,
         )
         # вызываем метод сервера
         response = await self.stub.CreateArtist(request)
@@ -34,7 +34,7 @@ class ArtistClient:
 
 
     @grpc_client_exception_handler
-    async def get_description_by_user_id(self, user_id: int):
+    async def get_data_by_user_id(self, user_id: int):
         """ Функция для передачи запроса с user_id исполнителя и возврата описания исполнителя """
         request = GetArtistDataByUserIdRequest(user_id=user_id)
         response = await self.stub.GetArtistDataByUserId(request)
@@ -42,7 +42,7 @@ class ArtistClient:
 
 
     @grpc_client_exception_handler
-    async def get_description_by_artist_id(self, artist_id: int):
+    async def get_data_by_artist_id(self, artist_id: int):
         """ Функция для передачи запроса с id исполнителя и возврата его описания """
         request = GetArtistDataByIdRequest(artist_id=artist_id)
         response = await self.stub.GetArtistDataById(request)
@@ -55,6 +55,14 @@ class ArtistClient:
         request = DeleteArtistByUserIdRequest(user_id=user_id)
         response = await self.stub.DeleteArtistByUserId(request)
         return response.user_id
+
+
+    @grpc_client_exception_handler
+    async def get_artist_id(self, user_id: int):
+        """ Функция для получения локального id исполнителя """
+        request = GetArtistIdRequest(user_id=user_id)
+        response = await self.stub.GetArtistId(request)
+        return response.id
 
 
     # @grpc_client_exception_handler

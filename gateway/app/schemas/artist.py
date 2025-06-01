@@ -5,4 +5,4 @@ class ArtistCreate(BaseModel):
     name: str
     email: str
     description: str
-    user_id: int
+    # user_id: int

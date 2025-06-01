@@ -20,10 +20,10 @@ class WriterClient:
         self.stub = WriterServiceStub(self.channel)
 
     @grpc_client_exception_handler
-    async def create_album(self, album: AlbumCreate):
+    async def create_album(self, album: AlbumCreate, artist_id: int):
         request = CreateAlbum_Request(
             title=album.title,
-            owner_id=album.owner_id,
+            owner_id=artist_id,
             release_date=datetime.combine(album.release_date, time.min),
         )
         response = await self.stub.CreateAlbum(request)
