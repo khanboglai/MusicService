@@ -140,12 +140,7 @@ async def liking(track_id: int, user = Depends(check_role(RoleEnum.LISTNER.value
 @handle_exceptions
 async def interacting(
         track_id: int, # это останется здесь (тк на фронте когда мы нажимаем на кнопку трека, то с фронта на бэк идет айдишник)
-        # track_name: str, # перенесется в тело функции (запрос к сервису ридера)
         listen_time: int,
-        # artist_id: int, # перенесется в тело функции (запрос к сервису ридера)
-        # artist_name: str, # перенесется в тело функции (запрос к сервису артиста)
-        # genre_id: int, # перенесется в тело функции (запрос к сервису ридера)
-        # genre_name: str, # перенесется в тело функции (запрос к сервису ридера)
         user = Depends(check_role(RoleEnum.LISTNER.value))
     ):
     track_info = await reader_client.get_track(track_id)

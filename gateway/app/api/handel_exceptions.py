@@ -3,6 +3,8 @@
 from functools import wraps
 from fastapi import HTTPException
 from app.domain_exceptions import *
+from app.core.logging import logger
+from app.domain_exceptions.streaming_exceptions import StreamingException
 
 
 def handle_exceptions(func):
@@ -67,7 +69,10 @@ def handle_exceptions(func):
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except PydanticValidationError as e:
             raise HTTPException(status_code=e.status_code, detail=str(e))
-        
+        except FileNotFoundError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+        except StreamingException as e:
+            raise HTTPException(status_code=e.status_code, detail=str(e))
         except Exception as e:
             # Для неопознанных ошибок
             raise HTTPException(status_code=500, detail=str(e))
