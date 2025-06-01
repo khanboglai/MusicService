@@ -42,7 +42,7 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    container_name: web
+    container_name: listener_web
     restart: always
     ports:
       - "8000:8000"

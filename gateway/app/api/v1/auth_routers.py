@@ -2,13 +2,18 @@
 import os
 
 from fastapi import APIRouter, HTTPException, Request, Response, Depends
+
+from app.grpc_clients.artist_client import ArtistClient
 from app.grpc_clients.auth_client import AuthClient
 from app.api.handel_exceptions import handle_exceptions, InvalidMimeType
+from app.grpc_clients.listener_client import ListenerClient
 from app.schemas.role_enum import RoleEnum
 
 
 router = APIRouter()
 auth_client = AuthClient()
+artist_client = ArtistClient()
+listener_client = ListenerClient()
 
 
 async def get_current_user(request: Request, response: Response):
@@ -88,6 +93,12 @@ async def register_user(login: str, password: str, role: RoleEnum = RoleEnum.LIS
 
 @router.delete('/delete')
 @handle_exceptions
-async def delete_user(login: str):
-    message = await auth_client.delete_user(login)
+async def delete_user(user = Depends(get_current_user)):
+    # удаление пользователя из сервисов
+    if user.role == RoleEnum.LISTNER.value:
+        await listener_client.delete_listener(user.user_id)
+    elif user.role == RoleEnum.ARTIST.value:
+        await artist_client.delete_artist(user.user_id)
+
+    message = await auth_client.delete_user(user.login)
     return {"message": str(message.message)}

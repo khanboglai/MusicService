@@ -1,10 +1,11 @@
+""" Инициализация сервера gRPC для стримнга """
 import grpc
 from concurrent import futures
 from apps.grpc.streaming_pb2 import FileChunk
 from apps.grpc.streaming_pb2_grpc import add_StreamingServiceServicer_to_server, StreamingServiceServicer
 from apps.core.config import settings
 from apps.core.logging import logger
-import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
 
 
 class StreamingService(StreamingServiceServicer):
@@ -15,12 +16,13 @@ class StreamingService(StreamingServiceServicer):
 
 
     async def StreamFileMp3(self, request, context):
+        """ Метод для стриминга треков """
         file_key = request.file_key
         try:
             response = self.s3_client.get_object(Bucket=self.bucket_name, Key=file_key)
             stream = response['Body']
 
-            while chunk := stream.read(1024 * 64):  # Читаем по 64 KB
+            while chunk := stream.read(1024 * 64):  # читаем по 64 KB
                 logger.debug(f"Sending chunk of size {len(chunk)} bytes")
                 yield FileChunk(data=chunk)
 
@@ -34,7 +36,7 @@ class StreamingService(StreamingServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Bucket not found")
             return
-        except self.s3_client.exceptions.ClientError as e:
+        except ClientError as e:
             logger.error(f"S3 error while accessing file {file_key}: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Problem accessing to storage")
