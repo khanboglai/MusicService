@@ -22,17 +22,17 @@ class CachedArtistRepo(ArtistRepositoryABC):
 
     async def get_artist_by_user_id(self, user_id: int) -> Optional[Artist]:
         """ Функция для получения данных исполнителя по user_id """
-        # cache_key = f"artist_{user_id}"
-        # cached = await self.redis.get(cache_key)
-        # if cached:
-        #     logger.info(f"Данные об исполнителе с {user_id} взяты из Redis")
-        #     data = json.loads(cached)
-        #     return Artist(**data)
+        cache_key = f"artist_{user_id}"
+        cached = await self.redis.get(cache_key)
+        if cached:
+            logger.info(f"Данные об исполнителе с {user_id} взяты из Redis")
+            data = json.loads(cached)
+            return Artist(**data)
 
         artist = await self.repo.get_artist_by_user_id(user_id)
-        # if artist:
-        #     await self.redis.setex(cache_key, 300, json.dumps(artist.to_dict()))
-        #     logger.info(f"Данные об исполнителе {artist.name} записаны в Redis")
+        if artist:
+            await self.redis.setex(cache_key, 300, json.dumps(artist.to_dict()))
+            logger.info(f"Данные об исполнителе {artist.name} записаны в Redis")
 
         return artist
 

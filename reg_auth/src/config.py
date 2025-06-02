@@ -51,8 +51,8 @@ class Settings(BaseSettings):
     )
 
     def get_db_url(self):
-        return (f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@"
-                f"{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}")
+        return (f"postgresql+asyncpg://server:password@"
+                f"auth_service_postgre:5432/auth_service_db")
     
     auth_jwt: AuthJWT = AuthJWT()
 
