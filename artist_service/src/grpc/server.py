@@ -89,48 +89,6 @@ class ArtistService:
         logger.info(f"GRPC: Delete artist by user_id {user_id}")
         return DeleteArtistByUserIdResponse(user_id=user_id)
 
-    # @grpc_exception_handler
-    # async def UploadArtistCover(self, request_iterator, context):
-    #
-    #     buffer = io.BytesIO()
-    #     user_id = None
-    #
-    #     try:
-    #         s3_client = settings.create_minio_client()
-    #         bucket_name = settings.minio_bucket_name
-    #         settings.create_bucket_if_not_exists(client=s3_client)
-    #
-    #         async for chunk in request_iterator:
-    #             if user_id is None:
-    #                 user_id = chunk.user_id
-    #             buffer.write(chunk.content)
-    #
-    #         if user_id is None:
-    #             return UploadStatus(success=False, message="User id is missing")
-    #
-    #         artist = await self.artist_repo.get_artist_by_user_id(user_id)
-    #         s3_key = f"{artist.oid}/{artist.oid}.jpg"
-    #         buffer.seek(0) # перемещение указателя на начало буфера
-    #
-    #         # проверка типа файла
-    #         mimetype = magic.from_buffer(buffer.read(1024), mime=True)
-    #         buffer.seek(0)
-    #         if mimetype != "image/jpeg":
-    #             return UploadStatus(success=False, message="Unsupported Media Type")
-    #         logger.info("GRPC: Checked mime type")
-    #
-    #         s3_client.upload_fileobj(
-    #             Fileobj=buffer,
-    #             Bucket=bucket_name,
-    #             Key=s3_key,
-    #             ExtraArgs={"ContentType": "image/jpeg"}
-    #         )
-    #
-    #         logger.info("GRPC: Uploaded cover")
-    #         return UploadStatus(success=True, message="Artist Cover Uploaded")
-    #     finally:
-    #         buffer.close()
-
 
 
 async def serve(redis_client):
@@ -139,7 +97,7 @@ async def serve(redis_client):
     async with get_db_session() as db:
         repo = await ArtistRepositoryFactory.create(
             db=db,
-            use_cache=True,
+            use_cache=False,
             redis_client=redis_client
         )
 

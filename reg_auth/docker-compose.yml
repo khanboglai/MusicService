@@ -1,12 +1,12 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:17
     container_name: auth_service_postgre
     environment:
       POSTGRES_DB: "auth_service_db"
-      POSTGRES_USER: "server"
-      POSTGRES_PASSWORD: "password"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       # - ./initdb:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
     networks:
       - music_network
+
   app:
     build: .
     container_name: auth_service_app
@@ -32,6 +33,8 @@ services:
     ports:
       - "8001:8001"
     command: ["./init.sh"]
+    restart: on-failure:5
+    
     networks:
       - music_network
 
