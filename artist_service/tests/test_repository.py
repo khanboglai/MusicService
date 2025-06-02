@@ -18,8 +18,8 @@ async def test_create_artist():
         name="Test Artist",
         email="fakemail@gmail.com",
         registered_at=datetime.now(),
-        cover_path="Test.png",
-        description=Description("Test Artist")
+        description=Description("Test Artist"),
+        user_id=1
     )
 
     created_artist = await repo.create_artist(new_artist)
@@ -40,8 +40,8 @@ async def test_create_existing_artist():
         name="Test Artist",
         email="fakemail@gmail.com",
         registered_at=datetime.now(),
-        cover_path="Test.png",
-        description=Description("Test Artist")
+        description=Description("Test Artist"),
+        user_id=1
     )
 
     # моделируем ошибку уникальности с нужной строкой в сообщении
@@ -71,17 +71,21 @@ async def test_delete_artist():
         name="Test Artist",
         email="test@example.com",
         registered_at=None,
-        cover_path="test.png",
-        description=Description("Test description")
+        description=Description("Test description"),
+        user_id=1
     )
-    artist.oid = 1
 
-    repo.get_artist_by_id = AsyncMock(return_value=artist)
+    # Подготавливаем моки
+    repo.get_artist_by_user_id = AsyncMock(return_value=artist)
+    mock_db.delete = AsyncMock()
+    mock_db.commit = AsyncMock()
 
-    result = await repo.delete_artist(artist.oid)
-    assert result == artist.name
+    # Вызов
+    result = await repo.delete_artist(artist.user_id)
 
-    repo.get_artist_by_id.assert_called_once_with(artist.oid)
+    # Проверки
+    assert result == artist.user_id
+    repo.get_artist_by_user_id.assert_called_once_with(artist.user_id)
     mock_db.delete.assert_called_once_with(artist)
     mock_db.commit.assert_called_once()
 

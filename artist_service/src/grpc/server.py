@@ -97,7 +97,7 @@ async def serve(redis_client):
     async with get_db_session() as db:
         repo = await ArtistRepositoryFactory.create(
             db=db,
-            use_cache=False,
+            use_cache=True,
             redis_client=redis_client
         )
 

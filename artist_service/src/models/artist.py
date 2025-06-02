@@ -58,3 +58,16 @@ class Artist(Entity):
 
     def json(self) -> str:
         return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "Artist":
+        description = Description(data["description"])  # Преобразуем обратно в объект
+        artist = cls(
+            name=data["name"],
+            email=data["email"],
+            registered_at=datetime.fromisoformat(data["registered_at"]) if data.get("registered_at") else None,
+            description=description,
+            user_id=data["user_id"]
+        )
+        artist.oid = data.get("id")  # Восстановим ID, если он есть
+        return artist
