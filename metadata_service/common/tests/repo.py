@@ -29,3 +29,22 @@ async def test_create_album():
     mock_db.refresh.assert_called_once_with(new_album)
 
     assert created_album == new_album
+
+@pytest.mark.asyncio
+async def test_create_track():
+    mock_db = AsyncMock()
+    mock_db.add = MagicMock()
+    repo = TrackRepository(db=mock_db)
+
+    new_track = Album(
+        title="Test Track",
+        album_id=1,
+        explicit=False,
+    )
+
+    created_track = await repo.create_track(new_track)
+    mock_db.add.assert_called_once_with(new_track)
+    mock_db.commit.assert_called_once()
+    mock_db.refresh.assert_called_once_with(new_track)
+
+    assert created_track == new_track
