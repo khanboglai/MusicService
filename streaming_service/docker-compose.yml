@@ -1,0 +1,19 @@
+services:
+
+  streaming_web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streaming_web
+    networks:
+      - music_network
+    restart: always
+    ports:
+      - "8007:8007"
+    volumes:
+      - .:/apps
+
+
+networks:
+  music_network:
+    name: music_network

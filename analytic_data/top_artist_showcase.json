@@ -1,0 +1,122 @@
+{
+  "id": 1,
+  "type": "barchart",
+  "title": "Top 3 artists per 30 days",
+  "gridPos": {
+    "x": 0,
+    "y": 60,
+    "h": 8,
+    "w": 12
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "lineWidth": 1,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "unit": "short"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "interactions"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "yellow",
+              "mode": "fixed"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pluginVersion": "12.0.1",
+  "targets": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "bennu4nqfywhsc"
+      },
+      "editorType": "sql",
+      "format": 1,
+      "meta": {
+        "builderOptions": {
+          "columns": [],
+          "database": "",
+          "limit": 1000,
+          "mode": "list",
+          "queryType": "table",
+          "table": ""
+        }
+      },
+      "pluginVersion": "4.9.0",
+      "queryType": "table",
+      "rawSql": "SELECT\n    artist_name,\n    count(*) AS interactions\nFROM interactions\nWHERE interaction_date >= toDate(now() - toIntervalMonth(1))\nGROUP BY artist_name\nORDER BY interactions DESC\nLIMIT 3;",
+      "refId": "A"
+    }
+  ],
+  "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "bennu4nqfywhsc"
+  },
+  "options": {
+    "orientation": "auto",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0,
+    "showValue": "never",
+    "stacking": "none",
+    "groupWidth": 0.7,
+    "barWidth": 0.97,
+    "barRadius": 0,
+    "fullHighlight": false,
+    "tooltip": {
+      "mode": "single",
+      "sort": "none",
+      "hideZeros": false
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "right",
+      "calcs": []
+    }
+  }
+}

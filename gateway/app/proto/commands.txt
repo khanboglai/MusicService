@@ -1,0 +1,5 @@
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/artist.proto
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/listener.proto
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/reader.proto
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/writer.proto
+python -m grpc_tools.protoc -I=app/proto --python_out=app/grpc_clients --grpc_python_out=app/grpc_clients app/proto/auth.proto

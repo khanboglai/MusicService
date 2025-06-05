@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:17
+    container_name: auth_service_postgre
+    environment:
+      POSTGRES_DB: "auth_service_db"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # - ./initdb:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U server -d auth_service_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - music_network
+
+  app:
+    build: .
+    container_name: auth_service_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/src
+    ports:
+      - "8001:8001"
+    command: ["./init.sh"]
+    restart: on-failure:5
+    
+    networks:
+      - music_network
+
+volumes:
+  pgdata:
+
+networks:
+  music_network:
+    name: music_network

@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package artist;
+
+import "google/protobuf/timestamp.proto";
+
+service ArtistService {
+    rpc GetArtistDataByUserId (GetArtistDataByUserIdRequest) returns (GetArtistDataByUserIdResponse);
+    rpc CreateArtist (CreateArtistRequest) returns (CreateArtistResponse);
+    rpc GetArtistDataById (GetArtistDataByIdRequest) returns (GetArtistDataByIdResponse);
+    rpc GetArtistId (GetArtistIdRequest) returns (GetArtistIdResponse);
+    rpc DeleteArtistByUserId (DeleteArtistByUserIdRequest) returns (DeleteArtistByUserIdResponse);
+}
+
+message GetArtistDataByUserIdRequest {
+    int32 user_id = 1;
+}
+
+message GetArtistDataByIdRequest { // по локальному id исполнителя
+    int32 artist_id = 1;
+}
+
+message GetArtistDataByUserIdResponse {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp registered_at = 4;
+}
+
+message GetArtistDataByIdResponse {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp registered_at = 4;
+}
+
+// создание исполнителя
+message CreateArtistRequest {
+    string name = 1;
+    string email = 2;
+    string description = 3;
+    int32 user_id = 4;
+}
+
+message CreateArtistResponse {
+    int32 artist_id = 1; // ID созданного исполнителя
+}
+
+// получения id исполнителя
+message GetArtistIdRequest {
+    int32 user_id = 1;
+}
+
+message GetArtistIdResponse {
+    int32 id = 1;
+}
+
+
+message DeleteArtistByUserIdRequest {
+    int32 user_id = 1;
+}
+
+message DeleteArtistByUserIdResponse {
+    int32 user_id = 1;
+}

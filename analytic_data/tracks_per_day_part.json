@@ -1,0 +1,118 @@
+{
+  "id": 7,
+  "type": "barchart",
+  "title": "Track per day",
+  "gridPos": {
+    "x": 0,
+    "y": 0,
+    "h": 11,
+    "w": 13
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "lineWidth": 1,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "value": null,
+            "color": "green"
+          },
+          {
+            "value": 80,
+            "color": "red"
+          }
+        ]
+      },
+      "unit": "short"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Вечер (18:00-00:00)"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "mode": "fixed",
+              "fixedColor": "dark-blue"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pluginVersion": "12.0.1",
+  "targets": [
+    {
+      "refId": "A",
+      "editorType": "sql",
+      "queryType": "table",
+      "rawSql": "SELECT\n    track_name,\n    sum(toHour(interaction_date) BETWEEN 6 AND 11) AS \"Утро (6:00-12:00)\",\n    sum(toHour(interaction_date) BETWEEN 12 AND 17) AS \"День (12:00-18:00)\",\n    sum(toHour(interaction_date) BETWEEN 18 AND 23) AS \"Вечер (18:00-00:00)\",\n    sum(toHour(interaction_date) BETWEEN 0 AND 5 OR toHour(interaction_date) = 23) AS \"Ночь (00:00-6:00)\"\nFROM interactions\nGROUP BY track_name\nLIMIT 20;",
+      "format": 1,
+      "meta": {
+        "builderOptions": {
+          "database": "",
+          "table": "",
+          "queryType": "table",
+          "columns": [],
+          "mode": "list",
+          "limit": 1000
+        }
+      },
+      "pluginVersion": "4.9.0"
+    }
+  ],
+  "datasource": {
+    "uid": "bennu4nqfywhsc",
+    "type": "grafana-clickhouse-datasource"
+  },
+  "options": {
+    "orientation": "auto",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0,
+    "showValue": "never",
+    "stacking": "normal",
+    "groupWidth": 0.7,
+    "barWidth": 0.97,
+    "barRadius": 0,
+    "fullHighlight": false,
+    "tooltip": {
+      "mode": "single",
+      "sort": "none",
+      "hideZeros": false
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "right",
+      "calcs": []
+    }
+  }
+}
