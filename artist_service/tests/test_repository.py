@@ -90,25 +90,72 @@ async def test_delete_artist():
     mock_db.commit.assert_called_once()
 
 
-# @pytest.mark.asyncio
-# async def test_delete_artist_not_exist():
-#     # Создаём мок для базы данных
-#     mock_db = AsyncMock()
-#
-#     # Создаём экземпляр репозитория
-#     repo = ArtistRepository(db=mock_db)
-#
-#     # Мокируем метод get_artist_by_oid
-#     repo.get_artist_by_oid = AsyncMock(return_value=None)
-#
-#     # Проверяем, что выбрасывается исключение NotFoundException
-#     with pytest.raises(InvalidIdException) as exc_info:
-#         await repo.delete_artist(999)
-#
-#     # Проверяем сообщение исключения
-#     assert "Исполнитель с id: 999 не существует" in str(exc_info.value)
-#
-#     # Проверяем вызовы методов базы данных
-#     repo.get_artist_by_oid.assert_called_once_with(999)
-#     mock_db.delete.assert_not_called()
-#     mock_db.commit.assert_not_called()
+@pytest.mark.asyncio
+async def test_delete_artist_not_exist():
+    # Создаём мок для базы данных
+    mock_db = AsyncMock()
+
+    # Создаём экземпляр репозитория
+    repo = ArtistRepository(db=mock_db)
+
+    # Мокируем метод get_artist_by_user_id (а не get_artist_by_oid!)
+    repo.get_artist_by_user_id = AsyncMock(side_effect=InvalidIdException(f"Исполнитель с user_id 999 не найден"))
+
+    # Проверяем, что выбрасывается исключение InvalidIdException
+    with pytest.raises(InvalidIdException) as exc_info:
+        await repo.delete_artist(999)
+
+    # Проверяем сообщение исключения
+    assert "Исполнитель с user_id 999 не найден" in str(exc_info.value)
+
+    # Проверяем вызовы методов
+    repo.get_artist_by_user_id.assert_called_once_with(999)
+    mock_db.delete.assert_not_called()
+    mock_db.commit.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_get_artist_by_user_id():
+    # Создаём мок для базы данных
+    mock_db = AsyncMock()
+
+    # Создаём тестового артиста
+    artist = Artist(
+        name="Test Artist",
+        email="fakemail@gmail.com",
+        registered_at=datetime.now(),
+        description=Description("Test Artist"),
+        user_id=1
+    )
+
+    # Создаём экземпляр репозитория
+    repo = ArtistRepository(db=mock_db)
+
+    # МОКИРУЕМ ВЫЗОВ МЕТОДА - ПРОСТО И ЭФФЕКТИВНО
+    repo.get_artist_by_user_id = AsyncMock(return_value=artist)
+
+    # Вызываем метод
+    result = await repo.get_artist_by_user_id(1)
+
+    # Проверяем, что метод был вызван с правильным аргументом
+    repo.get_artist_by_user_id.assert_called_once_with(1)
+
+    # Проверяем результат
+    assert result == artist
+    assert result.user_id == 1
+
+
+@pytest.mark.asyncio
+async def test_get_artist_by_user_id_not_exist():
+    mock_db = AsyncMock()
+
+    repo = ArtistRepository(db=mock_db)
+
+    repo.get_artist_by_user_id = AsyncMock(side_effect=InvalidIdException("Исполнитель с user_id 999 не найден"))
+
+    with pytest.raises(InvalidIdException) as exc_info:
+        await repo.get_artist_by_user_id(999)
+
+    assert "Исполнитель с user_id 999 не найден" in str(exc_info.value)
+
+    repo.get_artist_by_user_id.assert_called_once_with(999)
